@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Tournament Organizer">
+  <title>Tournament Organizer</title>
+
+  <defs>
+    <linearGradient id="to-degrade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C3AED"/>
+      <stop offset="0.55" stop-color="#A855F7"/>
+      <stop offset="1" stop-color="#C084FC"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Tuile biseautée : coins haut-droit et bas-gauche rognés, comme tout le
+       vocabulaire visuel du site. -->
+  <path d="M0 0 H50 L64 14 V64 H14 L0 50 Z" fill="url(#to-degrade)"/>
+
+  <!-- Arbre de tournoi : deux branches convergent vers un nœud, le vainqueur. -->
+  <g stroke="#0C0A14" stroke-width="4" stroke-linecap="square" fill="none">
+    <path d="M14 20 H28"/>
+    <path d="M14 44 H28"/>
+    <path d="M28 20 V44"/>
+    <path d="M28 32 H40"/>
+  </g>
+  <rect x="40" y="26" width="12" height="12" fill="#0C0A14"/>
+</svg>

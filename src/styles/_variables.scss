@@ -1,0 +1,37 @@
+// =============================================================================
+//  Thème — surcharge des variables Bootstrap
+//
+//  Tout le visuel se règle ici. Aucun composant ne porte de couleur en dur :
+//  changer l'identité du site se fait dans ce fichier, pas dans quarante.
+//  Ce fichier est importé AVANT Bootstrap (voir main.scss) : c'est ce qui
+//  permet à Bootstrap de construire ses composants avec nos valeurs.
+// =============================================================================
+
+// --- Palette : noir, blanc, violet -------------------------------------------
+$violet-profond:   #4C1D95;
+$violet:           #8B5CF6;
+$violet-clair:     #C084FC;
+$noir-fond:        #08070C;
+$noir-panneau:     #0C0A14;
+$gris-bordure:     #27272A;
+$blanc:            #F4F4F5;
+
+$primary:          $violet;
+$body-bg:          $noir-fond;
+$body-color:       $blanc;
+$border-color:     $gris-bordure;
+$link-color:       $violet-clair;
+
+// --- Zéro arrondi : le vocabulaire visuel repose sur l'angle droit ----------
+$enable-rounded:     false;
+$border-radius:      0;
+$border-radius-sm:   0;
+$border-radius-lg:   0;
+$border-radius-xl:   0;
+$border-radius-xxl:  0;
+$border-radius-pill: 0;
+
+// --- Typographie ------------------------------------------------------------
+$font-family-sans-serif: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+$headings-font-family:   'Chakra Petch', 'Inter', system-ui, sans-serif;
+$headings-font-weight:   700;
