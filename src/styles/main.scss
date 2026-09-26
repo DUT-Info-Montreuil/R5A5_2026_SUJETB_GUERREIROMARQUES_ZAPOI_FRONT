@@ -2,4 +2,7 @@
 // L'ordre compte : nos variables d'abord, Bootstrap ensuite, nos classes enfin.
 @import 'variables';
 @import 'bootstrap/scss/bootstrap';
-@import 'biseau';
+@import 'utilitaires';
+@import 'entete';
+@import 'accueil';
+@import 'authentification';

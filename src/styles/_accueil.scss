@@ -1,0 +1,77 @@
+// Page principale : tournoi à la une, puis calendrier.
+
+.hero {
+  @include fond-hachure;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 460px;
+  padding-top: 5rem;
+  padding-bottom: 4rem;
+}
+
+.hero-titre { font-size: clamp(3.5rem, 9vw, 8rem); }
+
+// Le fond des lignes déborde de 24 px : on le rogne au bord de la section.
+#calendrier { overflow-x: clip; }
+
+.calendrier-titre { font-size: clamp(2.5rem, 5vw, 3.5rem); }
+
+.filtre {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $texte-attenue;
+  transition: color .2s;
+
+  &:hover { color: $texte; }
+
+  &[aria-pressed="true"] {
+    color: $texte;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: $violet;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 8px;
+  }
+}
+
+.recherche { max-width: 280px; }
+
+.calendrier {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid $trait;
+}
+
+// Ligne : le fond glisse depuis la gauche, le titre avance.
+.ligne-tournoi {
+  position: relative;
+  padding: 1.375rem 0;
+  border-bottom: 1px solid $trait;
+  animation: apparition .6s ease-out backwards;
+
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) { animation-delay: $i * .05s; }
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0 -24px;
+    background: $surface;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .35s $courbe;
+  }
+
+  > * { position: relative; }
+  &:hover::before { transform: scaleX(1); }
+
+  .ligne-titre { transition: transform .3s $courbe; }
+  &:hover .ligne-titre { transform: translateX(8px); }
+}
+
+.ligne-jour { font-size: 2.25rem; font-weight: 800; font-stretch: 75%; line-height: 1; }
+.ligne-nom { font-size: 1.3rem; font-weight: 700; }

@@ -1,28 +1,31 @@
 // =============================================================================
-//  Thème — surcharge des variables Bootstrap
+//  Thème — « Piste A · Éditorial sport » (toile Design, PisteA.dc.html)
 //
-//  Tout le visuel se règle ici. Aucun composant ne porte de couleur en dur :
-//  changer l'identité du site se fait dans ce fichier, pas dans quarante.
-//  Ce fichier est importé AVANT Bootstrap (voir main.scss) : c'est ce qui
-//  permet à Bootstrap de construire ses composants avec nos valeurs.
+//  Noir neutre, un seul violet d'accent, angles droits, titres condensés.
+//  Importé AVANT Bootstrap (voir main.scss) : Bootstrap construit ses
+//  composants avec ces valeurs. Aucun composant ne porte de couleur en dur.
 // =============================================================================
 
-// --- Palette : noir, blanc, violet -------------------------------------------
-$violet-profond:   #4C1D95;
-$violet:           #8B5CF6;
-$violet-clair:     #C084FC;
-$noir-fond:        #08070C;
-$noir-panneau:     #0C0A14;
-$gris-bordure:     #27272A;
-$blanc:            #F4F4F5;
+// --- Palette ------------------------------------------------------------------
+$fond:           #0B0B0D;
+$surface:        #141418;
+$surface-hero:   #17171B;
+$trait:          #222226;
+$trait-fort:     #2E2E34;
+$avatar:         #2A2A30;
+$texte:          #F2F1F5;
+$texte-attenue:  #9C9AA6;
+$texte-discret:  #6E6C78;
+$violet:         #8B5CF6;
+$violet-focus:   #A78BFA;
+$lien:           #C4B5FD;
+$lien-survol:    #DDD6FE;
+$rouge:          #F87171;
 
-$primary:          $violet;
-$body-bg:          $noir-fond;
-$body-color:       $blanc;
-$border-color:     $gris-bordure;
-$link-color:       $violet-clair;
+$primary:        $violet;
+$danger:         $rouge;
 
-// --- Zéro arrondi : le vocabulaire visuel repose sur l'angle droit ----------
+// --- Angles droits ------------------------------------------------------------
 $enable-rounded:     false;
 $border-radius:      0;
 $border-radius-sm:   0;
@@ -31,7 +34,31 @@ $border-radius-xl:   0;
 $border-radius-xxl:  0;
 $border-radius-pill: 0;
 
-// --- Typographie ------------------------------------------------------------
-$font-family-sans-serif: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-$headings-font-family:   'Chakra Petch', 'Inter', system-ui, sans-serif;
-$headings-font-weight:   700;
+// --- Typographie : Archivo, largeur variable (titres condensés à 70-75 %) -----
+$famille:                'Archivo Variable', 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+$font-family-sans-serif: $famille;
+$headings-font-family:   $famille;
+$headings-font-weight:   900;
+$btn-font-weight:        700;
+
+// --- Champs ---------------------------------------------------------------------
+$input-bg:                 $surface;
+$input-border-color:       $trait-fort;
+$input-focus-border-color: $violet;
+$input-focus-box-shadow:   0 0 0 3px rgba($violet, .25);
+$input-padding-y:          .75rem;
+
+// --- Mode sombre (index.html active data-bs-theme="dark") ----------------------
+$body-bg-dark:              $fond;
+$body-color-dark:           $texte;
+$body-secondary-color-dark: $texte-attenue;
+$body-secondary-bg-dark:    $surface;
+$body-tertiary-bg-dark:     $surface-hero;
+$border-color-dark:         $trait;
+$link-color-dark:           $lien;
+$link-hover-color-dark:     $lien-survol;
+$form-invalid-color-dark:   $rouge;
+$danger-text-emphasis-dark: $rouge;
+
+// --- Mouvement : transform et opacity uniquement, 150 à 300 ms -----------------
+$courbe: cubic-bezier(.2, .7, .1, 1);

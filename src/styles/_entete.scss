@@ -1,0 +1,76 @@
+// En-tête commun : marque, navigation soulignée, compte.
+
+.entete {
+  height: 68px;
+  border-bottom: 1px solid $trait;
+}
+
+.marque {
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: $texte;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-stretch: 75%;
+  letter-spacing: .01em;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  &:hover { color: $texte; }
+  span { color: $violet; }
+}
+
+.entete-lien {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 68px;
+  color: $texte-attenue;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color .2s;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: $violet;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s $courbe;
+  }
+
+  &:hover { color: $texte; }
+  &:hover::after, &.active::after { transform: scaleX(1); }
+  &.active { color: $texte; font-weight: 600; }
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $avatar;
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.bouton-texte {
+  border: 0;
+  background: none;
+  color: $texte-attenue;
+  font-weight: 500;
+  transition: color .2s;
+
+  &:hover { color: $texte; }
+}
+
+// Sur téléphone, le bouton de l'en-tête se fait plus compact.
+@include media-breakpoint-down(sm) {
+  .entete .btn-principal { min-height: 40px; padding: 0 1rem; }
+}

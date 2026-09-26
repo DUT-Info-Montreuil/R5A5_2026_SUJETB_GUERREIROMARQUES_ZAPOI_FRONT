@@ -1,0 +1,134 @@
+// =============================================================================
+//  Classes propres au projet — ce que Bootstrap ne sait pas faire.
+// =============================================================================
+
+// Titre condensé en capitales : la signature typographique de la piste A.
+.titre-condense {
+  font-weight: 900;
+  font-stretch: 70%;
+  line-height: .86;
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+}
+
+// Petit libellé en capitales espacées (« En direct », « Match en cours »…).
+.libelle {
+  font-size: .875rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+:focus-visible {
+  outline: 2px solid $violet-focus;
+  outline-offset: 3px;
+}
+
+// Bouton principal : blanc, qui passe au violet au survol ; la flèche avance.
+.btn-principal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .625rem;
+  min-height: 50px;
+  padding: 0 1.625rem;
+  border: 0;
+  background: $texte;
+  color: $fond;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color .2s, color .2s, transform .12s;
+
+  svg { transition: transform .2s; }
+
+  &:hover:not(:disabled) { background: $violet; color: #fff; }
+  &:hover:not(:disabled) svg { transform: translateX(4px); }
+  &:active:not(:disabled) { transform: scale(.97); }
+  &:disabled { opacity: .6; }
+}
+
+// Lien souligné dont le soulignement s'éloigne au survol.
+.lien-souligne {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  transition: text-underline-offset .2s, color .2s;
+
+  &:hover { text-underline-offset: 9px; }
+}
+
+// Pastilles d'état : violette pleine, violette qui respire (en direct), vide.
+.point {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $violet;
+
+  &.point-direct { animation: respiration 1.8s ease-in-out infinite; }
+  &.point-vide { background: transparent; border: 1px solid $texte-discret; }
+}
+
+@keyframes respiration { 50% { opacity: .35; } }
+
+// Apparitions à l'arrivée sur la page.
+.apparition { animation: apparition .8s ease-out .35s both; }
+
+.ligne-revelee {
+  display: block;
+  overflow: hidden;
+  // Marge pour les accents (È, É) : sans elle, le masque les coupe.
+  padding-top: .1em;
+  margin-top: -.1em;
+
+  > span { display: block; animation: montee .9s $courbe both; }
+  &:nth-child(2) > span { animation-delay: .12s; }
+}
+
+@keyframes apparition { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes montee { from { transform: translateY(105%); } to { transform: none; } }
+
+// Fond « hero » : hachures qui défilent, lueur violette qui dérive, fondu vers le noir.
+@mixin fond-hachure {
+  position: relative;
+  overflow: hidden;
+  background-color: $surface-hero;
+  background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, .03) 0 2px, transparent 2px 14px);
+  animation: hachures 8s linear infinite;
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 760px;
+    height: 760px;
+    right: -120px;
+    top: -260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba($violet, .3), rgba($violet, 0) 65%);
+    animation: derive 18s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, $fond 0%, rgba($fond, .55) 45%, rgba($fond, 0) 80%);
+    pointer-events: none;
+  }
+
+  > * { position: relative; z-index: 1; }
+}
+
+@keyframes hachures { to { background-position: 56px 0; } }
+@keyframes derive { to { transform: translate(-340px, 160px); } }
+
+// Accessibilité : toute animation coupée si le système demande moins de mouvement.
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

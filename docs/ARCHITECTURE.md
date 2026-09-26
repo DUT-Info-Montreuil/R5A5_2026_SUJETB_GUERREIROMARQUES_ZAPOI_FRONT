@@ -16,6 +16,7 @@ d'écrire le premier composant.
 | Composants et grille | Bootstrap + react-bootstrap | 5.3.8 / 2.10.10 |
 | Thème (surcharge de Bootstrap) | sass | 1.105.0 |
 | Temps réel | socket.io-client | 4.8.3 |
+| Police Archivo, servie par le projet | @fontsource-variable/archivo | 5.3.0 |
 
 Pourquoi `socket.io-client` : le back utilise Flask-SocketIO, qui parle le
 protocole Socket.IO. Un `WebSocket` natif du navigateur ne suffit pas.
@@ -30,37 +31,41 @@ R5A5_..._FRONT/
 ├── package.json / package-lock.json   Dépendances, versions figées par le lock
 ├── vite.config.ts                     Port 5173, options Sass
 ├── .env.example                       VITE_API_URL
-├── public/favicon.svg                 Le logo
 ├── docs/
 └── src/
-    ├── main.tsx                       Point d'entrée, importe le thème
-    ├── App.tsx                        Racine : fournisseurs + routage
+    ├── main.tsx                       Point d'entrée : police et thème
+    ├── App.tsx                        Racine : FournisseurAuth + routage
     ├── api/                           Seule couche qui parle au réseau
-    │   ├── client.ts                  Le seul fetch du projet
+    │   ├── client.ts                  Le seul fetch du projet (cookie inclus)
     │   ├── socket.ts                  La seule connexion temps réel
-    │   └── sante.ts                   Modèle : un fichier par ressource
+    │   ├── auth.ts                    Connexion, inscription, moi, déconnexion
+    │   ├── tournois.ts
+    │   └── sante.ts
     ├── types/api.ts                   Le contrat d'API en TypeScript
-    ├── context/                       État global (vide — l'authentification viendra ici)
-    ├── hooks/
-    │   └── useEtatChaine.ts           Modèle : la logique d'un écran
+    ├── context/
+    │   ├── AuthContext.ts             Forme de l'état + objet contexte
+    │   ├── FournisseurAuth.tsx        Le composant qui porte l'état
+    │   └── useAuth.ts                 Lecture de l'état depuis un composant
+    ├── hooks/                         useConnexion, useInscription, useTournois, useEtatChaine
     ├── components/
-    │   ├── layout/MiseEnPage.tsx      En-tête, contenu, pied de page
-    │   └── ui/                        Briques génériques (vide)
-    ├── pages/
-    │   ├── AccueilPage.tsx            Modèle : une page qui s'appuie sur un hook
-    │   └── IntrouvablePage.tsx
+    │   ├── ui/                        Marque, IconeFleche, ChampTexte, ChampMotDePasse
+    │   ├── layout/                    MiseEnPage, EnTete, ZoneCompte
+    │   ├── auth/                      EcranAuthentification, formulaires
+    │   └── tournoi/                   HeroTournoi, CalendrierTournois, FiltresTournois,
+    │                                  LigneTournoi, presentation.ts (libellés, dates)
+    ├── pages/                         Accueil, Connexion, Inscription, Diagnostic, Introuvable
     ├── routes/Routage.tsx             Déclaration des routes
-    ├── styles/
-    │   ├── _variables.scss            Palette, typographie, zéro arrondi
-    │   ├── _biseau.scss               Classes propres au projet
-    │   └── main.scss
-    └── assets/logo.svg
+    └── styles/                        Thème « Piste A » (§4)
 ```
 
-Les dossiers par domaine (`components/tournoi/`, `components/equipe/`,
-`components/chat/`) se créent au moment où la première fonctionnalité de ce
-domaine arrive. **La page d'accueil est la seule fonctionnalité du socle** :
-elle vérifie la chaîne complète, et sert de modèle à recopier.
+Les dossiers par domaine (`components/equipe/`, `components/chat/`…) se créent
+au moment où la première fonctionnalité de ce domaine arrive.
+
+| Route | Page |
+|---|---|
+| `/` | Tournoi à la une et calendrier ; filtre dans l'URL (`?statut=…&recherche=…`) |
+| `/connexion`, `/inscription` | Plein écran, hors du cadre commun |
+| `/diagnostic` | État de la chaîne front → API → base → temps réel |
 
 | Dossier | Il contient | Il ne contient **jamais** |
 |---|---|---|
@@ -83,9 +88,16 @@ Le parallèle avec le back, qui aide à s'y retrouver :
 
 ## 3. Règles
 
-**Un seul `fetch`.** Tout appel réseau passe par `api/client.ts`, qui ajoute le
-jeton, lit `VITE_API_URL`, traduit les erreurs et gère le 401. Un `fetch` écrit
-ailleurs contourne tout ça.
+**Un seul `fetch`.** Tout appel réseau passe par `api/client.ts`, qui lit
+`VITE_API_URL`, demande au navigateur de joindre le cookie de session
+(`credentials: 'include'`), traduit les erreurs et prévient le contexte à
+chaque 401. Un `fetch` écrit ailleurs contourne tout ça.
+
+**Le front ne voit jamais le jeton.** Il vit dans un cookie `HttpOnly` que le
+JavaScript ne peut pas lire (contrat §2). Au chargement, le front demande à
+l'API qui est connecté (`GET /api/auth/moi`) ; pour se déconnecter, il appelle
+`POST /api/auth/deconnexion`, seul moyen d'effacer ce cookie. Un 401 sur
+`/api/auth/moi` dans la console du navigateur, pour un visiteur, est donc normal.
 
 **Une seule connexion WebSocket.** `api/socket.ts` crée l'unique instance
 Socket.IO ; les composants s'abonnent à des événements, ils n'ouvrent jamais
@@ -103,13 +115,17 @@ réutilisable et se contente d'afficher.
 `onSucces` ; c'est la page qui choisit où aller ensuite.
 
 **Aucun droit n'est déduit côté client.** L'état d'authentification ne contient
-que l'identité et le statut d'administrateur, lus depuis l'API — jamais décodés
-depuis le jeton. L'appartenance aux équipes se demande au serveur à chaque fois
+que l'identité et le statut d'administrateur, lus depuis l'API. L'appartenance aux équipes se demande au serveur à chaque fois
 (B-17).
 
 **`RouteProtegee` n'est pas une sécurité.** Cacher un écran évite une erreur de
 manipulation, pas une attaque : n'importe qui peut appeler l'API directement. La
 vraie protection est dans le back.
+
+**Du texte, jamais du HTML.** React échappe tout ce qui est écrit entre
+accolades : un pseudo ou un message de chat contenant `<img onerror=…>`
+s'affiche tel quel. `dangerouslySetInnerHTML` est interdit sur une donnée venue
+d'un utilisateur.
 
 **Taille des fichiers.** Un composant qui dépasse une centaine de lignes a
 presque toujours deux responsabilités : on le découpe.
@@ -118,29 +134,45 @@ presque toujours deux responsabilités : on le découpe.
 
 ## 4. Thème visuel
 
-La maquette de référence (noir, blanc, violet, angles vifs et biseautés) a été
-prototypée en Tailwind. Le projet utilise **Bootstrap** : on reproduit ce
-rendu en surchargeant les variables Sass de Bootstrap, pas en luttant contre
-ses classes une par une.
+Direction retenue : **« Piste A · Éditorial sport »** (toile Design du projet,
+`PisteA.dc.html`). Noir neutre, **un seul violet d'accent**, angles droits,
+titres en capitales condensées. Le projet utilise **Bootstrap** : on reproduit
+ce rendu en surchargeant ses variables Sass, pas en luttant contre ses classes.
 
 ```
 styles/
-├── _variables.scss      Palette, typographie, suppression des arrondis
-├── _biseau.scss         Classes utilitaires propres au projet
-└── main.scss            Point d'entrée, importé une fois dans main.tsx
+├── _variables.scss        Palette, police, zéro arrondi, champs, mode sombre
+├── _utilitaires.scss      Titres condensés, libellés, bouton principal, pastilles,
+│                          apparitions, fond hachuré animé (mixin fond-hachure)
+├── _entete.scss           Marque, navigation soulignée, avatar
+├── _accueil.scss          Tournoi à la une, filtres, lignes du calendrier
+├── _authentification.scss Écrans de connexion et d'inscription
+└── main.scss              Point d'entrée, importé une fois dans main.tsx
 ```
 
 **Palette**
 
 | Rôle | Valeur |
 |---|---|
-| Violet profond | `#4C1D95` |
-| Violet principal | `#8B5CF6` |
-| Violet clair | `#C084FC` |
-| Fond | `#08070C` |
-| Panneau | `#0C0A14` |
-| Texte | `#F4F4F5` |
-| Bordure | `#27272A` |
+| Fond | `#0B0B0D` |
+| Surface (survol des lignes, champs) | `#141418` |
+| Fond du hero | `#17171B` |
+| Traits / traits forts | `#222226` / `#2E2E34` |
+| Texte / atténué / discret | `#F2F1F5` / `#9C9AA6` / `#6E6C78` |
+| Violet d'accent (`$primary`) | `#8B5CF6` |
+| Focus / liens / liens survolés | `#A78BFA` / `#C4B5FD` / `#DDD6FE` |
+
+**Police** : Archivo, installée par npm (`@fontsource-variable/archivo`) et non
+chargée depuis Google Fonts : aucune requête vers un tiers, et la page
+s'affiche aussi hors ligne. Ses deux axes servent : la graisse, et la largeur
+(`font-stretch: 70 %`) pour les titres condensés (`.titre-condense`).
+
+**Bouton principal** (`.btn-principal`) : blanc, il passe au violet au survol
+et sa flèche avance.
+
+**Animations** : `transform` et `opacity` uniquement, entre 150 et 300 ms pour
+les survols. Hachures qui défilent et lueur qui dérive sur les fonds `hero`,
+titres révélés ligne par ligne, lignes du calendrier dont le fond glisse.
 
 **Zéro arrondi.** Un seul réglage supprime les coins arrondis de tous les
 composants Bootstrap :
@@ -151,11 +183,8 @@ $border-radius: 0;  $border-radius-sm: 0;  $border-radius-lg: 0;
 $border-radius-xl: 0;  $border-radius-xxl: 0;  $border-radius-pill: 0;
 ```
 
-Seuls les éléments volontairement circulaires (indicateur de chargement,
-interrupteur) gardent leur forme.
-
-**Biseaux.** Les coins coupés en diagonale ne sont pas une notion Bootstrap :
-ce sont des classes du projet, dans `_biseau.scss`, à base de `clip-path`.
+Seuls les éléments volontairement circulaires (pastilles d'état, avatar,
+indicateur de chargement) gardent leur forme.
 
 **Avertissements Sass.** Bootstrap 5.3 utilise encore une syntaxe Sass en cours
 d'abandon. Les avertissements sont inoffensifs et masqués dans

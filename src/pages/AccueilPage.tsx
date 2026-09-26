@@ -1,51 +1,56 @@
 /**
- * Page d'accueil provisoire : elle vérifie que front, API, base et temps réel
- * se parlent. C'est la seule page du socle, et le modèle d'une page qui
- * s'appuie sur un hook. À remplacer par la vraie page d'accueil.
+ * Page principale : le tournoi à la une, puis le calendrier.
+ *
+ * Le filtre vit dans l'URL (?statut=…&recherche=…) : une vue filtrée se
+ * partage par un lien, et le bouton « Retour » du navigateur la retrouve.
  */
 
-import { Alert, Badge, Button, Card, ListGroup, Spinner } from 'react-bootstrap';
+import { useSearchParams } from 'react-router-dom';
 
-import { useEtatChaine } from '../hooks/useEtatChaine';
+import { CalendrierTournois } from '../components/tournoi/CalendrierTournois.tsx';
+import { HeroTournoi } from '../components/tournoi/HeroTournoi';
+import { tournoiALaUne } from '../components/tournoi/presentation';
+import { useAuth } from '../context/useAuth';
+import { useTournois } from '../hooks/useTournois';
+import type { FiltreTournois, StatutTournoi } from '../types/api';
 
-function Etat({ ok }: { ok: boolean }) {
-  return <Badge bg={ok ? 'success' : 'danger'}>{ok ? 'opérationnel' : 'injoignable'}</Badge>;
+// Constante hors du composant : même objet à chaque rendu.
+const SANS_FILTRE: FiltreTournois = {};
+
+function lireFiltre(parametres: URLSearchParams): FiltreTournois {
+  return {
+    recherche: parametres.get('recherche') ?? undefined,
+    statut: (parametres.get('statut') as StatutTournoi | null) ?? undefined,
+  };
+}
+
+function versParametres(filtre: FiltreTournois): Record<string, string> {
+  const parametres: Record<string, string> = {};
+  if (filtre.recherche) parametres.recherche = filtre.recherche;
+  if (filtre.statut) parametres.statut = filtre.statut;
+  return parametres;
 }
 
 export function AccueilPage() {
-  const { sante, erreur, chargement, tempsReel, verifier } = useEtatChaine();
-  const base = sante?.baseDeDonnees;
+  const { utilisateur } = useAuth();
+  const [parametres, setParametres] = useSearchParams();
+  const filtre = lireFiltre(parametres);
+
+  // Deux listes : le calendrier suit le filtre, la une reste la même.
+  const calendrier = useTournois(filtre);
+  const aLaUne = tournoiALaUne(useTournois(SANS_FILTRE).tournois);
 
   return (
-    <Card className="mx-auto" style={{ maxWidth: '34rem' }}>
-      <Card.Body className="p-4">
-        <Card.Title as="h1" className="h4 text-uppercase">État de la chaîne</Card.Title>
-        <Card.Text className="text-body-secondary">
-          Front, API, base de données et temps réel.
-        </Card.Text>
-
-        {erreur && <Alert variant="danger">{erreur}</Alert>}
-
-        <ListGroup variant="flush" className="mb-3">
-          <ListGroup.Item className="d-flex justify-content-between">
-            API <Etat ok={sante !== null} />
-          </ListGroup.Item>
-          <ListGroup.Item className="d-flex justify-content-between">
-            Base de données <Etat ok={base?.joignable ?? false} />
-          </ListGroup.Item>
-          <ListGroup.Item className="d-flex justify-content-between">
-            Schéma
-            <span>{base?.schemaComplet ? `${base.tables} tables` : '—'}</span>
-          </ListGroup.Item>
-          <ListGroup.Item className="d-flex justify-content-between">
-            Temps réel <Etat ok={tempsReel} />
-          </ListGroup.Item>
-        </ListGroup>
-
-        <Button className="biseau w-100" onClick={verifier} disabled={chargement}>
-          {chargement ? <Spinner size="sm" /> : 'Revérifier'}
-        </Button>
-      </Card.Body>
-    </Card>
+      <>
+        {aLaUne && <HeroTournoi tournoi={aLaUne} estConnecte={utilisateur !== null} />}
+        <CalendrierTournois
+            tournois={calendrier.tournois}
+            chargement={calendrier.chargement}
+            erreur={calendrier.erreur}
+            onRecharger={calendrier.recharger}
+            filtre={filtre}
+            onFiltreChange={(nouveau) => setParametres(versParametres(nouveau))}
+        />
+      </>
   );
 }

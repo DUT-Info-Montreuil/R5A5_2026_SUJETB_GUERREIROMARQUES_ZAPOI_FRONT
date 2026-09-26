@@ -1,4 +1,4 @@
-# Tournament Organizer — Interface
+# Agôn Cup — Interface
 
 Interface web de la plateforme de tournois de l'association étudiante
 (R5A5, sujet B).

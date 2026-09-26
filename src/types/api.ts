@@ -25,3 +25,56 @@ export interface EtatSante {
     schemaComplet?: boolean;
   };
 }
+
+// --- Authentification (contrat §2) -------------------------------------------
+// Le jeton n'apparaît nulle part ici : il voyage dans un cookie HttpOnly que le
+// JavaScript ne peut pas lire.
+
+export interface Utilisateur {
+  idUtilisateur: number;
+  pseudo: string;
+  email: string;
+  estAdministrateur: boolean;
+}
+
+export interface IdentifiantsConnexion {
+  email: string;
+  motDePasse: string;
+}
+
+export interface DemandeInscription {
+  pseudo: string;
+  email: string;
+  motDePasse: string;
+}
+
+export interface ReponseAuthentification {
+  utilisateur: Utilisateur;
+}
+
+// --- Tournois (contrat §3) ---------------------------------------------------
+
+export type StatutTournoi = 'INSCRIPTIONS_OUVERTES' | 'INSCRIPTIONS_CLOSES' | 'EN_COURS' | 'TERMINE';
+
+export interface Jeu {
+  idJeu: number;
+  nomJeu: string;
+  joueursParEquipe: number;
+}
+
+export interface TournoiResume {
+  idTournoi: number;
+  nomTournoi: string;
+  jeu: Jeu;
+  statutTournoi: StatutTournoi;
+  nombreEquipes: number;
+  nombreEquipesInscrites: number;
+  /** Date ISO 8601. */
+  creeLe: string;
+}
+
+/** Paramètres de GET /api/tournois. */
+export interface FiltreTournois {
+  recherche?: string;
+  statut?: StatutTournoi;
+}
