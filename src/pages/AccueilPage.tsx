@@ -1,18 +1,24 @@
 /**
- * Page principale : le tournoi à la une, puis le calendrier.
+ * Page principale : la une, les chiffres, les jeux, le calendrier, les étapes
+ * et l'appel à s'inscrire. Tout ce qui s'affiche vient de l'API.
  *
- * Le filtre vit dans l'URL (?statut=…&recherche=…) : une vue filtrée se
- * partage par un lien, et le bouton « Retour » du navigateur la retrouve.
+ * Le filtre du calendrier vit dans l'URL (?statut=…&recherche=…) : une vue
+ * filtrée se partage par un lien, et « Retour » la retrouve.
  */
 
 import { useSearchParams } from 'react-router-dom';
 
-import { CalendrierTournois } from '../components/tournoi/CalendrierTournois.tsx';
-import { HeroTournoi } from '../components/tournoi/HeroTournoi';
-import { tournoiALaUne } from '../components/tournoi/presentation';
+import { BandeauAppel } from '../components/accueil/BandeauAppel';
+import { ChiffresSaison } from '../components/accueil/ChiffresSaison';
+import { CommentCaMarche } from '../components/accueil/CommentCaMarche';
+import { SectionJeux } from '../components/accueil/SectionJeux';
+import { CalendrierTournois } from '../components/tournoi/CalendrierTournois';
+import { CarrouselUne } from '../components/tournoi/CarrouselUne';
+import { tournoisALaUne } from '../components/tournoi/presentation';
 import { useAuth } from '../context/useAuth';
 import { useTournois } from '../hooks/useTournois';
 import type { FiltreTournois, StatutTournoi } from '../types/api';
+import { chiffresDeLaSaison, jeuxPresents } from '../components/accueil/statistiques';
 
 // Constante hors du composant : même objet à chaque rendu.
 const SANS_FILTRE: FiltreTournois = {};
@@ -33,16 +39,20 @@ function versParametres(filtre: FiltreTournois): Record<string, string> {
 
 export function AccueilPage() {
   const { utilisateur } = useAuth();
+  const estConnecte = utilisateur !== null;
   const [parametres, setParametres] = useSearchParams();
   const filtre = lireFiltre(parametres);
 
-  // Deux listes : le calendrier suit le filtre, la une reste la même.
+  // Deux listes : le calendrier suit le filtre, le reste de la page non.
   const calendrier = useTournois(filtre);
-  const aLaUne = tournoiALaUne(useTournois(SANS_FILTRE).tournois);
+  const tous = useTournois(SANS_FILTRE);
+  const quiRecrute = tous.tournois.find((t) => t.statutTournoi === 'INSCRIPTIONS_OUVERTES');
 
   return (
       <>
-        {aLaUne && <HeroTournoi tournoi={aLaUne} estConnecte={utilisateur !== null} />}
+        <CarrouselUne tournois={tournoisALaUne(tous.tournois)} estConnecte={estConnecte} />
+        {!tous.chargement && tous.tournois.length > 0 && <ChiffresSaison chiffres={chiffresDeLaSaison(tous.tournois)} />}
+        {tous.tournois.length > 0 && <SectionJeux jeux={jeuxPresents(tous.tournois)} />}
         <CalendrierTournois
             tournois={calendrier.tournois}
             chargement={calendrier.chargement}
@@ -51,6 +61,8 @@ export function AccueilPage() {
             filtre={filtre}
             onFiltreChange={(nouveau) => setParametres(versParametres(nouveau))}
         />
+        <CommentCaMarche />
+        {quiRecrute && <BandeauAppel tournoi={quiRecrute} estConnecte={estConnecte} />}
       </>
   );
 }

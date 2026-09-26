@@ -48,6 +48,47 @@
   &:disabled { opacity: .6; }
 }
 
+.btn-principal-compact { min-height: 44px; padding: 0 1.25rem; }
+
+// Bouton noir sur fond violet (bandeau d'appel), qui passe au blanc au survol.
+.btn-sombre {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 0 1.875rem;
+  flex-shrink: 0;
+  background: $fond;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color .2s, color .2s, transform .12s;
+
+  &:hover { background: $texte; color: $fond; }
+  &:active { transform: scale(.97); }
+}
+
+// Surtitre violet au-dessus des titres de section.
+.surtitre {
+  color: $violet;
+  font-size: .8125rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+// Étiquette d'état : contour violet, ou pleine pour « En direct ».
+.etiquette {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  height: 28px;
+  padding: 0 .75rem;
+  border: 1px solid $violet;
+  color: $lien-survol;
+
+  &.etiquette-pleine { background: $violet; color: #fff; }
+}
+
 // Lien souligné dont le soulignement s'éloigne au survol.
 .lien-souligne {
   font-weight: 600;
@@ -69,12 +110,14 @@
 
   &.point-direct { animation: respiration 1.8s ease-in-out infinite; }
   &.point-vide { background: transparent; border: 1px solid $texte-discret; }
+  &.point-blanc { width: 7px; height: 7px; background: #fff; }
 }
 
 @keyframes respiration { 50% { opacity: .35; } }
 
 // Apparitions à l'arrivée sur la page.
-.apparition { animation: apparition .8s ease-out .35s both; }
+.apparition { animation: apparition .8s ease-out .3s both; }
+.apparition-lente { animation: apparition .8s ease-out .45s both; }
 
 .ligne-revelee {
   display: block;

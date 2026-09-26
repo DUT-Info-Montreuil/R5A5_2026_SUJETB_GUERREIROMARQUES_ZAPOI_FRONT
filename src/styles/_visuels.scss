@@ -1,0 +1,51 @@
+// =============================================================================
+//  Visuels de jeu générés en CSS (VisuelJeu.tsx) : dégradé aux couleurs du jeu,
+//  hachures qui défilent, reflet, et le nom du jeu en contour, penché.
+//  Les couleurs arrivent par les variables --jeu-couleur et --jeu-fond.
+// =============================================================================
+
+.visuel-jeu {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  height: 100%;
+  background:
+          radial-gradient(90% 70% at 70% 15%, var(--jeu-couleur), transparent 65%),
+          linear-gradient(165deg, var(--jeu-fond) 0%, $fond 90%);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -40px;
+    z-index: -1;
+    background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .045) 0 2px, transparent 2px 16px);
+    animation: hachures-visuel 10s linear infinite;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(60% 50% at 70% 20%, rgba(255, 255, 255, .16), transparent 70%);
+    mix-blend-mode: screen;
+  }
+}
+
+.visuel-mot {
+  position: absolute;
+  left: .75rem;
+  bottom: .75rem;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, .38);
+  font-size: 9rem;
+  font-weight: 900;
+  font-stretch: 62%;
+  line-height: .8;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(-6deg);
+  transition: transform .6s $courbe;
+}
+
+@keyframes hachures-visuel { to { transform: translateX(45px); } }

@@ -1,21 +1,193 @@
-// Page principale : tournoi à la une, puis calendrier.
+// =============================================================================
+//  Page principale
+// =============================================================================
 
-.hero {
-  @include fond-hachure;
+.section-accueil { padding-top: 5.5rem; padding-bottom: 1.5rem; }
+.titre-section { font-size: clamp(2.5rem, 5vw, 4rem); line-height: .95; }
+.texte-section { max-width: 26rem; color: $texte-attenue; }
+
+// --- La une : visuel à droite, voile vers la gauche, onglets en bas ----------
+
+.une {
+  position: relative;
+  min-height: 640px;
+  overflow: hidden;
+  border-bottom: 1px solid $trait;
+
+  &::before {
+    content: "";
+    position: absolute;
+    width: 820px;
+    height: 820px;
+    right: -160px;
+    top: -320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba($violet, .35), rgba($violet, 0) 65%);
+    animation: derive 18s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+}
+
+.une-diapositive { position: relative; min-height: 552px; display: flex; }
+
+.une-visuel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 64%;
+  height: auto;
+
+  .visuel-mot { left: auto; right: -40px; bottom: 40px; font-size: clamp(10rem, 25vw, 22.5rem); animation: recul 12s ease-out both; }
+}
+
+@keyframes recul { from { transform: rotate(-6deg) scale(1.12); } to { transform: rotate(-6deg) scale(1); } }
+
+.une-voile {
+  position: absolute;
+  inset: 0;
+  background:
+          linear-gradient(90deg, $fond 0%, rgba($fond, .92) 34%, rgba($fond, .35) 62%, rgba($fond, .2) 100%),
+          linear-gradient(0deg, $fond 0%, rgba($fond, 0) 35%);
+}
+
+.une-contenu {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  min-height: 460px;
-  padding-top: 5rem;
-  padding-bottom: 4rem;
+  gap: 1.375rem;
+  padding-top: 6rem;
+  padding-bottom: 3rem;
 }
 
-.hero-titre { font-size: clamp(3.5rem, 9vw, 8rem); }
+.une-titre { font-size: clamp(3.5rem, 8.5vw, 7.5rem); font-stretch: 68%; line-height: .92; max-width: 900px; }
+.une-texte { max-width: 35rem; font-size: 1.125rem; line-height: 1.55; color: $texte-clair; margin: 0; }
+.une-meta { font-size: .875rem; color: $texte-attenue; }
+
+.une-onglets {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  min-height: 88px;
+  border-top: 1px solid $trait;
+  background: rgba($fond, .72);
+}
+
+.une-onglet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: .25rem;
+  padding: 1rem 1.5rem;
+  border: 0;
+  border-right: 1px solid $trait;
+  background: transparent;
+  color: $texte-attenue;
+  text-align: left;
+  transition: color .2s, background-color .2s;
+
+  &:hover { color: $texte; background: rgba(255, 255, 255, .03); }
+  &[aria-selected="true"] { color: $texte; }
+}
+
+.une-onglet-titre { font-size: 1.0625rem; font-weight: 600; }
+[aria-selected="true"] .une-onglet-titre { font-weight: 700; }
+
+.une-progression {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 2px;
+  background: $violet;
+  transform-origin: left;
+  animation: progression 6s linear both;
+}
+
+@keyframes progression { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+// --- Chiffres de la saison -----------------------------------------------------
+
+.chiffres {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  border-bottom: 1px solid $trait;
+}
+
+.chiffre {
+  display: flex;
+  flex-direction: column;
+  gap: .375rem;
+  padding: 2.25rem clamp(1.5rem, 4vw, 4rem);
+  border-right: 1px solid $trait;
+  animation: apparition .7s ease-out backwards;
+
+  @for $i from 2 through 4 { &:nth-child(#{$i}) { animation-delay: ($i - 1) * .08s; } }
+}
+
+.chiffre-valeur { font-size: clamp(3rem, 6vw, 4rem); line-height: 1; font-variant-numeric: tabular-nums; }
+
+// Sur téléphone, les onglets de la une ne gardent que le nom du tournoi.
+@include media-breakpoint-down(md) {
+  .une-onglet { padding: .875rem 1rem; .libelle { display: none; } }
+  .une-onglet-titre { font-size: .9375rem; }
+  .chiffre { padding: 1.5rem; border-bottom: 1px solid $trait; }
+}
+
+// --- Jeux ------------------------------------------------------------------------
+
+.grille-jeux {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.carte-jeu {
+  display: flex;
+  flex-direction: column;
+  gap: .375rem;
+  animation: apparition .7s ease-out backwards;
+
+  @for $i from 2 through 6 { &:nth-child(#{$i}) { animation-delay: ($i - 1) * .06s; } }
+
+  &:hover .visuel-mot { transform: rotate(-6deg) scale(1.1) translateX(10px); }
+  &:hover .carte-jeu-nom { color: $lien; }
+  &:hover .carte-jeu-trait { transform: scaleX(1); }
+}
+
+.carte-jeu-visuel { position: relative; height: 300px; margin-bottom: .5rem; border: 1px solid $trait; }
+
+.carte-jeu-compte {
+  position: absolute;
+  top: .875rem;
+  left: .875rem;
+  padding: .125rem .5rem;
+  background: rgba($fond, .7);
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.carte-jeu-nom { font-size: 1.125rem; font-weight: 700; transition: color .2s; }
+
+.carte-jeu-trait {
+  height: 2px;
+  background: $violet;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s $courbe;
+}
+
+// --- Calendrier --------------------------------------------------------------------
 
 // Le fond des lignes déborde de 24 px : on le rogne au bord de la section.
 #calendrier { overflow-x: clip; }
-
-.calendrier-titre { font-size: clamp(2.5rem, 5vw, 3.5rem); }
 
 .filtre {
   padding: 0;
@@ -38,23 +210,16 @@
 
 .recherche { max-width: 280px; }
 
-.calendrier {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid $trait;
-}
+.calendrier { margin: 0; padding: 0; list-style: none; border-top: 1px solid $trait; }
 
-// Ligne : le fond glisse depuis la gauche, le titre avance.
+// Ligne : le fond glisse depuis la gauche, le titre avance, le visuel grossit.
 .ligne-tournoi {
   position: relative;
-  padding: 1.375rem 0;
+  padding: 1.125rem 0;
   border-bottom: 1px solid $trait;
   animation: apparition .6s ease-out backwards;
 
-  @for $i from 1 through 8 {
-    &:nth-child(#{$i}) { animation-delay: $i * .05s; }
-  }
+  @for $i from 1 through 8 { &:nth-child(#{$i}) { animation-delay: $i * .05s; } }
 
   &::before {
     content: "";
@@ -71,7 +236,86 @@
 
   .ligne-titre { transition: transform .3s $courbe; }
   &:hover .ligne-titre { transform: translateX(8px); }
+  &:hover .visuel-mot { transform: rotate(-6deg) scale(1.15); }
 }
 
-.ligne-jour { font-size: 2.25rem; font-weight: 800; font-stretch: 75%; line-height: 1; }
-.ligne-nom { font-size: 1.3rem; font-weight: 700; }
+.ligne-visuel { height: 72px; .visuel-mot { font-size: 4rem; left: .625rem; bottom: .375rem; } }
+.ligne-jour { font-size: 2.375rem; font-weight: 900; font-stretch: 70%; line-height: 1; }
+.ligne-nom { font-size: 1.25rem; font-weight: 700; }
+
+// Jauge : une case par place.
+.jauge { display: inline-flex; gap: 3px; }
+.jauge-case { width: 8px; height: 18px; background: $trait-fort; }
+.jauge-pleine { background: $violet; }
+
+// --- Étapes ----------------------------------------------------------------------
+
+.etapes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.etape {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid $trait-fort;
+
+  &:hover .etape-icone { transform: translateY(-4px); background: $violet; color: #fff; }
+  &:hover .etape-numero { -webkit-text-stroke-color: $violet; }
+}
+
+.etape-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: $surface-hero;
+  color: $lien;
+  transition: transform .35s $courbe, background-color .25s, color .25s;
+}
+
+.etape-numero {
+  color: transparent;
+  -webkit-text-stroke: 1.5px $contour;
+  font-size: 4.5rem;
+  font-stretch: 62%;
+  line-height: 1;
+  transition: -webkit-text-stroke-color .25s;
+}
+
+.etape-titre { margin: 0; font-size: 1.5rem; font-weight: 800; }
+
+// --- Bandeau d'appel ---------------------------------------------------------------
+
+.appel {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  margin-top: 4rem;
+  padding: clamp(2rem, 5vw, 4rem);
+  background: $violet-profond;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -60px;
+    z-index: -1;
+    background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .06) 0 2px, transparent 2px 18px);
+    animation: hachures-visuel 8s linear infinite;
+  }
+}
+
+.appel-titre { color: #fff; font-size: clamp(3rem, 6vw, 4.5rem); line-height: .9; }
+.appel-texte { max-width: 32rem; font-size: 1.125rem; color: $violet-pale; }

@@ -3,6 +3,7 @@
 import { Outlet } from 'react-router-dom';
 
 import { EnTete } from './EnTete';
+import { PiedDePage } from './PiedDePage';
 
 export function MiseEnPage() {
     return (
@@ -11,9 +12,7 @@ export function MiseEnPage() {
             <main className="flex-grow-1">
                 <Outlet />
             </main>
-            <footer className="border-top py-4 small text-body-secondary">
-                <div className="container-xxl px-4 px-lg-5">Agôn Cup — R5A5, IUT de Montreuil</div>
-            </footer>
+            <PiedDePage />
         </div>
     );
 }

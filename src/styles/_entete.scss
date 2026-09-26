@@ -1,30 +1,37 @@
 // En-tête commun : marque, navigation soulignée, compte.
 
 .entete {
-  height: 68px;
+  position: relative;
+  z-index: 2;
+  height: 72px;
   border-bottom: 1px solid $trait;
+  background: $fond;
 }
 
 .marque {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
   flex-shrink: 0;
   white-space: nowrap;
   color: $texte;
-  font-size: 1.5rem;
-  font-weight: 800;
-  font-stretch: 75%;
+  font-size: 1.625rem;
+  font-weight: 900;
+  font-stretch: 70%;
   letter-spacing: .01em;
   text-decoration: none;
   text-transform: uppercase;
 
   &:hover { color: $texte; }
-  span { color: $violet; }
+  .marque-accent { color: $violet; }
+  .embleme-vainqueur { fill: $violet; }
 }
 
 .entete-lien {
   position: relative;
   display: flex;
   align-items: center;
-  height: 68px;
+  height: 72px;
   color: $texte-attenue;
   font-weight: 500;
   text-decoration: none;
@@ -48,16 +55,29 @@
   &.active { color: $texte; font-weight: 600; }
 }
 
+// Carré de recherche, à contour.
+.bouton-carre {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid $trait-fort;
+  color: $texte;
+  transition: border-color .2s, background-color .2s;
+
+  &:hover { border-color: $texte; background: rgba(255, 255, 255, .04); color: $texte; }
+}
+
 .avatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: $avatar;
+  width: 34px;
+  height: 34px;
+  background: $violet-fonce;
   font-size: .75rem;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .bouton-texte {
@@ -70,7 +90,8 @@
   &:hover { color: $texte; }
 }
 
-// Sur téléphone, le bouton de l'en-tête se fait plus compact.
+// Sur téléphone, le logo se réduit pour laisser la place au compte.
 @include media-breakpoint-down(sm) {
-  .entete .btn-principal { min-height: 40px; padding: 0 1rem; }
+  .entete .marque { font-size: 1.25rem; }
+  .entete .bouton-carre { display: none; }
 }

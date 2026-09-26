@@ -46,13 +46,17 @@ R5A5_..._FRONT/
     │   ├── AuthContext.ts             Forme de l'état + objet contexte
     │   ├── FournisseurAuth.tsx        Le composant qui porte l'état
     │   └── useAuth.ts                 Lecture de l'état depuis un composant
-    ├── hooks/                         useConnexion, useInscription, useTournois, useEtatChaine
+    ├── hooks/                         useConnexion, useInscription, useTournois, useEtatChaine,
+    │                                  useCarrousel, useCompteurAnime, useMouvementReduit
     ├── components/
-    │   ├── ui/                        Marque, IconeFleche, ChampTexte, ChampMotDePasse
-    │   ├── layout/                    MiseEnPage, EnTete, ZoneCompte
+    │   ├── ui/                        Marque (et son emblème), IconeFleche, ChampTexte, ChampMotDePasse
+    │   ├── layout/                    MiseEnPage, EnTete, ZoneCompte, PiedDePage
     │   ├── auth/                      EcranAuthentification, formulaires
-    │   └── tournoi/                   HeroTournoi, CalendrierTournois, FiltresTournois,
-    │                                  LigneTournoi, presentation.ts (libellés, dates)
+    │   ├── tournoi/                   CarrouselUne, EnteteDiapositive, CalendrierTournois,
+    │   │                              FiltresTournois, LigneTournoi, VisuelJeu,
+    │   │                              identitesJeux.ts, presentation.ts (libellés, dates, textes)
+    │   └── accueil/                   Sections de l'accueil : chiffres, jeux, étapes, appel,
+    │                                  statistiques.ts (calculs tirés de la liste des tournois)
     ├── pages/                         Accueil, Connexion, Inscription, Diagnostic, Introuvable
     ├── routes/Routage.tsx             Déclaration des routes
     └── styles/                        Thème « Piste A » (§4)
@@ -63,7 +67,7 @@ au moment où la première fonctionnalité de ce domaine arrive.
 
 | Route | Page |
 |---|---|
-| `/` | Tournoi à la une et calendrier ; filtre dans l'URL (`?statut=…&recherche=…`) |
+| `/` | Une (carrousel), chiffres, jeux, calendrier filtrable (`?statut=…&recherche=…`), étapes, appel |
 | `/connexion`, `/inscription` | Plein écran, hors du cadre commun |
 | `/diagnostic` | État de la chaîne front → API → base → temps réel |
 
@@ -134,8 +138,8 @@ presque toujours deux responsabilités : on le découpe.
 
 ## 4. Thème visuel
 
-Direction retenue : **« Piste A · Éditorial sport »** (toile Design du projet,
-`PisteA.dc.html`). Noir neutre, **un seul violet d'accent**, angles droits,
+Direction retenue : **« Piste A v2 »** (toile Design du projet,
+`AccueilV2.dc.html`). Noir neutre, **un seul violet d'accent**, angles droits,
 titres en capitales condensées. Le projet utilise **Bootstrap** : on reproduit
 ce rendu en surchargeant ses variables Sass, pas en luttant contre ses classes.
 
@@ -144,8 +148,10 @@ styles/
 ├── _variables.scss        Palette, police, zéro arrondi, champs, mode sombre
 ├── _utilitaires.scss      Titres condensés, libellés, bouton principal, pastilles,
 │                          apparitions, fond hachuré animé (mixin fond-hachure)
-├── _entete.scss           Marque, navigation soulignée, avatar
-├── _accueil.scss          Tournoi à la une, filtres, lignes du calendrier
+├── _visuels.scss          Visuels de jeu générés en CSS (VisuelJeu)
+├── _entete.scss           Marque, navigation soulignée, recherche, avatar
+├── _accueil.scss          Une, chiffres, jeux, calendrier, étapes, bandeau d'appel
+├── _pied.scss             Pied de page
 ├── _authentification.scss Écrans de connexion et d'inscription
 └── main.scss              Point d'entrée, importé une fois dans main.tsx
 ```
@@ -170,9 +176,21 @@ s'affiche aussi hors ligne. Ses deux axes servent : la graisse, et la largeur
 **Bouton principal** (`.btn-principal`) : blanc, il passe au violet au survol
 et sa flèche avance.
 
+**Visuels de jeu** : tant que les jeux n'ont pas d'image, `VisuelJeu` en
+génère un en CSS (dégradé, hachures, nom du jeu en contour). Les couleurs et
+les rôles de chaque jeu sont dans `components/tournoi/identitesJeux.ts`.
+
+**Textes et chiffres** : tout ce qui s'affiche vient de l'API. Les
+descriptions de la une sont construites à partir de l'état du tournoi
+(`descriptionTournoi`), les chiffres à partir de la liste (`statistiques.ts`).
+Le bandeau « match en cours » de la maquette attend l'API des rencontres.
+
 **Animations** : `transform` et `opacity` uniquement, entre 150 et 300 ms pour
 les survols. Hachures qui défilent et lueur qui dérive sur les fonds `hero`,
-titres révélés ligne par ligne, lignes du calendrier dont le fond glisse.
+titres révélés ligne par ligne, lignes du calendrier dont le fond glisse,
+carrousel qui avance toutes les 6 secondes, chiffres qui montent. Les deux
+derniers sont pilotés en JavaScript : `useMouvementReduit` les coupe quand le
+système demande moins de mouvement.
 
 **Zéro arrondi.** Un seul réglage supprime les coins arrondis de tous les
 composants Bootstrap :

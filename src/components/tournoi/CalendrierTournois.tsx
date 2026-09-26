@@ -3,8 +3,9 @@
 import { Alert, Spinner } from 'react-bootstrap';
 
 import type { FiltreTournois, TournoiResume } from '../../types/api';
+import { EnteteSection } from '../accueil/EnteteSection';
 import { FiltresTournois } from './FiltresTournois';
-import { LigneTournoi } from './LigueTournoi';
+import { LigneTournoi } from './LigneTournoi';
 
 interface Props {
     tournois: TournoiResume[];
@@ -17,12 +18,11 @@ interface Props {
 
 export function CalendrierTournois({ tournois, chargement, erreur, onRecharger, filtre, onFiltreChange }: Props) {
     return (
-        <section id="calendrier" className="container-xxl px-4 px-lg-5 py-5 d-flex flex-column gap-4">
-            <div className="d-flex flex-wrap align-items-end justify-content-between gap-4">
-                <h2 className="calendrier-titre titre-condense m-0">Calendrier</h2>
+        <section id="calendrier" className="container-xxl px-4 px-lg-5 section-accueil d-flex flex-column gap-4">
+            <EnteteSection surtitre="Calendrier" titre="Tous les tournois">
                 {/* key : la saisie repart de l'URL si elle change (bouton « Retour »). */}
                 <FiltresTournois key={filtre.recherche ?? ''} filtre={filtre} onChange={onFiltreChange} />
-            </div>
+            </EnteteSection>
 
             {erreur && (
                 <Alert variant="danger" className="d-flex justify-content-between align-items-center">
