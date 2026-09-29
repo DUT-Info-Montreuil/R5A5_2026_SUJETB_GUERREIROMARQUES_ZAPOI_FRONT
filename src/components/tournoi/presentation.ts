@@ -1,6 +1,6 @@
 /** Libellés, dates et textes d'affichage des tournois, partagés par les composants. */
 
-import type { StatutTournoi, TournoiResume } from '../../types/api';
+import type { StatutEquipe, StatutTournoi, TournoiResume, TypeResultat } from '../../types/api';
 
 export const LIBELLES_STATUT: Record<StatutTournoi, string> = {
     INSCRIPTIONS_OUVERTES: 'Inscriptions ouvertes',
@@ -53,4 +53,24 @@ export function descriptionTournoi(t: TournoiResume): string {
         case 'TERMINE':
             return "Le tournoi est terminé. L'arbre complet reste consultable.";
     }
+}
+
+export const LIBELLES_STATUT_EQUIPE: Record<StatutEquipe, string> = {
+    EN_LICE: 'En lice',
+    ELIMINEE: 'Éliminée',
+    DISQUALIFIEE: 'Disqualifiée',
+    VAINQUEUR: 'Vainqueur',
+};
+
+export const LIBELLES_RESULTAT: Record<TypeResultat, string> = {
+    NORMAL: 'Match joué',
+    FORFAIT: 'Forfait',
+    QUALIFICATION_DIRECTE: "Qualification d'office",
+};
+
+const NOMS_DES_TOURS = ['Finale', 'Demi-finales', 'Quarts de finale', 'Huitièmes de finale'];
+
+/** Nom d'un tour, compté depuis la finale : le dernier tour est toujours la finale. */
+export function nomDuTour(tour: number, nombreDeTours: number): string {
+    return NOMS_DES_TOURS[nombreDeTours - tour] ?? `Tour ${tour}`;
 }

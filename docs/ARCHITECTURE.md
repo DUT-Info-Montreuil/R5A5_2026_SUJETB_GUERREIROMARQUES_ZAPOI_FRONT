@@ -39,7 +39,8 @@ R5A5_..._FRONT/
     │   ├── client.ts                  Le seul fetch du projet (cookie inclus)
     │   ├── socket.ts                  La seule connexion temps réel
     │   ├── auth.ts                    Connexion, inscription, moi, déconnexion
-    │   ├── tournois.ts
+    │   ├── tournois.ts                Tournois, équipes du tournoi, arbre, jeux
+    │   ├── rencontres.ts              Saisie d'un résultat
     │   └── sante.ts
     ├── types/api.ts                   Le contrat d'API en TypeScript
     ├── context/
@@ -47,18 +48,27 @@ R5A5_..._FRONT/
     │   ├── FournisseurAuth.tsx        Le composant qui porte l'état
     │   └── useAuth.ts                 Lecture de l'état depuis un composant
     ├── hooks/                         useConnexion, useInscription, useTournois, useEtatChaine,
-    │                                  useCarrousel, useCompteurAnime, useMouvementReduit
+    │                                  useCarrousel, useCompteurAnime, useMouvementReduit,
+    │                                  useTournoi (+ useSuiviTournoi : temps réel), useJeux,
+    │                                  useAction (envoi + message d'erreur d'une écriture)
     ├── components/
     │   ├── ui/                        Marque (et son emblème), IconeFleche, ChampTexte, ChampMotDePasse
     │   ├── layout/                    MiseEnPage, EnTete, ZoneCompte, PiedDePage
     │   ├── auth/                      EcranAuthentification, formulaires
     │   ├── tournoi/                   CarrouselUne, EnteteDiapositive, CalendrierTournois,
     │   │                              FiltresTournois, LigneTournoi, VisuelJeu,
-    │   │                              identitesJeux.ts, presentation.ts (libellés, dates, textes)
+    │   │                              identitesJeux.ts, presentation.ts (libellés, dates, textes),
+    │   │                              EnteteTournoi, ListeEquipes, ArbreTournoi, CarteRencontre,
+    │   │                              emplacementsMorts.ts (côtés « Pas d'adversaire »)
+    │   ├── admin/                     ActionsTournoi (transitions), ModaleCreationTournoi,
+    │   │                              ModaleResultat, FormulaireRenommage, LigneTournoiAdmin
     │   └── accueil/                   Sections de l'accueil : chiffres, jeux, étapes, appel,
     │                                  statistiques.ts (calculs tirés de la liste des tournois)
-    ├── pages/                         Accueil, Connexion, Inscription, Diagnostic, Introuvable
-    ├── routes/Routage.tsx             Déclaration des routes
+    ├── pages/                         Accueil, Connexion, Inscription, Diagnostic, Introuvable, Tournoi
+    │   └── admin/                     AdminTournois, AdminTournoi
+    ├── routes/
+    │   ├── Routage.tsx                Déclaration des routes
+    │   └── RouteProtegee.tsx          Enveloppe des routes /admin (confort, pas sécurité)
     └── styles/                        Thème « Piste A » (§4)
 ```
 
@@ -70,6 +80,9 @@ au moment où la première fonctionnalité de ce domaine arrive.
 | `/` | Une (carrousel), chiffres, jeux, calendrier filtrable (`?statut=…&recherche=…`), étapes, appel |
 | `/connexion`, `/inscription` | Plein écran, hors du cadre commun |
 | `/diagnostic` | État de la chaîne front → API → base → temps réel |
+| `/tournois/:idTournoi` | Détail public : en-tête, arbre, équipes — à jour en temps réel |
+| `/admin/tournois` | Administrateur : liste, prochaine étape à un clic, création |
+| `/admin/tournois/:idTournoi` | Administrateur : renommer, faire avancer le tournoi, saisir les résultats |
 
 | Dossier | Il contient | Il ne contient **jamais** |
 |---|---|---|

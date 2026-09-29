@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import type { TournoiResume } from '../../types/api';
 import { VisuelJeu } from './VisuelJeu';
 import { LIBELLES_STATUT, POINT_STATUT, jourEtMois } from './presentation';
@@ -27,7 +29,7 @@ export function LigneTournoi({ tournoi }: { tournoi: TournoiResume }) {
                 <VisuelJeu nomJeu={tournoi.jeu.nomJeu} className="ligne-visuel" />
             </div>
             <div className="ligne-titre col-9 col-md-4 d-flex flex-column gap-1">
-                <span className="ligne-nom">{tournoi.nomTournoi}</span>
+                <Link to={`/tournois/${tournoi.idTournoi}`} className="ligne-nom ligne-lien">{tournoi.nomTournoi}</Link>
                 <span className="small text-body-secondary">{tournoi.jeu.nomJeu} · Élimination directe</span>
             </div>
             <div className="col-6 col-md-2 d-flex align-items-center gap-2 mt-2 mt-md-0">

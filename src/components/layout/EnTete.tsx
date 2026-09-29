@@ -1,10 +1,13 @@
 import { NavLink } from 'react-router-dom';
 
+import { useAuth } from '../../context/useAuth';
 import { Marque } from '../ui/Marque';
 import { ZoneCompte } from './ZoneCompte';
 
-/** En-tête commun. « Mes équipes » et « Administration » s'ajouteront avec leurs pages. */
+/** En-tête commun. « Mes équipes » s'ajoutera avec sa page. */
 export function EnTete() {
+    const { utilisateur } = useAuth();
+
     return (
         <header className="entete">
             <div className="container-xxl h-100 d-flex align-items-center gap-3 gap-md-5 px-4 px-lg-5">
@@ -12,6 +15,7 @@ export function EnTete() {
                 <nav aria-label="Navigation principale" className="d-none d-md-flex gap-4 flex-grow-1">
                     <NavLink to="/" end className="entete-lien">Tournois</NavLink>
                     <a href="/#jeux" className="entete-lien">Jeux</a>
+                    {utilisateur?.estAdministrateur && <NavLink to="/admin/tournois" className="entete-lien">Administration</NavLink>}
                 </nav>
                 <div className="d-flex align-items-center gap-3 ms-auto">
                     <a href="/#calendrier" className="bouton-carre" aria-label="Rechercher un tournoi">
