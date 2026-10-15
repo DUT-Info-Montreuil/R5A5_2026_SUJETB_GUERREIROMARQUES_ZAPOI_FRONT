@@ -9,6 +9,8 @@ premier.
 
 | Document | Contenu |
 |---|---|
+| [`API.md`](API.md) | Ce que le front consomme de l'API : appels, écrans, temps réel, état d'avancement |
+| [`CLAUDE.md`](CLAUDE.md) | Règles de travail avec Claude (français, PR obligatoires, pas de secret…) et contexte du projet |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Organisation du code, règles, thème visuel |
 | [`docs/CONTRAT_API.md`](docs/CONTRAT_API.md) | Contrat figé entre le front et le back — identique dans les deux dépôts |
 
