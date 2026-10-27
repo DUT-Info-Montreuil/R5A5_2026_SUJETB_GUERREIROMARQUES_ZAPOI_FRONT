@@ -7,6 +7,7 @@ import type { Equipe, Tournoi } from '../../types/api';
 import { LogoJeu } from '../jeux/LogoJeu';
 import { VisuelJeu } from '../tournoi/VisuelJeu';
 import { LIBELLES_STATUT_EQUIPE } from '../tournoi/presentation';
+import { estSolo } from '../tournoi/vocabulaire';
 
 interface Props {
     equipe: Equipe;
@@ -34,7 +35,7 @@ export function EnteteEquipe({ equipe, tournoi, children }: Props) {
                         {LIBELLES_STATUT_EQUIPE[equipe.statutEquipe]}
                     </span>
                     <span className="une-meta">
-                        {equipe.membres.length}/{tournoi.jeu.joueursParEquipe} joueurs
+                        {estSolo(tournoi.jeu.joueursParEquipe) ? 'Solo' : `${equipe.membres.length}/${tournoi.jeu.joueursParEquipe} joueurs`}
                     </span>
                 </div>
                 {equipe.motifSortie && <p className="une-texte m-0">Motif : {equipe.motifSortie}</p>}

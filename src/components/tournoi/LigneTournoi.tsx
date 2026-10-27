@@ -6,11 +6,12 @@ import { LogoJeu } from '../jeux/LogoJeu';
 import { dotationAffichee } from './dotations';
 import { identiteJeu } from './identitesJeux';
 import { LIBELLES_STATUT, POINT_STATUT, jourEtMois } from './presentation';
+import { motParticipants } from './vocabulaire';
 
 /** Jauge de remplissage : une case par place, pleine quand une équipe l'occupe. */
-function JaugeEquipes({ inscrites, total }: { inscrites: number; total: number }) {
+function JaugeEquipes({ inscrites, total, mot }: { inscrites: number; total: number; mot: string }) {
     return (
-        <span className="jauge" role="img" aria-label={`${inscrites} équipes inscrites sur ${total}`}>
+        <span className="jauge" role="img" aria-label={`${inscrites} ${mot} inscrits sur ${total}`}>
             {Array.from({ length: total }, (_, i) => (
                 <span key={i} className={i < inscrites ? 'jauge-case jauge-pleine' : 'jauge-case'} />
             ))}
@@ -49,7 +50,7 @@ export function LigneTournoi({ tournoi }: { tournoi: TournoiResume }) {
                 </span>
                 <span className="ligne-dotation">{dotationAffichee(tournoi)}</span>
                 <span className="d-flex align-items-center gap-3 ms-lg-auto">
-                    <JaugeEquipes inscrites={tournoi.nombreEquipesInscrites} total={tournoi.nombreEquipes} />
+                    <JaugeEquipes inscrites={tournoi.nombreEquipesInscrites} total={tournoi.nombreEquipes} mot={motParticipants(tournoi.jeu.joueursParEquipe)} />
                     <span className="small text-body-secondary">{tournoi.nombreEquipesInscrites}/{tournoi.nombreEquipes}</span>
                 </span>
             </div>

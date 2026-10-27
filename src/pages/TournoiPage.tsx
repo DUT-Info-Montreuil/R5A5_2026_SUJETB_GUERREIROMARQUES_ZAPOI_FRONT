@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { Alert, Spinner } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { BoutonDemande } from '../components/equipe/BoutonDemande';
@@ -15,11 +16,42 @@ import { EtatChargement } from '../components/tournoi/EtatChargement';
 import { ListeEquipes } from '../components/tournoi/ListeEquipes';
 import { SectionTournoi } from '../components/tournoi/SectionTournoi';
 import { placesRestantes } from '../components/tournoi/presentation';
+import { estSolo } from '../components/tournoi/vocabulaire';
 import { IconeFleche } from '../components/ui/IconeFleche';
 import { useAuth } from '../context/useAuth';
+import { useInscriptionSolo } from '../hooks/useInscriptionSolo';
 import { useMesParticipations } from '../hooks/useMesParticipations';
 import { useTournoi } from '../hooks/useTournoi';
-import type { EquipeDuTournoi } from '../types/api';
+import type { EquipeDuTournoi, Tournoi } from '../types/api';
+
+/** Les commandes d'inscription d'un joueur connecté qui n'a pas encore de place ici. */
+function Inscription({ tournoi, onCreation, onInscrit }: { tournoi: Tournoi; onCreation: () => void; onInscrit: () => void }) {
+    const solo = estSolo(tournoi.jeu.joueursParEquipe);
+    const { sInscrire, envoi, erreur, pret } = useInscriptionSolo(tournoi);
+
+    if (!solo) {
+        return (
+            <>
+                <button type="button" className="btn-principal" onClick={onCreation}>Créer mon équipe</button>
+                <span className="small text-body-secondary">ou demandez à rejoindre une équipe ci-dessous</span>
+            </>
+        );
+    }
+    return (
+        <>
+            <button
+                type="button"
+                className="btn-principal"
+                disabled={!pret || envoi}
+                onClick={async () => { if (await sInscrire()) onInscrit(); }}
+            >
+                {envoi ? <Spinner size="sm" aria-label="Inscription en cours" /> : "M'inscrire au tournoi"}
+            </button>
+            <span className="small text-body-secondary">Tournoi en solo : une inscription, aucune équipe à monter.</span>
+            {erreur && <Alert variant="danger" className="m-0 py-2">{erreur}</Alert>}
+        </>
+    );
+}
 
 export function TournoiPage() {
     const idTournoi = Number(useParams().idTournoi);
@@ -32,6 +64,7 @@ export function TournoiPage() {
     if (!tournoi) return <EtatChargement introuvable={introuvable} erreur={erreur} onRecharger={recharger} />;
 
     const recrute = tournoi.statutTournoi === 'INSCRIPTIONS_OUVERTES';
+    const solo = estSolo(tournoi.jeu.joueursParEquipe);
     const monEquipe = participations.equipes.find((e) => e.idTournoi === idTournoi);
     const demandeEnAttente = (idEquipe: number) => participations.demandes.some((d) => d.idEquipe === idEquipe);
 
@@ -44,7 +77,7 @@ export function TournoiPage() {
     };
 
     const sectionEquipes = (
-        <SectionTournoi key="equipes" surtitre="Participants" titre="Équipes">
+        <SectionTournoi key="equipes" surtitre="Participants" titre={solo ? 'Joueurs' : 'Équipes'}>
             <ListeEquipes
                 equipes={equipes}
                 joueursParEquipe={tournoi.jeu.joueursParEquipe}
@@ -69,14 +102,20 @@ export function TournoiPage() {
                 )}
                 {monEquipe && (
                     <Link to={`/equipes/${monEquipe.idEquipe}`} className="btn-principal">
-                        Mon équipe : {monEquipe.nomEquipe} <IconeFleche />
+                        {solo ? 'Mon inscription' : `Mon équipe : ${monEquipe.nomEquipe}`} <IconeFleche />
                     </Link>
                 )}
-                {recrute && utilisateur && !monEquipe && !participations.chargement && (
-                    <>
-                        <button type="button" className="btn-principal" onClick={() => setCreation(true)}>Créer mon équipe</button>
-                        <span className="small text-body-secondary">ou demandez à rejoindre une équipe ci-dessous</span>
-                    </>
+                {recrute && utilisateur && !utilisateur.estAdministrateur && !monEquipe && !participations.chargement && (
+                    <Inscription
+                        tournoi={tournoi}
+                        onCreation={() => setCreation(true)}
+                        onInscrit={() => { participations.recharger(); recharger(); }}
+                    />
+                )}
+                {recrute && utilisateur?.estAdministrateur && (
+                    <span className="small text-body-secondary">
+                        Vous organisez ce tournoi : un administrateur n'y joue pas. Pour participer, utilisez un compte joueur.
+                    </span>
                 )}
                 {utilisateur?.estAdministrateur && (
                     <Link to={`/admin/tournois/${tournoi.idTournoi}`} className="lien-souligne">Gérer ce tournoi</Link>
