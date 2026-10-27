@@ -33,7 +33,7 @@ const ATOUTS: Atout[] = [
     },
     {
         titre: 'Un rôle par joueur',
-        texte: 'Chaque jeu a ses postes. Le capitaine les attribue : cinq joueurs, cinq rôles, aucune équipe bancale.',
+        texte: 'Chaque jeu a ses postes. Le capitaine les attribue : un rôle par joueur (top, jungle, tank, heal…), aucune équipe bancale.',
         couleur: '#F99E1A',
         icone: <><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5M17 6l2 2 3-3" /></>,
     },

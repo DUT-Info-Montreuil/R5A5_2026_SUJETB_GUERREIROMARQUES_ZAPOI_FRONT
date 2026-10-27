@@ -8,6 +8,7 @@ export const AVIS_FIN_D_ACCES: Record<FinDAcces, string> = {
     exclusion: "Vous ne faites plus partie de cette équipe : son espace d'échange est fermé pour vous.",
     elimination: "Votre équipe est éliminée : son espace d'échange est fermé.",
     disqualification: "Votre équipe a été disqualifiée : son espace d'échange est fermé.",
+    dissolution: "Le capitaine a dissous l'équipe : son espace d'échange est fermé.",
     refuse: "Vous n'avez plus accès à cet espace d'échange.",
 };
 

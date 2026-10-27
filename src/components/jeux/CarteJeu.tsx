@@ -2,6 +2,7 @@
 
 import { Link } from 'react-router-dom';
 
+import { usePostes } from '../../hooks/usePostes';
 import type { Jeu, TournoiResume } from '../../types/api';
 import { VisuelJeu } from '../tournoi/VisuelJeu';
 import { dotationAffichee } from '../tournoi/dotations';
@@ -15,7 +16,8 @@ interface Props {
 }
 
 export function CarteJeu({ jeu, tournois }: Props) {
-    const { description, postes } = identiteJeu(jeu.nomJeu);
+    const { description } = identiteJeu(jeu.nomJeu);
+    const { postes, chargement: postesEnCours } = usePostes(jeu.idJeu);
     const ouverts = tournois.filter((t) => t.statutTournoi === 'INSCRIPTIONS_OUVERTES').length;
 
     return (
@@ -31,9 +33,11 @@ export function CarteJeu({ jeu, tournois }: Props) {
                     <p className="text-body-secondary m-0">{description}</p>
                 </div>
 
-                {postes.length > 0 && (
-                    <ul className="puces" aria-label={`Postes de ${jeu.nomJeu}`}>
-                        {postes.map((poste, i) => <li key={`${poste}-${i}`} className="puce">{poste}</li>)}
+                {postesEnCours ? (
+                    <span className="squelette squelette-puces" aria-hidden="true" />
+                ) : postes.length > 0 && (
+                    <ul className="puces" aria-label={jeu.joueursParEquipe > 1 ? `Postes de ${jeu.nomJeu}` : `Format de ${jeu.nomJeu}`}>
+                        {postes.map((poste) => <li key={poste.idRole} className="puce">{poste.libelleRole}</li>)}
                     </ul>
                 )}
 

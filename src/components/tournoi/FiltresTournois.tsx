@@ -1,9 +1,10 @@
 /**
  * Filtres du calendrier : un statut à la fois, et une recherche sur le nom.
  * Composant contrôlé : le filtre vient de la page, qui le garde dans l'URL.
+ * La recherche s'applique en tapant (après une courte pause), sans attendre « Entrée ».
  */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 
 import type { FiltreTournois, StatutTournoi } from '../../types/api';
@@ -19,8 +20,20 @@ interface Props {
 }
 
 export function FiltresTournois({ filtre, onChange, focusRecherche = false }: Props) {
-    // Texte en cours de saisie : il ne devient un filtre qu'à la validation.
+    // Texte en cours de saisie : il devient un filtre après 250 ms sans frappe, ou tout de suite sur « Entrée ».
     const [saisie, setSaisie] = useState(filtre.recherche ?? '');
+    // La dernière version du filtre et du rappel, sans relancer le minuteur à chaque rendu.
+    const courant = useRef({ filtre, onChange });
+    useEffect(() => {
+        courant.current = { filtre, onChange };
+    });
+
+    useEffect(() => {
+        const voulu = saisie.trim() || undefined;
+        if (voulu === courant.current.filtre.recherche) return;
+        const minuteur = window.setTimeout(() => courant.current.onChange({ ...courant.current.filtre, recherche: voulu }), 250);
+        return () => window.clearTimeout(minuteur);
+    }, [saisie]);
 
     function rechercher(evenement: FormEvent<HTMLFormElement>) {
         evenement.preventDefault();

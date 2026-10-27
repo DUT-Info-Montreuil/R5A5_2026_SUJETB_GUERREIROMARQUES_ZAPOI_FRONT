@@ -244,7 +244,7 @@ export interface Message {
   envoyeLe: string;
 }
 
-export type MotifAccesRevoque = 'exclusion' | 'elimination' | 'disqualification';
+export type MotifAccesRevoque = 'exclusion' | 'elimination' | 'disqualification' | 'dissolution';
 
 /** Charge de l'événement equipe:acces-revoque : l'utilisateur perd l'accès à cet espace. */
 export interface AccesRevoque {

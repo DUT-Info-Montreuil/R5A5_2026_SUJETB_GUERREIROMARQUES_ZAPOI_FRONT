@@ -12,7 +12,7 @@ const QUESTIONS: { question: string; reponse: string }[] = [
     },
     {
         question: "Combien de joueurs par équipe ?",
-        reponse: "Cela dépend du jeu : cinq joueurs pour la plupart. Chaque joueur a un poste (un rôle) attribué par le capitaine. Une équipe incomplète au lancement du tournoi est déclarée forfait.",
+        reponse: "Cela dépend du jeu : de un joueur (échecs, EA FC, Pokémon) à six (Overwatch 2), cinq pour la plupart des jeux de stratégie. Chaque joueur a un poste (un rôle) attribué par le capitaine. Une équipe incomplète au lancement du tournoi est déclarée forfait.",
     },
     {
         question: 'Puis-je jouer dans plusieurs tournois ?',

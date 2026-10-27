@@ -43,7 +43,7 @@ export function HeroVitrine({ estConnecte, vedette, chiffres, jeux }: Props) {
                         <span className="hero-titre-degrade">Gagne ta finale.</span>
                     </h1>
                     <p className="hero-sous-titre m-0">
-                        Cinq joueurs, un rôle chacun, un arbre à élimination directe. Monte ton équipe et défie les IUT de la région
+                        Une équipe, un rôle chacun, un arbre à élimination directe. Monte ton équipe et défie les IUT de la région
                         sur les jeux du moment, avec une dotation à la clé.
                     </p>
                     <div className="d-flex flex-wrap gap-3 pt-2">

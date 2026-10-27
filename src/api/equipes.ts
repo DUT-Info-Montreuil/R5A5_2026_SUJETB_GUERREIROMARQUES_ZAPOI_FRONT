@@ -28,6 +28,11 @@ export function modifierMembre(idEquipe: number, idUtilisateur: number, modifica
     return api.patch<Equipe>(`/api/equipes/${idEquipe}/membres/${idUtilisateur}`, modification);
 }
 
+/** Le désistement : le capitaine dissout son équipe, tant que les inscriptions sont ouvertes. */
+export function dissoudreEquipe(idEquipe: number): Promise<void> {
+    return api.delete<void>(`/api/equipes/${idEquipe}`);
+}
+
 /** Le capitaine exclut un membre, ou le membre part de lui-même. */
 export function retirerMembre(idEquipe: number, idUtilisateur: number): Promise<void> {
     return api.delete<void>(`/api/equipes/${idEquipe}/membres/${idUtilisateur}`);

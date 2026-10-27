@@ -1,5 +1,5 @@
 /**
- * L'histoire d'Agôn Cup, en quatre chapitres illustrés. Contenu éditorial,
+ * L'histoire d'Agôn Cup, en cinq chapitres illustrés. Contenu éditorial,
  * fictif : il ne vient pas de l'API et ne change qu'à la main. Les
  * illustrations sont des dessins vectoriels décoratifs.
  */
@@ -55,6 +55,22 @@ function TableauBlanc() {
     );
 }
 
+/** Un tableur illisible : les colonnes débordent, les cases s'allument en rouge. */
+function TableurDeTrop() {
+    const lignes = [0, 1, 2, 3, 4];
+    return (
+        <svg viewBox="0 0 400 260" role="presentation" aria-hidden="true" className="scene">
+            <rect x="30" y="26" width="340" height="206" className="scene-fenetre" />
+            <rect x="30" y="26" width="340" height="24" className="scene-barre" />
+            {[0, 1, 2, 3].map((c) => <line key={c} x1={78 + c * 74} y1="50" x2={78 + c * 74} y2="232" className="scene-grille" />)}
+            {lignes.map((l) => <line key={l} x1="30" y1={74 + l * 31} x2="370" y2={74 + l * 31} className="scene-grille" />)}
+            {lignes.flatMap((l) => [0, 1, 2, 3].map((c) => (
+                <rect key={`${l}-${c}`} x={38 + c * 74} y={82 + l * 31} width={c === 0 ? 30 : 46 - ((l * 7 + c * 11) % 18)} height="8" className={(l * 3 + c * 5) % 7 === 0 ? 'scene-erreur' : 'scene-ligne'} style={{ animationDelay: `${(l + c) * 0.15}s` }} />
+            )))}
+        </svg>
+    );
+}
+
 /** Une fenêtre de navigateur avec un arbre : la plateforme. */
 function FenetrePlateforme() {
     return (
@@ -75,10 +91,10 @@ function FenetrePlateforme() {
 
 /** Les logos des jeux, en mosaïque : aujourd'hui. */
 function MosaiqueJeux() {
-    const jeux = ['League of Legends', 'Valorant', 'Counter-Strike 2', 'Dota 2', 'Overwatch 2'];
+    const jeux = ['League of Legends', 'Valorant', 'Counter-Strike 2', 'Fortnite', 'Minecraft', 'Pokémon', 'Échecs'];
     return (
         <div className="scene scene-mosaique" aria-hidden="true">
-            {jeux.map((nom, i) => <LogoJeu key={nom} nomJeu={nom} taille={i === 0 ? 96 : 72} className={`mosaique-logo mosaique-logo-${i + 1}`} />)}
+            {jeux.map((nom, i) => <LogoJeu key={nom} nomJeu={nom} taille={i === 0 ? 92 : 64} className={`mosaique-logo mosaique-logo-${i + 1}`} />)}
         </div>
     );
 }
@@ -86,26 +102,32 @@ function MosaiqueJeux() {
 const CHAPITRES: Chapitre[] = [
     {
         date: 'Octobre 2024',
-        titre: 'Le match de la salle B12',
-        texte: "Un jeudi soir, un TP de réseaux qui traîne, un switch, deux groupes de la même promo : la première partie de CS2 inter-groupes. Le perdant paie les croissants.",
+        titre: 'Le switch de la salle B12',
+        texte: "Un jeudi soir, le TP de réseaux est bouclé avec une heure d'avance. Quelqu'un branche un switch, deux groupes de la même promo se retrouvent sur le même serveur CS2. Quarante minutes plus tard, le couloir s'est vidé et la salle s'est remplie. Le perdant offre les croissants du lendemain : la tradition est née.",
         scene: <SalleDeTP />,
     },
     {
         date: 'Février 2025',
-        titre: 'Le premier tournoi',
-        texte: "Le lendemain, tout l'amphi voulait la revanche. Seize joueurs, quatre équipes, un arbre dessiné au tableau blanc et une finale suivie par tout le monde.",
+        titre: 'Seize joueurs, un tableau blanc',
+        texte: "Tout l'amphi réclame la revanche. Alors on s'organise : seize joueurs, quatre équipes, un arbre dessiné au feutre et un arbitre qui court d'une salle à l'autre avec les scores sur un post-it. La finale se joue devant une salle debout. Le soir même, le groupe de la promo compte quarante et un messages : « on recommence quand ? ».",
         scene: <TableauBlanc />,
     },
     {
         date: 'Septembre 2025',
-        titre: 'La plateforme naît',
-        texte: "Un tableur, quatre cents messages non lus et trois arbres griffonnés plus tard, il fallait une vraie plateforme : inscriptions en ligne, arbre généré à la clôture, résultats en direct.",
+        titre: 'Le tableur de trop',
+        texte: "Deuxième saison, six tournois, un tableur partagé que plus personne ne sait lire. Les inscriptions arrivent par messages privés, et l'arbre est redessiné trois fois parce qu'une équipe a déclaré forfait à la dernière minute. Le bureau des étudiants le dit sans détour : il faut une vraie plateforme, et il la faut avant les vacances d'hiver.",
+        scene: <TableurDeTrop />,
+    },
+    {
+        date: 'Mars 2026',
+        titre: 'Une plateforme, trois règles',
+        texte: "Le cahier des charges tient en une soirée et trois règles. Chacun ne voit que ce qu'il a le droit de voir. Un résultat saisi apparaît chez tout le monde sans recharger la page. Plus jamais d'arbre redessiné à la main. Résultat : inscriptions en ligne, arbre généré à la clôture, résultats en direct et un espace d'échange réservé à chaque équipe.",
         scene: <FenetrePlateforme />,
     },
     {
         date: "Aujourd'hui",
-        titre: 'Cinq jeux, une communauté',
-        texte: "Agôn, c'est le mot grec du concours, l'épreuve où l'on se mesure à armes égales. Des tournois toute l'année entre les IUT de la région, et toujours des croissants pour les perdants.",
+        titre: 'Douze jeux, une communauté',
+        texte: "Agôn, c'est le mot grec du concours : l'épreuve où l'on se mesure à armes égales. Aujourd'hui, du MOBA aux échecs, ça se joue à cinq, à trois ou en duel, entre les IUT de la région et toute l'année. Une règle de la première soirée tient toujours : les croissants sont pour les perdants.",
         scene: <MosaiqueJeux />,
     },
 ];

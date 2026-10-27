@@ -94,6 +94,8 @@ Claude le signale et demande confirmation.
 | **Thème clair / sombre** au choix de l'utilisateur (retenu dans le navigateur), curseur et halo de la marque (souris seulement) | ✅ |
 | Logos officiels des jeux (Simple Icons) — **sauf Overwatch 2**, en attente de son fichier officiel (`components/jeux/logos.ts`) | ◐ |
 | « Mes équipes » refondu : accueil du joueur, cartes animées, filtres, état vide | ✅ |
+| **Catalogue de douze jeux** : filtres par famille, recherche sans accents, « inscriptions ouvertes » ; les postes viennent de l'API (une seule source : la base) | ✅ |
+| **Se désister** : le capitaine dissout son équipe tant que les inscriptions sont ouvertes (confirmation, retour sur Mes équipes) | ✅ |
 | **Mon prochain match** sur « Mes équipes » : tour, adversaire, « à jouer maintenant », suivi en temps réel (B-19) | ✅ |
 | Image Docker de production (nginx : site + relais `/api` et WebSocket) ; interface et API sur la même origine | ✅ |
 | Connexion, inscription, restauration de session | ✅ |
