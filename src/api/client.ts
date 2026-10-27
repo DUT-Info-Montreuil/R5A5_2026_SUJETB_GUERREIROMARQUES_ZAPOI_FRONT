@@ -9,7 +9,13 @@
 
 import type { ErreurApi } from '../types/api.ts';
 
+/**
+ * Adresse de l'API. Vide : la même adresse que la page, comme dans l'image Docker de production,
+ * où nginx sert l'interface ET transmet /api et /socket.io au back.
+ */
 export const URL_API: string = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
+
+const ORIGINE_DE_L_API: string = URL_API || window.location.origin;
 
 /** Erreur renvoyée par l'API, avec son code HTTP (contrat §1.2). */
 export class ErreurHttp extends Error {
@@ -38,7 +44,7 @@ type Methode = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 type Parametres = Record<string, string | undefined>;
 
 function construireUrl(chemin: string, parametres?: Parametres): string {
-    const url = new URL(chemin, URL_API);
+    const url = new URL(chemin, ORIGINE_DE_L_API);
     for (const [cle, valeur] of Object.entries(parametres ?? {})) {
         if (valeur) url.searchParams.set(cle, valeur);
     }

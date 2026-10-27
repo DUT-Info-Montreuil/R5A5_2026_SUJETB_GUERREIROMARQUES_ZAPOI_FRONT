@@ -1,10 +1,11 @@
 /**
  * Visuel d'un jeu généré en CSS : dégradé aux couleurs du jeu, hachures qui
- * défilent, et le nom du jeu en contour. Remplaçable par une vraie image.
+ * défilent, et le logo du jeu en grand, en filigrane.
  */
 
 import type { CSSProperties } from 'react';
 
+import { EmblemeJeu } from '../jeux/EmblemeJeu';
 import { identiteJeu } from './identitesJeux';
 
 interface Props {
@@ -13,13 +14,13 @@ interface Props {
 }
 
 export function VisuelJeu({ nomJeu, className = '' }: Props) {
-    const { mot, couleur, fond } = identiteJeu(nomJeu);
+    const { couleur, fond } = identiteJeu(nomJeu);
     // Variables CSS : la mise en forme reste dans _visuels.scss.
     const couleurs = { '--jeu-couleur': couleur, '--jeu-fond': fond } as CSSProperties;
 
     return (
         <div className={`visuel-jeu ${className}`} style={couleurs} aria-hidden="true">
-            <span className="visuel-mot">{mot}</span>
+            <EmblemeJeu nomJeu={nomJeu} className="visuel-embleme" />
         </div>
     );
 }

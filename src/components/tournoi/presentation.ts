@@ -9,9 +9,9 @@ export const LIBELLES_STATUT: Record<StatutTournoi, string> = {
     TERMINE: 'Terminé',
 };
 
-/** Pastille : violette qui respire en direct, violette pour ce qui recrute, vide sinon. */
+/** Pastille : pleine pour ce qui est ouvert ou se joue, vide sinon. Rien ne pulse ici : l'« en direct » n'apparaît qu'à deux endroits. */
 export const POINT_STATUT: Record<StatutTournoi, string> = {
-    EN_COURS: 'point point-direct',
+    EN_COURS: 'point',
     INSCRIPTIONS_OUVERTES: 'point',
     INSCRIPTIONS_CLOSES: 'point point-vide',
     TERMINE: 'point point-vide',

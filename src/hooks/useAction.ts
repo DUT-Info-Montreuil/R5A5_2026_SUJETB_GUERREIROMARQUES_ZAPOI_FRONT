@@ -14,7 +14,8 @@ function messageErreur(e: unknown): string {
     if (!(e instanceof ErreurHttp)) return "L'action a échoué. Réessayez.";
     if (e.statut === 400 && typeof e.detail !== 'string') return 'Certains champs sont invalides.';
     if (e.statut === 401) return 'Votre session a expiré. Reconnectez-vous.';
-    if (e.statut === 403) return 'Action réservée aux administrateurs.';
+    // 403 : l'API dit elle-même qui a le droit (« Seul le capitaine… », « Action réservée aux administrateurs. »).
+    if (e.statut === 403) return e.message;
     if (e.statut >= 500) return 'Le serveur a rencontré une erreur. Réessayez.';
     return e.message;
 }

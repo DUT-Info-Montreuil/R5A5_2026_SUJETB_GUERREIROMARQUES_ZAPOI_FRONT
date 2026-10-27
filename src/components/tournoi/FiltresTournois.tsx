@@ -14,9 +14,11 @@ const STATUTS: StatutTournoi[] = ['INSCRIPTIONS_OUVERTES', 'EN_COURS', 'INSCRIPT
 interface Props {
     filtre: FiltreTournois;
     onChange: (filtre: FiltreTournois) => void;
+    /** Place le curseur dans la recherche à l'arrivée (clic sur la loupe de l'en-tête). */
+    focusRecherche?: boolean;
 }
 
-export function FiltresTournois({ filtre, onChange }: Props) {
+export function FiltresTournois({ filtre, onChange, focusRecherche = false }: Props) {
     // Texte en cours de saisie : il ne devient un filtre qu'à la validation.
     const [saisie, setSaisie] = useState(filtre.recherche ?? '');
 
@@ -38,7 +40,7 @@ export function FiltresTournois({ filtre, onChange }: Props) {
                 ))}
             </div>
             <form role="search" onSubmit={rechercher} className="recherche flex-grow-1">
-                <input type="search" className="form-control form-control-sm" placeholder="Rechercher un tournoi" aria-label="Rechercher un tournoi" value={saisie} onChange={(e) => setSaisie(e.target.value)} />
+                <input type="search" autoFocus={focusRecherche} className="form-control form-control-sm" placeholder="Rechercher un tournoi" aria-label="Rechercher un tournoi" value={saisie} onChange={(e) => setSaisie(e.target.value)} />
             </form>
         </div>
     );

@@ -12,4 +12,14 @@ import { io } from 'socket.io-client';
 
 import { URL_API } from './client';
 
-export const socket = io(URL_API, { autoConnect: false, withCredentials: true });
+// `undefined` : Socket.IO se connecte à l'adresse de la page (URL_API vide, voir client.ts).
+export const socket = io(URL_API || undefined, { autoConnect: false, withCredentials: true });
+
+// Quand c'est le SERVEUR qui ferme la connexion (jeton expiré, trop d'événements),
+// Socket.IO ne se reconnecte pas tout seul : contrairement à une coupure réseau, il
+// considère la fermeture comme voulue. On rouvre donc la connexion à la main. Si la
+// session a expiré, elle s'ouvre en visiteur : le prochain appel à l'API reçoit un
+// 401, et l'interface renvoie l'utilisateur vers la connexion.
+socket.on('disconnect', (raison) => {
+    if (raison === 'io server disconnect') socket.connect();
+});

@@ -1,8 +1,7 @@
 /** Calculs de la page d'accueil, tirés de la liste des tournois. */
 
 import type { Chiffre } from './ChiffresSaison';
-import type { JeuPresent } from './SectionJeux';
-import type { TournoiResume } from '../../types/api';
+import type { Jeu, TournoiResume } from '../../types/api';
 
 export function chiffresDeLaSaison(tournois: TournoiResume[]): Chiffre[] {
     const equipes = tournois.reduce((total, t) => total + t.nombreEquipesInscrites, 0);
@@ -13,6 +12,12 @@ export function chiffresDeLaSaison(tournois: TournoiResume[]): Chiffre[] {
         { valeur: jeuxPresents(tournois).length, libelle: 'jeux au programme' },
         { valeur: ouverts, libelle: 'inscriptions ouvertes' },
     ];
+}
+
+/** Un jeu et le nombre de tournois qui le jouent. */
+export interface JeuPresent {
+    jeu: Jeu;
+    nombreTournois: number;
 }
 
 /** Chaque jeu une seule fois, avec son nombre de tournois, le plus joué d'abord. */

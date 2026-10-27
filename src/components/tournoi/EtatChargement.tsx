@@ -1,4 +1,4 @@
-/** Ce qu'affiche une page de tournoi tant qu'elle n'a pas son tournoi : attente, introuvable, ou erreur. */
+/** Ce qu'affiche une page tant qu'elle n'a pas ses données : attente, introuvable, ou erreur. Par défaut, ceux d'un tournoi. */
 
 import { Alert, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -7,14 +7,18 @@ interface Props {
     introuvable: boolean;
     erreur: string | null;
     onRecharger: () => void;
+    titreIntrouvable?: string;
+    libelleChargement?: string;
 }
 
-export function EtatChargement({ introuvable, erreur, onRecharger }: Props) {
+export function EtatChargement({
+    introuvable, erreur, onRecharger, titreIntrouvable = 'Tournoi introuvable', libelleChargement = 'Chargement du tournoi',
+}: Props) {
     if (introuvable) {
         return (
             <div className="container-xxl px-4 px-lg-5 py-5 text-center d-flex flex-column align-items-center gap-3">
-                <h1 className="titre-condense display-3 m-0">Tournoi introuvable</h1>
-                <Link to="/#calendrier" className="lien-souligne">Voir tous les tournois</Link>
+                <h1 className="titre-condense display-3 m-0">{titreIntrouvable}</h1>
+                <Link to="/tournois" className="lien-souligne">Voir tous les tournois</Link>
             </div>
         );
     }
@@ -28,5 +32,5 @@ export function EtatChargement({ introuvable, erreur, onRecharger }: Props) {
             </div>
         );
     }
-    return <div className="py-5 text-center"><Spinner aria-label="Chargement du tournoi" /></div>;
+    return <div className="py-5 text-center"><Spinner aria-label={libelleChargement} /></div>;
 }

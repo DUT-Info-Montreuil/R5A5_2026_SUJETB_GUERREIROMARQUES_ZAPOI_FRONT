@@ -10,8 +10,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Alert, Form, Modal, Spinner } from 'react-bootstrap';
 
-import { saisirResultat } from '../../api/rencontres';
-import { useAction } from '../../hooks/useAction';
+import { useSaisieResultat } from '../../hooks/useSaisieResultat';
 import type { EquipeDeRencontre, Rencontre, TypeResultat } from '../../types/api';
 import { LIBELLES_RESULTAT } from '../tournoi/presentation';
 
@@ -26,7 +25,7 @@ function lireScore(saisie: string): number | undefined {
 }
 
 export function ModaleResultat({ rencontre, onFermer, onEnregistre }: Props) {
-    const { executer, envoi, erreur } = useAction();
+    const { enregistrer, envoi, erreur } = useSaisieResultat();
     const equipes = [rencontre.equipeA, rencontre.equipeB].filter((e): e is EquipeDeRencontre => e !== undefined);
     const seule = equipes.length === 1;
 
@@ -41,12 +40,12 @@ export function ModaleResultat({ rencontre, onFermer, onEnregistre }: Props) {
 
     async function soumettre(evenement: FormEvent<HTMLFormElement>) {
         evenement.preventDefault();
-        const enregistree = await executer(() => saisirResultat(rencontre.idRencontre, {
+        const enregistree = await enregistrer(rencontre.idRencontre, {
             idVainqueur,
             typeResultat,
             scoreA: avecScore ? lireScore(scoreA) : undefined,
             scoreB: avecScore ? lireScore(scoreB) : undefined,
-        }));
+        });
         if (enregistree) onEnregistre(enregistree);
     }
 

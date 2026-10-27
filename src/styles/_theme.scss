@@ -1,0 +1,56 @@
+// =============================================================================
+//  Les deux thèmes : sombre (par défaut) et clair. Chaque couleur de nos
+//  composants est une variable CSS ; le thème se choisit avec l'attribut
+//  data-bs-theme de <html> (voir theme/theme.ts), le même que celui de Bootstrap.
+//  Les violets d'accent sont communs ; le texte d'accent s'assombrit en clair
+//  pour rester lisible sur fond blanc.
+// =============================================================================
+
+:root,
+[data-bs-theme="dark"] {
+  --c-fond: #{$sombre-fond};
+  --c-fond-rgb: 11, 11, 13;
+  --c-surface: #{$sombre-surface};
+  --c-surface-hero: #{$sombre-surface-hero};
+  --c-trait: #{$sombre-trait};
+  --c-trait-fort: #2E2E34;
+  --c-texte: #{$sombre-texte};
+  --c-texte-attenue: #{$sombre-texte-attenue};
+  --c-texte-discret: #{$sombre-texte-discret};
+  --c-texte-clair: #C9C7D1;
+  --c-contour: #3A3A42;
+  --c-lien: #{$sombre-lien};
+  --c-lien-survol: #{$sombre-lien-survol};
+  --c-accent: #{$violet};
+  --c-voile-rgb: 255, 255, 255;
+  --c-ombre: 0, 0, 0;
+  color-scheme: dark;
+}
+
+[data-bs-theme="light"] {
+  --c-fond: #F7F6FB;
+  --c-fond-rgb: 247, 246, 251;
+  --c-surface: #FFFFFF;
+  --c-surface-hero: #EFEDF8;
+  --c-trait: #E4E1EE;
+  --c-trait-fort: #D3CFE3;
+  --c-texte: #17151F;
+  --c-texte-attenue: #5D5A6B;
+  --c-texte-discret: #8A8798;
+  --c-texte-clair: #3A3748;
+  --c-contour: #BDB8D0;
+  --c-lien: #6D28D9;
+  --c-lien-survol: #5B21B6;
+  --c-accent: #6D28D9;
+  --c-voile-rgb: 23, 21, 31;
+  --c-ombre: 60, 40, 120;
+  color-scheme: light;
+}
+
+body {
+  background: var(--c-fond);
+  color: var(--c-texte);
+  transition: background-color .25s, color .25s;
+}
+
+.text-primary { color: var(--c-accent) !important; }

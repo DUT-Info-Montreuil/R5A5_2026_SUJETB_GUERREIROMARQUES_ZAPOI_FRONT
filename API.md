@@ -10,11 +10,11 @@ Le front **ne définit aucune API** : il consomme celle du dépôt back
 | Source | Contenu |
 |---|---|
 | Swagger du back — http://localhost:5000/apidoc/swagger (back démarré) | Schémas exacts, générés depuis le code |
-| [`docs/CONTRAT_API.md`](docs/CONTRAT_API.md) | Règles transverses et décisions — **identique** dans les deux dépôts (v5) |
+| [`docs/CONTRAT_API.md`](docs/CONTRAT_API.md) | Règles transverses et décisions — **identique** dans les deux dépôts (v8) |
 | `API.md` du dépôt back | Routes, événements temps réel, état d'avancement côté serveur |
 | [`src/types/api.ts`](src/types/api.ts) | Le contrat en TypeScript : types de toutes les charges |
 
-Légende : ✅ branché dans l'interface · ⏳ prévu au contrat, pas encore consommé.
+Légende : ✅ branché dans l'interface · ⏳ prévu au contrat, pas encore consommé. Tout le contrat actuel est consommé, sauf la route de supervision (administrateur, hors interface).
 
 ---
 
@@ -41,17 +41,19 @@ canal temps réel.
 
 | Route | Page | Accès | Exigences | |
 |---|---|---|---|---|
-| `/` | `AccueilPage` — une, chiffres, jeux, calendrier filtrable (`?statut=…&recherche=…`) | Public | B-02 | ✅ |
+| `/` | `AccueilPage` — **vitrine** : hero, bande des jeux, chiffres, carrousel « à la une », tournois ouverts, atouts, mode d'emploi, histoire, témoignages, FAQ, appel final | Public | B-02 | ✅ |
+| `/tournois` | `TournoisPage` — tous les tournois, en cartes ou en liste (`?statut=…&recherche=…&vue=liste`), carte ou ligne entière cliquable | Public | B-02 | ✅ |
+| `/jeux` | `JeuxPage` — le catalogue : logo, postes et tournois de chaque jeu | Public | B-01, B-05 | ✅ |
 | `/tournois/:idTournoi` | `TournoiPage` — en-tête, arbre, équipes, **en direct** | Public | B-02, B-19 | ✅ |
 | `/connexion`, `/inscription` | `ConnexionPage`, `InscriptionPage` (plein écran) | Public | — | ✅ |
 | `/diagnostic` | `DiagnosticPage` | Public | — | ✅ |
 | `/admin/tournois` | `AdminTournoisPage` — liste, prochaine étape, création | Administrateur | B-01, B-03, B-04 | ✅ |
 | `/admin/tournois/:idTournoi` | `AdminTournoiPage` — renommer, faire avancer, saisir les résultats | Administrateur | B-13, B-14, B-15 | ✅ |
-| `/tournois/:id` — créer/rejoindre une équipe | — | Joueur | B-05, B-06 | ⏳ |
-| `/equipes/:id` — gestion de l'équipe, demandes | — | Capitaine / membre | B-08 à B-11 | ⏳ |
-| `/equipes/:id/chat` — espace d'échange | — | Membre (ou admin en lecture) | B-16 à B-18 | ⏳ |
+| `/tournois/:idTournoi` — bloc « Mon équipe » : créer une équipe, demander à rejoindre | `TournoiPage` | Joueur | B-05, B-06 | ✅ |
+| `/equipes/:idEquipe` | `EquipePage` — équipe, membres, demandes, postes, chat | Public pour la composition ; gestion : capitaine ; chat : membre | B-08 à B-11, B-16 à B-18 | ✅ |
+| `/mes-equipes` | `MesEquipesPage` — accueil du joueur, **mon prochain match** (tour, adversaire, à jour en temps réel), mes équipes (filtres Toutes / En lice / Terminées), mes demandes en attente, point de départ s'il n'a rien | Connecté | B-06, B-16, B-19 | ✅ |
 
-`RouteProtegee` enveloppe `/admin/*` : si l'utilisateur n'est pas connecté →
+`RouteProtegee` enveloppe `/admin/*` et `/mes-equipes` : si l'utilisateur n'est pas connecté →
 redirection vers `/connexion` ; s'il n'est pas administrateur → « Accès
 réservé ». **C'est du confort, pas de la sécurité** : c'est l'API qui refuse
 (403).
@@ -93,9 +95,21 @@ api.patch<Tournoi>('/api/tournois/1', { statutTournoi: 'INSCRIPTIONS_CLOSES' });
 | `tournois.creerTournoi` | `POST /api/tournois` | `ModaleCreationTournoi` | Admin | ✅ |
 | `tournois.modifierTournoi` | `PATCH /api/tournois/{id}` | `ActionsTournoi`, `FormulaireRenommage` | Admin | ✅ |
 | `rencontres.saisirResultat` | `PATCH /api/rencontres/{id}` | `ModaleResultat` | Admin | ✅ |
+| `tournois.listerPostes` | `GET /api/jeux/{id}/roles` | `usePostes` | Création d'équipe | ✅ |
+| `equipes.detailEquipe` | `GET /api/equipes/{id}` | `useEquipe` | Équipe | ✅ |
+| `equipes.creerEquipe` | `POST /api/tournois/{id}/equipes` | `useCreationEquipe` | Page tournoi | ✅ |
+| `equipes.modifierEquipe` | `PATCH /api/equipes/{id}` | `useGestionEquipe` (nom), `useDisqualification` (admin) | Équipe, admin | ✅ |
+| `equipes.modifierMembre` | `PATCH /api/equipes/{id}/membres/{id}` | `useGestionEquipe` (poste, capitanat) | Équipe | ✅ |
+| `equipes.retirerMembre` | `DELETE /api/equipes/{id}/membres/{id}` | `useGestionEquipe` (exclure, quitter) | Équipe | ✅ |
+| `equipes.mesEquipes` | `GET /api/moi/equipes` | `useMesParticipations` | Mes équipes, page tournoi | ✅ |
+| `demandes.demanderAdhesion` | `POST /api/equipes/{id}/demandes` | `useDemandeAdhesion` | Page tournoi | ✅ |
+| `demandes.demandesDeLEquipe` | `GET /api/equipes/{id}/demandes` | `useDemandesEquipe` | Équipe (capitaine) | ✅ |
+| `demandes.traiterDemande` | `PATCH /api/demandes/{id}` | `useGestionEquipe` | Équipe (capitaine) | ✅ |
+| `demandes.mesDemandes` | `GET /api/moi/demandes` | `useMesParticipations` | Mes équipes | ✅ |
+| `messages.messagesDeLEquipe` | `GET /api/equipes/{id}/messages` | `useChatEquipe` | Chat | ✅ |
+| `messages.envoyerMessage` | `POST /api/equipes/{id}/messages` | `useChatEquipe` | Chat | ✅ |
 | `sante.etatSante` | `GET /health` | `useEtatChaine` | Diagnostic | ✅ |
-| Création d'équipe, demandes, membres | `POST/GET/PATCH/DELETE /api/equipes…`, `/api/demandes/{id}` | — | — | ⏳ |
-| Messages d'équipe | `GET/POST /api/equipes/{id}/messages` | — | — | ⏳ |
+| — | `GET /api/metriques/temps-reel` | — (supervision, à appeler à la main) | — | — |
 
 ### Authentification dans l'interface
 
@@ -119,10 +133,11 @@ L'état d'authentification ne contient **que** `Utilisateur`
 | `0` | « L'API est injoignable. Le serveur back est-il démarré ? » |
 | `400` | `useAction` : « Certains champs sont invalides. » (le détail par champ est dans `ErreurHttp.detail.champs`) |
 | `401` | Session perdue : contexte remis à `null` ; `useConnexion` affiche « E-mail ou mot de passe incorrect. » |
-| `403` | `useAction` : « Action réservée aux administrateurs. » — **à nuancer** quand les actions de capitaine arriveront (§6) |
-| `404` | Page tournoi : écran « introuvable » |
+| `403` | `useAction` : affiche le message de l'API (« Seul le capitaine… », « Action réservée aux administrateurs. »), jamais un texte figé |
+| `404` | Page tournoi ou équipe : écran « introuvable ». Pour le chat : l'espace se ferme (« tu n'y as pas accès ») sans dire pourquoi |
 | `409` | Message de l'API affiché tel quel (« La finale n'a pas encore de vainqueur. ») ; à l'inscription, indique si le pseudo ou l'e-mail est pris |
 | `422` | Message de l'API affiché tel quel |
+| `429` | Message de l'API affiché tel quel (trop de messages envoyés) |
 | `5xx` | « Le serveur a rencontré une erreur. Réessayez. » — jamais le détail technique |
 
 ---
@@ -142,10 +157,12 @@ un `new WebSocket(...)` natif ne peut pas parler à ce serveur.
 | ← serveur | `tournoi:maj` | `Tournoi` | `useTournoi` → relit tout (l'arbre a pu changer) | ✅ |
 | ← serveur | `rencontre:maj` | `Rencontre` | `useTournoi` → remplace la rencontre dans l'arbre, relit les équipes (statut) | ✅ |
 | ← serveur | `bienvenue` | `{ message }` | non utilisé (diagnostic) | — |
-| ← serveur | `message:nouveau` | `Message` | — | ⏳ |
-| ← serveur | `equipe:acces-revoque` | `{ idEquipe, motif }` | — | ⏳ |
+| → serveur | `equipe:suivre` | `{ idEquipe }` → accusé `{ ok }` | `useChatEquipe`, à **chaque** `connect` | ✅ |
+| → serveur | `equipe:quitter` | `{ idEquipe }` | `useChatEquipe`, au démontage | ✅ |
+| ← serveur | `message:nouveau` | `Message` | `useChatEquipe` → fusion par identifiant | ✅ |
+| ← serveur | `equipe:acces-revoque` | `{ idEquipe, motif }` | `useChatEquipe` → ferme l'espace, vide les messages, prévient la page | ✅ |
 
-Comportement garanti par `useSuiviTournoi` : le salon est rejoint à chaque
+Comportement garanti par `useSuiviTournoi` et `useChatEquipe` : le salon est rejoint à chaque
 connexion (le serveur oublie les salons d'un socket perdu), les écouteurs sont
 retirés au démontage, et les rappels du composant sont lus via une référence
 pour ne pas se réabonner à chaque rendu.
@@ -153,17 +170,16 @@ pour ne pas se réabonner à chaque rendu.
 Rappel : **pas de rejeu des événements manqués** pendant une coupure. Le motif
 suivi est « snapshot HTTP, puis deltas par événements ».
 
-### Point à venir : le chat d'équipe
+### Le chat d'équipe (`useChatEquipe`)
 
-À prévoir dans un hook dédié (`useChatEquipe`), pas dans un composant :
-
-1. charger `GET /api/equipes/{id}/messages` (snapshot) ;
-2. écouter `message:nouveau`, en retirant un éventuel doublon de même `id` ;
-3. envoyer par `POST …/messages` (HTTP), pas par `socket.emit` ;
-4. sur `equipe:acces-revoque` : fermer l'espace, vider les messages, informer ;
-5. afficher l'état de la connexion.
-
-L'abonnement au salon `equipe:{id}` n'existe pas encore côté back.
+1. snapshot : `GET /api/equipes/{id}/messages` ;
+2. `equipe:suivre` à chaque connexion ; si l'accusé est `{ ok: false }`, l'espace est considéré comme inaccessible (le serveur ne dit pas pourquoi) ;
+3. `message:nouveau` fusionné par identifiant : un message peut arriver par la réponse du `POST`, par l'événement et par la relecture, il n'est affiché qu'une fois ;
+4. à chaque **re**connexion, les messages sont relus (les événements émis pendant la coupure sont perdus) ;
+5. envoi par `POST` (HTTP), jamais par `socket.emit` ;
+6. `equipe:acces-revoque` : l'espace se ferme tout de suite (B-17, B-18) ;
+7. si le serveur coupe la connexion (`io server disconnect`, jeton expiré ou plafond dépassé), `api/socket.ts` se reconnecte explicitement : Socket.IO ne le fait pas tout seul dans ce cas ;
+8. l'état de la connexion est affiché (« Connecté » / « Reconnexion… »).
 
 ---
 
@@ -173,36 +189,41 @@ L'abonnement au salon `equipe:{id}` n'existe pas encore côté back.
 `Utilisateur`, `IdentifiantsConnexion`, `DemandeInscription`, `Jeu`,
 `TournoiResume`, `Tournoi`, `CreationTournoi`, `ModificationTournoi`,
 `FiltreTournois`, `EquipeDuTournoi`, `Rencontre`, `ResultatRencontre`,
-`EtatSante`, `ErreurApi`, et les unions `StatutTournoi`, `StatutEquipe`,
-`StatutRencontre`, `TypeResultat`.
+`EtatSante`, `ErreurApi`, `RoleJeu`, `Membre`, `Equipe`, `CreationEquipe`, `ModificationEquipe`, `ModificationMembre`, `DemandeAdhesion`, `MonEquipe`, `MaDemande`, `Message`, `AccesRevoque`, et les unions `StatutTournoi`, `StatutEquipe`,
+`StatutRencontre`, `TypeResultat`, `StatutDemande`, `MotifAccesRevoque`.
 
 Règles : un champ facultatif (`?`) correspond à un champ **omis** par l'API
 (jamais `null`) ; les dates sont des chaînes ISO 8601 ; ce fichier se modifie
 **en même temps** que le contrat, dans les deux dépôts.
-Types **à ajouter** pour les équipes : `Equipe`, `Membre`, `DemandeAdhesion`,
-`Message`, `RoleJeu`, et les corps de création/modification correspondants.
-
 ---
 
-## 6. Écarts et points d'attention
+## 6. Limites connues
 
-À traiter avant le rendu ou à justifier.
+À connaître avant l'oral.
 
-1. **Architecture : quatre composants appellent `api/` directement**
-   (`ModaleResultat`, `ModaleCreationTournoi`, `ActionsTournoi`,
-   `FormulaireRenommage`), alors que `docs/ARCHITECTURE.md` impose de passer par
-   un hook. Correction simple : un hook `useAdministrationTournoi` (ou un hook
-   par action) qui encapsule `executer(() => …)`. Le sujet note l'architecture
-   sur 4 points.
-2. **Message 403 figé** dans `useAction` : « Action réservée aux
-   administrateurs. ». Faux dès qu'un capitaine reçoit un 403 sur une équipe
-   qui n'est pas la sienne. Utiliser le `detail` de l'API ou un message par
-   contexte.
-3. **Aucun test automatisé côté front** (pas de test runner dans
-   `package.json`). La vérification actuelle est `npm run build` (typage) et
-   `npm run lint`.
-4. **Fonctionnalités du sujet non faites côté interface** : équipes
-   (B-05 à B-11), chat (B-16 à B-18), disqualification. Elles dépendent
-   d'abord des routes du back (voir son `API.md`, §4).
-5. **Contrat et back** : l'authentification du socket (contrat §7) et la durée
-   du cookie sont à aligner côté back — voir §7 de son `API.md`.
+0. **Contenus éditoriaux fictifs, non fournis par l'API** : l'histoire d'Agôn Cup
+   (`NotreHistoire.tsx`), les témoignages (`Temoignages.tsx`), les coordonnées du pied de page, et la **dotation**
+   (« cash prize ») des tournois, calculée dans `components/tournoi/dotations.ts`
+   à partir du jeu et de la taille de l'arbre. Le schéma et le contrat n'ont
+   aucun champ de dotation : une vraie dotation demande une colonne en base et
+   un champ dans le contrat (décision à deux, voir `CLAUDE.md`).
+   **Logos des jeux** : pictogrammes officiels de la bibliothèque Simple Icons
+   (`components/jeux/logos.ts`), sauf **Overwatch 2** (absent de cette
+   bibliothèque) : son sigle s'affiche en attendant le fichier officiel.
+   Les marques restent la propriété de leurs éditeurs.
+
+1. **Aucun test automatisé côté front** : pas de test runner dans `package.json`.
+   Ce qui tient lieu de vérification : `npm run build` (typage), `npm run lint`,
+   et des parcours de bout en bout jouables avec les données de démonstration du
+   back (`python scripts/donnees_demo.py`). Les droits d'accès, eux, sont testés
+   côté back, seul endroit où ils comptent.
+2. **L'interface cache, le serveur refuse.** Les boutons masqués ou grisés
+   (capitaine, administrateur, composition figée) sont du confort : la sécurité
+   est dans l'API (403/404 testés).
+3. **Le chat charge tout l'historique, sans pagination** (décision du contrat
+   §6) : un très long historique alourdirait la page.
+4. **Un capitaine seul ne peut pas quitter son équipe** : le back refuse (`422`)
+   et ne propose pas de suppression d'équipe ; l'interface ne lui offre donc pas le bouton « Quitter ».
+5. **Les demandes d'adhésion et les postes ne sont pas poussés en temps réel** :
+   `useRechargeAuRetour` relit les données quand on revient sur l'onglet, plutôt
+   qu'un polling permanent.

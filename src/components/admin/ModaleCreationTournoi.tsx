@@ -7,8 +7,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Alert, Form, Modal, Spinner } from 'react-bootstrap';
 
-import { creerTournoi } from '../../api/tournois';
-import { useAction } from '../../hooks/useAction';
+import { useCreationTournoi } from '../../hooks/useCreationTournoi';
 import { useJeux } from '../../hooks/useJeux';
 import type { CreationTournoi, Tournoi } from '../../types/api';
 import { ChampTexte } from '../ui/ChampTexte';
@@ -25,14 +24,14 @@ interface Props {
 
 export function ModaleCreationTournoi({ visible, onFermer, onCree }: Props) {
     const { jeux, chargement, erreur: erreurJeux } = useJeux();
-    const { executer, envoi, erreur } = useAction();
+    const { creer, envoi, erreur } = useCreationTournoi();
     const [nom, setNom] = useState('');
     const [idJeu, setIdJeu] = useState('');
     const [nombreEquipes, setNombreEquipes] = useState<NombreEquipes>(NOMBRE_EQUIPES_PAR_DEFAUT);
 
     async function soumettre(evenement: FormEvent<HTMLFormElement>) {
         evenement.preventDefault();
-        const cree = await executer(() => creerTournoi({ nomTournoi: nom.trim(), idJeu: Number(idJeu), nombreEquipes }));
+        const cree = await creer({ nomTournoi: nom.trim(), idJeu: Number(idJeu), nombreEquipes });
         if (cree) {
             setNom('');
             onCree(cree);

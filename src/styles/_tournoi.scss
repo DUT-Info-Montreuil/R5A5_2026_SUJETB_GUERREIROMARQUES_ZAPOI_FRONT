@@ -30,7 +30,7 @@
   width: 60%;
   height: auto;
 
-  .visuel-mot { left: auto; right: -30px; bottom: 30px; font-size: clamp(8rem, 20vw, 18rem); }
+  .visuel-embleme { right: 4%; bottom: 10%; width: 56%; max-width: 480px; }
 }
 
 .entete-tournoi-contenu {
@@ -53,7 +53,7 @@
 .confirmation {
   padding: .5rem .5rem .5rem 1rem;
   border: 1px solid $violet;
-  background: rgba($fond, .8);
+  background: fond-a(.8);
 }
 
 .champ-renommage { width: min(22rem, 100%); }
@@ -123,7 +123,7 @@
 }
 
 .rencontre-cote-vide { color: $texte-discret; font-weight: 400; font-style: italic; }
-.rencontre-cote-gagnant { color: #fff; box-shadow: inset 3px 0 0 $violet; }
+.rencontre-cote-gagnant { color: $texte; box-shadow: inset 3px 0 0 $violet; }
 .rencontre-cote-perdant { color: $texte-discret; }
 
 .rencontre-score {
@@ -149,6 +149,18 @@
   padding: 1.125rem 0;
   border-bottom: 1px solid $trait;
 }
+
+// Ligne ou carte entière cliquable : le lien étendu couvre tout, les boutons passent au-dessus.
+.ligne-cliquable,
+.carte-cliquable {
+  position: relative;
+  transition: background-color .2s, border-color .2s;
+
+  &:hover { background: voile(.025); }
+}
+
+.carte-cliquable:hover { border-color: $violet; }
+.carte-actions { position: relative; z-index: 2; }
 
 @include media-breakpoint-down(md) {
   .entete-tournoi-visuel { width: 100%; opacity: .45; }
