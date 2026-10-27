@@ -1,6 +1,6 @@
 /**
  * Page /mes-equipes — l'espace du joueur : ses équipes (filtrables), ses
- * demandes d'adhésion en attente, et un point de départ quand il n'a encore
+ * demandes d'adhésion en attente, le prochain match de chaque équipe en lice, et un point de départ quand il n'a encore
  * rien. Le jeu de chaque équipe vient de la liste des tournois : l'API des
  * équipes de l'utilisateur ne le donne pas.
  */
@@ -10,6 +10,7 @@ import { Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import { EnteteSection } from '../components/accueil/EnteteSection';
+import { BandeauProchainMatch } from '../components/equipe/BandeauProchainMatch';
 import { CarteMaDemande } from '../components/equipe/CarteMaDemande';
 import { CarteMonEquipe } from '../components/equipe/CarteMonEquipe';
 import { Embleme } from '../components/ui/Marque';
@@ -58,6 +59,8 @@ export function MesEquipesPage() {
     const enLice = equipes.filter((e) => e.statutEquipe === 'EN_LICE').length;
     const garde = ONGLETS.find((o) => o.cle === onglet)?.garde ?? (() => true);
     const visibles = equipes.filter(garde);
+    // Un match à venir n'existe que dans un tournoi lancé, pour une équipe encore en lice.
+    const aJouer = equipes.filter((e) => e.statutEquipe === 'EN_LICE' && e.statutTournoi === 'EN_COURS');
     const vide = !chargement && !erreur && equipes.length === 0 && demandes.length === 0;
 
     return (
@@ -106,6 +109,17 @@ export function MesEquipesPage() {
                             </Link>
                             <Link to="/jeux" className="btn-contour">Découvrir les jeux</Link>
                         </div>
+                    </div>
+                )}
+
+                {aJouer.length > 0 && (
+                    <div className="d-flex flex-column gap-4">
+                        <EnteteSection surtitre="Sur le terrain" titre="Mon prochain match" />
+                        <ul className="liste-prochains-matchs" aria-label="Prochains matchs">
+                            {aJouer.map((equipe) => (
+                                <li key={equipe.idEquipe}><BandeauProchainMatch equipe={equipe} /></li>
+                            ))}
+                        </ul>
                     </div>
                 )}
 

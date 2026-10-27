@@ -137,3 +137,43 @@
   h2 { font-size: clamp(2rem, 4vw, 3rem); }
 }
 
+
+// « Mon prochain match » : un bandeau par équipe en lice dans un tournoi lancé.
+.liste-prochains-matchs {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bandeau-match {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid $trait;
+  background: $surface;
+  animation: apparition .5s ease-out backwards;
+}
+
+.bandeau-match-jouable { border-color: $violet; box-shadow: inset 3px 0 0 $violet; }
+.bandeau-match-attente { min-height: 96px; }
+
+.bandeau-match-duel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .25rem .75rem;
+  font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+  font-weight: 900;
+  font-stretch: 78%;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.bandeau-match-contre { color: $texte-discret; font-size: .9rem; font-weight: 700; font-stretch: 100%; }
