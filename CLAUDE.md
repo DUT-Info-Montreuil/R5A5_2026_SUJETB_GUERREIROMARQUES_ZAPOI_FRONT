@@ -86,17 +86,23 @@ Claude le signale et demande confirmation.
   moitié visible ici) · UX/UI 1 · documentation 2 · droits d'accès 3 (le front
   n'est **jamais** la sécurité : voir §5).
 
-### Où en est-on (branche `feature/tournois`)
+### Où en est-on
 
 | Domaine | État |
 |---|---|
-| Accueil (une, chiffres, jeux, calendrier filtrable, étapes) | ✅ |
+| **Accueil vitrine** (hero animé, bande des jeux, carrousel, atouts, histoire illustrée, témoignages, FAQ), page **Tournois** (cartes / liste, filtres), page **Jeux** (catalogue), pied de page avec contacts, menu mobile | ✅ |
+| **Thème clair / sombre** au choix de l'utilisateur (retenu dans le navigateur), curseur et halo de la marque (souris seulement) | ✅ |
+| Logos officiels des jeux (Simple Icons) — **sauf Overwatch 2**, en attente de son fichier officiel (`components/jeux/logos.ts`) | ◐ |
+| « Mes équipes » refondu : accueil du joueur, cartes animées, filtres, état vide | ✅ |
+| **Mon prochain match** sur « Mes équipes » : tour, adversaire, « à jouer maintenant », suivi en temps réel (B-19) | ✅ |
+| Image Docker de production (nginx : site + relais `/api` et WebSocket) ; interface et API sur la même origine | ✅ |
 | Connexion, inscription, restauration de session | ✅ |
 | Page publique d'un tournoi : en-tête, arbre, équipes, **mise à jour en temps réel** (B-02, B-19) | ✅ |
 | Administration : liste, création, renommage, transitions d'état, saisie des résultats (B-01, B-03, B-04, B-13, B-14, B-15) | ✅ |
-| **Équipes** : création, demandes d'adhésion, gestion du capitaine, rôles (B-05 à B-11) | ⏳ aucun écran, aucun appel API |
-| **Chat d'équipe** en temps réel + perte d'accès immédiate (B-16 à B-18) | ⏳ aucun écran |
-| Disqualification d'une équipe par l'administrateur | ⏳ |
+| **Équipes** : créer, demander à rejoindre, gérer (postes, demandes, passation, exclusion, quitter), « Mes équipes » (B-05 à B-11) | ✅ |
+| **Chat d'équipe** en temps réel + perte d'accès immédiate, reconnexion, dédoublonnage (B-16 à B-18) | ✅ |
+| Disqualification d'une équipe par l'administrateur (B-15) | ✅ |
+| Avertissement « équipe incomplète » (joueurs ou postes manquants) pour le capitaine, avant le lancement (B-08) | ✅ |
 | Tests automatisés front | ❌ aucun (pas de test runner installé) |
 
 Le détail des appels est dans [`API.md`](API.md).
