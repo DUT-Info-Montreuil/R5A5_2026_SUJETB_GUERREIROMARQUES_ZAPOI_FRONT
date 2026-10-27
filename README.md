@@ -106,9 +106,17 @@ qui n'est pas connecté.
 | `npm run build` | Vérifie le typage TypeScript puis produit la version de production dans `dist/` |
 | `npm run preview` | Sert la version de production en local |
 | `npm run lint` | Analyse statique du code |
+| `npm test` | Lance les tests automatisés (Vitest), une fois |
+| `npm run test:watch` | Relance les tests à chaque modification |
 
-`npm run build` est le meilleur test avant une pull request : il échoue à la
-moindre erreur de typage.
+Avant une pull request : `npm test`, puis `npm run build`, qui échoue à la
+moindre erreur de typage (tests compris), puis `npm run lint`.
+
+Les tests vivent dans `src/__tests__/`. Ils couvrent le client HTTP (cookie
+joint, traduction des erreurs, réaction au 401), `RouteProtegee`, et l'espace
+d'échange (`useChatEquipe` : dédoublonnage, perte d'accès immédiate, relecture
+après reconnexion). Le socket et l'API y sont remplacés par des doublures :
+aucun back n'est nécessaire.
 
 ---
 

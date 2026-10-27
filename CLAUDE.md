@@ -108,7 +108,7 @@ Claude le signale et demande confirmation.
 | Icônes des postes (Lucide, ISC) ; accueil avec « En direct » et « Palmarès » ; histoire en frise | ✅ |
 | Disqualification d'une équipe par l'administrateur (B-15) | ✅ |
 | Avertissement « équipe incomplète » (joueurs ou postes manquants) pour le capitaine, avant le lancement (B-08) | ✅ |
-| Tests automatisés front | ❌ aucun (pas de test runner installé) |
+| Tests automatisés front : Vitest + Testing Library (`src/__tests__/`) — client HTTP, `RouteProtegee`, `useChatEquipe` | ✅ ciblés, pas de bout en bout |
 
 Le détail des appels est dans [`API.md`](API.md).
 
@@ -121,14 +121,15 @@ Le détail des appels est dans [`API.md`](API.md).
 | Installer (versions figées) | `npm ci` |
 | Configurer | `cp .env.example .env` (`VITE_API_URL=http://localhost:5000`) |
 | Lancer | `npm run dev` → http://localhost:5173 (**le back doit tourner**) |
-| **Vérifier avant une PR** | `npm run build` (typage strict + production) **puis** `npm run lint` |
+| Lancer les tests | `npm test` (Vitest, une fois) · `npm run test:watch` (en continu) |
+| **Vérifier avant une PR** | `npm test`, puis `npm run build` (typage strict + production, tests compris) **puis** `npm run lint` |
 | Voir la version de production | `npm run preview` |
 
 Le port 5173 est fixe (`strictPort`) : il doit figurer dans `CORS_ORIGINS` du
 `.env` du back. `npm install` ne sert qu'à ajouter une dépendance ;
 `npm ci` pour tout le reste.
 
-`npm run build` **et** `npm run lint` doivent passer sans erreur avant toute PR.
+`npm test`, `npm run build` **et** `npm run lint` doivent passer sans erreur avant toute PR.
 L'écran `/diagnostic` vérifie la chaîne front → API → base → temps réel.
 
 ---
