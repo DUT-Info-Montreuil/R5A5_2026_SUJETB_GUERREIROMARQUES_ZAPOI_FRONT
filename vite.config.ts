@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
@@ -7,6 +8,12 @@ export default defineConfig({
     // Port fixe : il doit correspondre à CORS_ORIGINS dans le .env du back.
     port: 5173,
     strictPort: true,
+  },
+  test: {
+    // Navigateur simulé : les tests rendent de vrais composants React.
+    environment: 'jsdom',
+    include: ['src/__tests__/**/*.test.{ts,tsx}'],
+    setupFiles: ['src/__tests__/setup.ts'],
   },
   css: {
     preprocessorOptions: {
