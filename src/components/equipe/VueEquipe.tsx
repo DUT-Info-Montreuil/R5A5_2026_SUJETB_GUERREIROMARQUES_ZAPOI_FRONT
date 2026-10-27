@@ -9,7 +9,7 @@
 
 import { useState } from 'react';
 import { Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/useAuth';
 import { useDemandesEquipe } from '../../hooks/useDemandesEquipe';
@@ -19,6 +19,7 @@ import { useSuiviTournoi } from '../../hooks/useSuiviTournoi';
 import type { FinDAcces } from '../../hooks/useChatEquipe';
 import type { Equipe, Tournoi } from '../../types/api';
 import { SectionTournoi } from '../tournoi/SectionTournoi';
+import { BoutonConfirme } from '../ui/BoutonConfirme';
 import { ChatEquipe } from './ChatEquipe';
 import { EnteteEquipe } from './EnteteEquipe';
 import { FormulaireRenommageEquipe } from './FormulaireRenommageEquipe';
@@ -34,6 +35,7 @@ interface Props {
 
 export function VueEquipe({ equipe, tournoi, onRecharger }: Props) {
     const { utilisateur } = useAuth();
+    const navigate = useNavigate();
     const [finDAcces, setFinDAcces] = useState<FinDAcces | null>(null);
 
     const moi = equipe.membres.find((m) => m.idUtilisateur === utilisateur?.idUtilisateur);
@@ -58,6 +60,10 @@ export function VueEquipe({ equipe, tournoi, onRecharger }: Props) {
     async function traiter(idDemande: number, statut: 'ACCEPTEE' | 'REFUSEE') {
         gestion.effacerErreur();
         if (await gestion.traiterDemande(idDemande, statut)) rechargerDemandes();
+    }
+
+    async function seDesister() {
+        if (await gestion.dissoudre()) navigate('/mes-equipes');
     }
 
     function surFinDAcces(fin: FinDAcces) {
@@ -122,6 +128,23 @@ export function VueEquipe({ equipe, tournoi, onRecharger }: Props) {
                     surRetirer={(idUtilisateur) => { gestion.effacerErreur(); void gestion.retirer(idUtilisateur); }}
                 />
             </SectionTournoi>
+
+            {estCapitaine && modifiable && (
+                <SectionTournoi surtitre="Zone sensible" titre="Se désister">
+                    <div className="d-flex flex-column gap-3 align-items-start">
+                        <p className="text-body-secondary m-0">
+                            Dissoudre l'équipe la retire du tournoi : sa place est libérée, les joueurs et les demandes
+                            en attente sont renvoyés. Pour partir en laissant l'équipe, passez d'abord la main à un membre.
+                        </p>
+                        <BoutonConfirme
+                            libelle="Dissoudre l'équipe"
+                            avertissement={`« ${equipe.nomEquipe} » sera dissoute et ses ${equipe.membres.length > 1 ? `${equipe.membres.length} membres` : 'membre'} renvoyé${equipe.membres.length > 1 ? 's' : ''}.`}
+                            desactive={gestion.envoi}
+                            onConfirme={() => { gestion.effacerErreur(); void seDesister(); }}
+                        />
+                    </div>
+                </SectionTournoi>
+            )}
 
             {estCapitaine && modifiable && (
                 <SectionTournoi surtitre="Recrutement" titre="Demandes">

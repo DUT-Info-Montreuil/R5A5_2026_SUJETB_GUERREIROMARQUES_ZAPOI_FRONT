@@ -92,7 +92,7 @@ valeur par défaut. Sans ça, le navigateur bloque tous les appels à l'API.
 Les comptes et tournois de démonstration sont créés par le **back**
 (`python scripts/donnees_demo.py`, voir son README) : un administrateur
 (`admin@agon-cup.fr`), 40 joueurs (`joueur01@demo.iut.fr` à `joueur40@demo.iut.fr`)
-et six tournois à des étapes différentes. Pour tester plusieurs profils en même
+et dix tournois (six à des étapes différentes, quatre sans équipe). Pour tester plusieurs profils en même
 temps, ouvrir des fenêtres de navigation privée distinctes : le cookie de
 session est partagé dans une même fenêtre. Un visiteur est simplement quelqu'un
 qui n'est pas connecté.

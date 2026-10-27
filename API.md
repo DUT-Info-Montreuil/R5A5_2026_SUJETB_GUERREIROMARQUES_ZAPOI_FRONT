@@ -101,6 +101,7 @@ api.patch<Tournoi>('/api/tournois/1', { statutTournoi: 'INSCRIPTIONS_CLOSES' });
 | `equipes.modifierEquipe` | `PATCH /api/equipes/{id}` | `useGestionEquipe` (nom), `useDisqualification` (admin) | Équipe, admin | ✅ |
 | `equipes.modifierMembre` | `PATCH /api/equipes/{id}/membres/{id}` | `useGestionEquipe` (poste, capitanat) | Équipe | ✅ |
 | `equipes.retirerMembre` | `DELETE /api/equipes/{id}/membres/{id}` | `useGestionEquipe` (exclure, quitter) | Équipe | ✅ |
+| `equipes.dissoudreEquipe` | `DELETE /api/equipes/{id}` | `useGestionEquipe` (se désister, capitaine, inscriptions ouvertes) | Équipe | ✅ |
 | `equipes.mesEquipes` | `GET /api/moi/equipes` | `useMesParticipations` | Mes équipes, page tournoi | ✅ |
 | `demandes.demanderAdhesion` | `POST /api/equipes/{id}/demandes` | `useDemandeAdhesion` | Page tournoi | ✅ |
 | `demandes.demandesDeLEquipe` | `GET /api/equipes/{id}/demandes` | `useDemandesEquipe` | Équipe (capitaine) | ✅ |
