@@ -12,6 +12,7 @@ import { Alert } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/useAuth';
+import { useMessagerieContexte } from '../../context/useMessagerieContexte';
 import { useDemandesEquipe } from '../../hooks/useDemandesEquipe';
 import { useGestionEquipe } from '../../hooks/useGestionEquipe';
 import { usePostes } from '../../hooks/usePostes';
@@ -19,6 +20,7 @@ import { useSuiviTournoi } from '../../hooks/useSuiviTournoi';
 import type { FinDAcces } from '../../hooks/useChatEquipe';
 import type { Equipe, Tournoi } from '../../types/api';
 import { SectionTournoi } from '../tournoi/SectionTournoi';
+import { estSolo } from '../tournoi/vocabulaire';
 import { BoutonConfirme } from '../ui/BoutonConfirme';
 import { ChatEquipe } from './ChatEquipe';
 import { EnteteEquipe } from './EnteteEquipe';
@@ -35,6 +37,7 @@ interface Props {
 
 export function VueEquipe({ equipe, tournoi, onRecharger }: Props) {
     const { utilisateur } = useAuth();
+    const messagerie = useMessagerieContexte();
     const navigate = useNavigate();
     const [finDAcces, setFinDAcces] = useState<FinDAcces | null>(null);
 
@@ -78,6 +81,33 @@ export function VueEquipe({ equipe, tournoi, onRecharger }: Props) {
         : moi !== undefined && !enLice && !estAdministrateur
             ? AVIS_ESPACE_FERME[equipe.statutEquipe as Exclude<typeof equipe.statutEquipe, 'EN_LICE'>]
             : null;
+
+    // Un jeu en solo : une inscription, rien à composer, personne avec qui échanger.
+    if (estSolo(tournoi.jeu.joueursParEquipe)) {
+        return (
+            <div className="pb-5">
+                <EnteteEquipe equipe={equipe} tournoi={tournoi}>
+                    <Link to={`/tournois/${tournoi.idTournoi}`} className="lien-souligne">Page du tournoi</Link>
+                    {utilisateur && <Link to="/mes-equipes" className="lien-souligne">Mes inscriptions</Link>}
+                </EnteteEquipe>
+                <SectionTournoi surtitre="Ton inscription" titre={moi ? 'Tu es inscrit' : 'Un joueur inscrit'}>
+                    {gestion.erreur && <Alert variant="danger" className="m-0" dismissible onClose={gestion.effacerErreur}>{gestion.erreur}</Alert>}
+                    <p className="text-body-secondary m-0">
+                        {tournoi.jeu.nomJeu} se joue en solo : {moi ? 'tu' : equipe.nomEquipe} affronte{moi ? 's' : ''} les autres joueurs en
+                        élimination directe. Rien d'autre à préparer : suis l'arbre du tournoi pour connaître ton prochain match.
+                    </p>
+                    {moi && modifiable && (
+                        <BoutonConfirme
+                            libelle="Annuler mon inscription"
+                            avertissement="Ta place sera libérée pour un autre joueur."
+                            desactive={gestion.envoi}
+                            onConfirme={() => { gestion.effacerErreur(); void seDesister(); }}
+                        />
+                    )}
+                </SectionTournoi>
+            </div>
+        );
+    }
 
     return (
         <div className="pb-5">
@@ -155,13 +185,21 @@ export function VueEquipe({ equipe, tournoi, onRecharger }: Props) {
             {(chatOuvert || avisChat) && (
                 <SectionTournoi surtitre="Échanges" titre="Espace d'équipe">
                     {avisChat && <Alert variant="secondary" className="m-0">{avisChat}</Alert>}
-                    {chatOuvert && !avisChat && utilisateur && (
-                        <ChatEquipe
-                            idEquipe={equipe.idEquipe}
-                            moiId={utilisateur.idUtilisateur}
-                            peutEcrire={moi !== undefined && enLice}
-                            surFinDAcces={surFinDAcces}
-                        />
+                    {/* Un membre discute depuis la messagerie latérale, accessible de toutes les pages. */}
+                    {moi !== undefined && enLice && !avisChat && (
+                        <div className="d-flex flex-wrap align-items-center gap-3">
+                            <button type="button" className="btn-principal" onClick={() => messagerie.ouvrir(equipe.idEquipe)}>
+                                Ouvrir la messagerie
+                            </button>
+                            {messagerie.nonLus(equipe.idEquipe) > 0 && (
+                                <span className="etiquette"><span className="point" /> {messagerie.nonLus(equipe.idEquipe)} non lu{messagerie.nonLus(equipe.idEquipe) > 1 ? 's' : ''}</span>
+                            )}
+                            <span className="small text-body-secondary">Le bouton « Messages » en bas à gauche suit les échanges partout sur le site.</span>
+                        </div>
+                    )}
+                    {/* L'administrateur, lui, consulte l'espace sans y écrire (B-18). */}
+                    {chatOuvert && !avisChat && utilisateur && moi === undefined && (
+                        <ChatEquipe idEquipe={equipe.idEquipe} moiId={utilisateur.idUtilisateur} surFinDAcces={surFinDAcces} />
                     )}
                 </SectionTournoi>
             )}

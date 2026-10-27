@@ -1,0 +1,98 @@
+// =============================================================================
+//  Messagerie : bouton en bas à gauche, tiroir à droite sur toute la hauteur.
+//  Le tiroir ne bloque pas la page : on peut lire l'arbre pendant que l'on discute.
+// =============================================================================
+
+.messagerie-bouton {
+  position: fixed;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1040;
+  display: inline-flex;
+  align-items: center;
+  gap: .625rem;
+  min-height: 52px;
+  padding: 0 1.25rem 0 1rem;
+  border: 1px solid $violet;
+  background: $violet-profond;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+  transition: transform .15s, background-color .2s;
+
+  &:hover { background: $violet-fonce; }
+  &:active { transform: scale(.96); }
+}
+
+// Un message non lu : le bouton se signale d'une pulsation douce (coupée si le mouvement est réduit).
+.messagerie-bouton-nouveau { animation: messagerie-appel 2.4s ease-in-out infinite; }
+@keyframes messagerie-appel {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, .4), 0 0 0 0 rgba(139, 92, 246, .55); }
+  50% { box-shadow: 0 10px 30px rgba(0, 0, 0, .4), 0 0 0 10px rgba(139, 92, 246, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .messagerie-bouton-nouveau { animation: none; } }
+
+.messagerie-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 .375rem;
+  background: $rouge;
+  color: #1a0000;
+  font-size: .8125rem;
+  font-weight: 800;
+}
+
+.messagerie-tiroir {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, 100%);
+  border-left: 1px solid $trait-fort;
+  background: $fond;
+  box-shadow: -18px 0 50px rgba(0, 0, 0, .4);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform .3s $courbe, visibility 0s linear .3s;
+
+  &:focus { outline: none; }
+}
+
+.messagerie-tiroir-ouvert {
+  transform: none;
+  visibility: visible;
+  transition: transform .3s $courbe, visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .messagerie-tiroir, .messagerie-tiroir-ouvert { transition: none; }
+}
+
+.messagerie-entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.25rem 1rem;
+  border-bottom: 1px solid $trait;
+}
+
+.messagerie-titre { font-size: 1.75rem; font-weight: 900; text-transform: uppercase; }
+.messagerie-choix { max-width: 100%; }
+
+// Le fil prend toute la hauteur restante ; la saisie reste en bas.
+.messagerie-corps {
+  flex: 1;
+  min-height: 0;
+  padding: 1rem 1.25rem 1.25rem;
+
+  .chat { height: 100%; }
+  .chat-fil { flex: 1; min-height: 0; max-height: none; }
+  .chat-message { max-width: 92%; }
+}
