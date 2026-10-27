@@ -1,4 +1,7 @@
-/** Les équipes inscrites : nom, effectif par rapport au jeu, et état dans le tournoi. */
+/** Les équipes inscrites : nom (lien vers sa page), effectif par rapport au jeu, état dans le tournoi, et des actions. */
+
+import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 import type { EquipeDuTournoi } from '../../types/api';
 import { LIBELLES_STATUT_EQUIPE } from './presentation';
@@ -8,9 +11,11 @@ interface Props {
     joueursParEquipe: number;
     /** Places affichées vides tant que le tournoi recrute. */
     placesLibres: number;
+    /** Actions propres à chaque équipe (demander à rejoindre, disqualifier…). */
+    actions?: (equipe: EquipeDuTournoi) => ReactNode;
 }
 
-export function ListeEquipes({ equipes, joueursParEquipe, placesLibres }: Props) {
+export function ListeEquipes({ equipes, joueursParEquipe, placesLibres, actions }: Props) {
     if (equipes.length === 0 && placesLibres === 0) {
         return <p className="text-body-secondary m-0">Aucune équipe inscrite.</p>;
     }
@@ -21,13 +26,17 @@ export function ListeEquipes({ equipes, joueursParEquipe, placesLibres }: Props)
                 const complete = equipe.nombreMembres >= joueursParEquipe;
                 return (
                     <li key={equipe.idEquipe} className="col-12 col-sm-6 col-lg-3 ps-0">
-                        <div className={`carte-equipe carte-equipe-${equipe.statutEquipe.toLowerCase()} h-100`}>
-                            <span className="carte-equipe-nom text-truncate">{equipe.nomEquipe}</span>
+                        <div className={`carte-equipe carte-equipe-${equipe.statutEquipe.toLowerCase()} carte-cliquable h-100`}>
+                            <Link to={`/equipes/${equipe.idEquipe}`} className="carte-equipe-nom text-truncate ligne-lien lien-etendu">
+                                {equipe.nomEquipe}
+                            </Link>
                             <span className="small text-body-secondary">
                                 {equipe.nombreMembres}/{joueursParEquipe} joueurs{complete ? '' : ' · incomplète'}
                             </span>
                             <span className="libelle small mt-auto">{LIBELLES_STATUT_EQUIPE[equipe.statutEquipe]}</span>
                             {equipe.motifSortie && <span className="small text-body-secondary">{equipe.motifSortie}</span>}
+                            {/* Au-dessus du lien étendu : les boutons restent cliquables. */}
+                            {actions && <div className="carte-actions">{actions(equipe)}</div>}
                         </div>
                     </li>
                 );

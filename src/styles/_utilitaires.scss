@@ -69,7 +69,7 @@
 
 // Surtitre violet au-dessus des titres de section.
 .surtitre {
-  color: $violet;
+  color: $accent;
   font-size: .8125rem;
   font-weight: 700;
   letter-spacing: .12em;
@@ -138,7 +138,7 @@
   position: relative;
   overflow: hidden;
   background-color: $surface-hero;
-  background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, .03) 0 2px, transparent 2px 14px);
+  background-image: repeating-linear-gradient(135deg, voile(.03) 0 2px, transparent 2px 14px);
   animation: hachures 8s linear infinite;
 
   &::before {
@@ -158,7 +158,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, $fond 0%, rgba($fond, .55) 45%, rgba($fond, 0) 80%);
+    background: linear-gradient(0deg, $fond 0%, fond-a(.55) 45%, fond-a(0) 80%);
     pointer-events: none;
   }
 
@@ -167,6 +167,141 @@
 
 @keyframes hachures { to { background-position: 56px 0; } }
 @keyframes derive { to { transform: translate(-340px, 160px); } }
+
+// Bouton à contour : l'action secondaire à côté d'un bouton principal.
+.btn-contour {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0 1.5rem;
+  border: 1px solid $trait-fort;
+  background: transparent;
+  color: $texte;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color .2s, background-color .2s, transform .12s;
+
+  &:hover { border-color: $texte; background: voile(.05); color: $texte; }
+  &:active { transform: scale(.97); }
+}
+
+// Lien étendu : son zone cliquable couvre tout le parent positionné (carte, ligne).
+// Un seul lien par carte, donc un seul arrêt au clavier ; le reste de la carte est une aide à la souris.
+.lien-etendu::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+// Retour au-dessus d'un titre de page.
+.lien-retour {
+  align-self: flex-start;
+  color: $texte-attenue;
+  font-size: .9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color .2s, transform .2s;
+
+  &:hover { color: $texte; transform: translateX(-3px); }
+}
+
+// Lien d'évitement : invisible, il apparaît au premier appui sur Tab.
+.lien-evitement {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 10;
+  padding: .75rem 1rem;
+  background: $texte;
+  color: $fond;
+  font-weight: 700;
+  text-decoration: none;
+
+  &:focus { top: 1rem; }
+}
+
+// Un mot à trait d'union ne se coupe pas à la fin d'une ligne.
+.insecable { white-space: nowrap; }
+
+// Puces de texte (postes d'un jeu).
+.puces { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+
+.puce {
+  padding: .25rem .75rem;
+  border: 1px solid $trait-fort;
+  color: $texte-clair;
+  font-size: .875rem;
+  transition: border-color .2s, color .2s;
+
+  &:hover { border-color: $violet; color: $texte; }
+}
+
+// Étiquettes d'état secondaires : éteinte (équipe sortie) et en attente.
+.etiquette-eteinte { border-color: $trait-fort; color: $texte-attenue; }
+.etiquette-attente { border-color: $trait-fort; color: $texte-clair; }
+
+// Sablier qui se retourne : « en attente de réponse ».
+.sablier {
+  display: inline-block;
+  width: 10px;
+  height: 14px;
+  border-top: 2px solid $violet-focus;
+  border-bottom: 2px solid $violet-focus;
+  background: linear-gradient($violet-focus, $violet-focus) center / 2px 100% no-repeat;
+  animation: sablier 2.4s ease-in-out infinite;
+}
+
+@keyframes sablier { 0%, 60% { transform: rotate(0); } 100% { transform: rotate(180deg); } }
+
+// Squelette : une zone grise qui brille, pendant qu'une liste charge. La page ne saute pas à l'arrivée des données.
+.squelette {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 1.5rem;
+  background: linear-gradient(100deg, $surface 30%, $trait-fort 50%, $surface 70%) 0 0 / 250% 100%;
+  animation: brillance 1.4s linear infinite;
+}
+
+.squelette-logo { width: 56px; height: 56px; }
+
+@keyframes brillance { to { background-position: -150% 0; } }
+
+// Section de la vitrine : de l'air entre les blocs.
+.section-vitrine { padding-top: clamp(4rem, 9vw, 7rem); }
+
+// Apparition à l'entrée dans l'écran (composant Revele).
+.revele {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .8s ease, transform .8s $courbe;
+  transition-delay: var(--delai, 0ms);
+}
+
+.revele-visible { opacity: 1; transform: none; }
+
+// Variantes de boutons pour la vitrine.
+.btn-grand { min-height: 58px; padding: 0 2rem; font-size: 1.0625rem; }
+
+.btn-clair-contour {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 0 1.75rem;
+  border: 1px solid rgba(255, 255, 255, .55);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color .2s, color .2s, transform .12s;
+
+  &:hover { background: #fff; color: #17151F; }
+  &:active { transform: scale(.97); }
+}
+
+@keyframes flotte { 50% { transform: translateY(-10px); } }
 
 // Accessibilité : toute animation coupée si le système demande moins de mouvement.
 @media (prefers-reduced-motion: reduce) {

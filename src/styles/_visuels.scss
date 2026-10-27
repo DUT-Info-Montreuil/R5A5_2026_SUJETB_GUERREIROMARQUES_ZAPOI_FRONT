@@ -1,6 +1,7 @@
 // =============================================================================
+//  Les visuels et les tuiles de logo restent sombres dans les deux thèmes : le logo blanc y ressort.
 //  Visuels de jeu générés en CSS (VisuelJeu.tsx) : dégradé aux couleurs du jeu,
-//  hachures qui défilent, reflet, et le nom du jeu en contour, penché.
+//  hachures qui défilent, reflet, et l'emblème du jeu en filigrane.
 //  Les couleurs arrivent par les variables --jeu-couleur et --jeu-fond.
 // =============================================================================
 
@@ -11,14 +12,14 @@
   height: 100%;
   background:
           radial-gradient(90% 70% at 70% 15%, var(--jeu-couleur), transparent 65%),
-          linear-gradient(165deg, var(--jeu-fond) 0%, $fond 90%);
+          linear-gradient(165deg, var(--jeu-fond) 0%, $sombre-fond 90%);
 
   &::before {
     content: "";
     position: absolute;
     inset: -40px;
     z-index: -1;
-    background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .045) 0 2px, transparent 2px 16px);
+    background: repeating-linear-gradient(135deg, voile(.045) 0 2px, transparent 2px 16px);
     animation: hachures-visuel 10s linear infinite;
   }
 
@@ -27,25 +28,46 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: radial-gradient(60% 50% at 70% 20%, rgba(255, 255, 255, .16), transparent 70%);
+    background: radial-gradient(60% 50% at 70% 20%, voile(.16), transparent 70%);
     mix-blend-mode: screen;
   }
 }
 
-.visuel-mot {
+.visuel-embleme {
   position: absolute;
-  left: .75rem;
-  bottom: .75rem;
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, .38);
-  font-size: 9rem;
-  font-weight: 900;
-  font-stretch: 62%;
-  line-height: .8;
-  text-transform: uppercase;
-  white-space: nowrap;
-  transform: rotate(-6deg);
+  right: -6%;
+  bottom: -8%;
+  width: 78%;
+  max-width: 420px;
+  aspect-ratio: 1;
+  color: voile(.16);
+  object-fit: contain;
+  transform: rotate(-8deg);
   transition: transform .6s $courbe;
 }
+
+// Tuile du logo d'un jeu : l'emblème, blanc, sur un fond aux couleurs du jeu.
+.logo-jeu {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  svg, img { width: 100%; height: 100%; object-fit: contain; }
+}
+
+.logo-jeu-tuile {
+  padding: calc(var(--taille) * .18);
+  border: 1px solid voile(.16);
+  color: #fff;
+  background:
+          radial-gradient(90% 90% at 80% 10%, var(--jeu-couleur), transparent 70%),
+          linear-gradient(160deg, var(--jeu-fond), $sombre-fond);
+  transition: transform .3s $courbe, border-color .2s;
+}
+
+.logo-jeu-nu { color: inherit; }
 
 @keyframes hachures-visuel { to { transform: translateX(45px); } }

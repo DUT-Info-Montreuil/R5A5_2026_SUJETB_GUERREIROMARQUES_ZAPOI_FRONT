@@ -6,8 +6,7 @@
 import { useState } from 'react';
 import { Alert, Spinner } from 'react-bootstrap';
 
-import { modifierTournoi } from '../../api/tournois';
-import { useAction } from '../../hooks/useAction';
+import { useModificationTournoi } from '../../hooks/useModificationTournoi';
 import type { StatutTournoi, Tournoi } from '../../types/api';
 
 interface Transition {
@@ -25,7 +24,7 @@ const TRANSITIONS: Partial<Record<StatutTournoi, Transition>> = {
     INSCRIPTIONS_CLOSES: {
         vers: 'EN_COURS',
         libelle: 'Lancer le tournoi',
-        effet: 'Les équipes incomplètes sont déclarées forfait.',
+        effet: 'Les équipes incomplètes (joueurs ou postes manquants) sont déclarées forfait.',
     },
     EN_COURS: {
         vers: 'TERMINE',
@@ -42,13 +41,13 @@ interface Props {
 }
 
 export function ActionsTournoi({ tournoi, onModifie, compact = false }: Props) {
-    const { executer, envoi, erreur, effacerErreur } = useAction();
+    const { modifier, envoi, erreur, effacerErreur } = useModificationTournoi();
     const [aConfirmer, setAConfirmer] = useState(false);
     const transition = TRANSITIONS[tournoi.statutTournoi];
     if (!transition) return null;
 
     async function confirmer() {
-        const modifie = await executer(() => modifierTournoi(tournoi.idTournoi, { statutTournoi: transition!.vers }));
+        const modifie = await modifier(tournoi.idTournoi, { statutTournoi: transition!.vers });
         setAConfirmer(false);
         if (modifie) onModifie(modifie);
     }

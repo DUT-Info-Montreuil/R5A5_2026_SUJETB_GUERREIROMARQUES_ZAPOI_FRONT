@@ -1,11 +1,14 @@
 // En-tête commun : marque, navigation soulignée, compte.
 
 .entete {
-  position: relative;
-  z-index: 2;
+  position: sticky;
+  top: 0;
+  z-index: 20;
   height: 72px;
   border-bottom: 1px solid $trait;
-  background: $fond;
+  background: fond-a(.82);
+  backdrop-filter: blur(16px) saturate(1.4);
+  transition: background-color .25s, border-color .25s;
 }
 
 .marque {
@@ -23,7 +26,7 @@
   text-transform: uppercase;
 
   &:hover { color: $texte; }
-  .marque-accent { color: $violet; }
+  .marque-accent { color: $accent; }
   .embleme-vainqueur { fill: $violet; }
 }
 
@@ -63,10 +66,11 @@
   width: 44px;
   height: 44px;
   border: 1px solid $trait-fort;
+  background: transparent;
   color: $texte;
   transition: border-color .2s, background-color .2s;
 
-  &:hover { border-color: $texte; background: rgba(255, 255, 255, .04); color: $texte; }
+  &:hover { border-color: $texte; background: voile(.06); color: $texte; }
 }
 
 .avatar {
@@ -93,5 +97,40 @@
 // Sur téléphone, le logo se réduit pour laisser la place au compte.
 @include media-breakpoint-down(sm) {
   .entete .marque { font-size: 1.25rem; }
-  .entete .bouton-carre { display: none; }
+  .entete a.bouton-carre { display: none; }
+}
+
+// Menu déroulant du téléphone : sous l'en-tête, pleine largeur.
+.menu-mobile {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  padding: .5rem 1.5rem 1rem;
+  border-bottom: 1px solid $trait;
+  background: $fond;
+  animation: apparition .2s ease-out;
+
+  .entete-lien { height: 52px; border-bottom: 1px solid $trait; font-size: 1.0625rem; }
+  .entete-lien::after { bottom: -1px; }
+}
+
+.bouton-menu { background: transparent; }
+
+// Bascule de thème dans le menu du téléphone : une ligne avec son libellé.
+.bouton-theme-large {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  height: 52px;
+  border: 0;
+  background: transparent;
+  color: $texte-attenue;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  text-align: left;
+
+  &:hover { color: $texte; }
 }

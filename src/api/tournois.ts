@@ -7,6 +7,7 @@ import type {
     Jeu,
     ModificationTournoi,
     Rencontre,
+    RoleJeu,
     Tournoi,
     TournoiResume,
 } from '../types/api.ts';
@@ -41,4 +42,9 @@ export function modifierTournoi(idTournoi: number, modification: ModificationTou
 
 export function listerJeux(): Promise<Jeu[]> {
     return api.get<Jeu[]>('/api/jeux');
+}
+
+/** Les postes d'un jeu, à proposer à la création d'une équipe. */
+export function listerPostes(idJeu: number): Promise<RoleJeu[]> {
+    return api.get<RoleJeu[]>(`/api/jeux/${idJeu}/roles`);
 }

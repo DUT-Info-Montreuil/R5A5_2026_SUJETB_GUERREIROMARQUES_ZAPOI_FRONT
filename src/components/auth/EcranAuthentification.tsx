@@ -20,7 +20,7 @@ export function EcranAuthentification({ surtitre, titre, children }: Props) {
                 <Marque />
                 <div className="d-flex flex-column gap-4">
                     <p className="libelle apparition d-flex align-items-center gap-2 m-0">
-                        <span className="point point-direct" /> Saison 2026 · Association étudiante
+                        <span className="point" /> Saison 2026 · Association étudiante
                     </p>
                     <p className="accroche-titre titre-condense m-0" aria-hidden="true">
                         <span className="ligne-revelee"><span>Entrez</span></span>

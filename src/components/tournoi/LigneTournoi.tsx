@@ -1,44 +1,57 @@
+import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 
 import type { TournoiResume } from '../../types/api';
-import { VisuelJeu } from './VisuelJeu';
+import { LogoJeu } from '../jeux/LogoJeu';
+import { dotationAffichee } from './dotations';
+import { identiteJeu } from './identitesJeux';
 import { LIBELLES_STATUT, POINT_STATUT, jourEtMois } from './presentation';
 
 /** Jauge de remplissage : une case par place, pleine quand une équipe l'occupe. */
 function JaugeEquipes({ inscrites, total }: { inscrites: number; total: number }) {
     return (
         <span className="jauge" role="img" aria-label={`${inscrites} équipes inscrites sur ${total}`}>
-      {Array.from({ length: total }, (_, i) => (
-          <span key={i} className={i < inscrites ? 'jauge-case jauge-pleine' : 'jauge-case'} />
-      ))}
-    </span>
+            {Array.from({ length: total }, (_, i) => (
+                <span key={i} className={i < inscrites ? 'jauge-case jauge-pleine' : 'jauge-case'} />
+            ))}
+        </span>
     );
 }
 
-/** Une ligne du calendrier : date, visuel, nom, état, remplissage. */
+/**
+ * Une ligne du calendrier : date, logo du jeu, nom, état, dotation, remplissage.
+ * Toute la ligne est cliquable : le lien du nom s'étend sur elle (lien-etendu).
+ */
 export function LigneTournoi({ tournoi }: { tournoi: TournoiResume }) {
     const { jour, mois } = jourEtMois(tournoi.creeLe);
 
     return (
-        <li className="ligne-tournoi row align-items-center g-0 gx-4">
-            <div className="col-3 col-md-1 d-flex flex-column">
+        <li className="ligne-tournoi row align-items-center g-0 gx-3 gx-md-4" style={{ '--jeu-couleur': identiteJeu(tournoi.jeu.nomJeu).couleur } as CSSProperties}>
+            <div className="col-2 col-md-1 d-flex flex-column">
                 <span className="ligne-jour">{jour}</span>
                 <span className="libelle small text-body-secondary">{mois}</span>
             </div>
-            <div className="d-none d-md-block col-md-2">
-                <VisuelJeu nomJeu={tournoi.jeu.nomJeu} className="ligne-visuel" />
+            <div className="col-auto d-none d-sm-block">
+                <LogoJeu nomJeu={tournoi.jeu.nomJeu} taille={56} className="ligne-logo" />
             </div>
-            <div className="ligne-titre col-9 col-md-4 d-flex flex-column gap-1">
-                <Link to={`/tournois/${tournoi.idTournoi}`} className="ligne-nom ligne-lien">{tournoi.nomTournoi}</Link>
-                <span className="small text-body-secondary">{tournoi.jeu.nomJeu} · Élimination directe</span>
+            <div className="ligne-titre col d-flex flex-column gap-1">
+                {/* Le décalage au survol s'applique aux textes, jamais au lien : un parent transformé
+                    deviendrait le repère du lien étendu, et le clic sur la ligne serait perdu. */}
+                <Link to={`/tournois/${tournoi.idTournoi}`} className="ligne-nom ligne-lien lien-etendu">
+                    <span className="ligne-decalable">{tournoi.nomTournoi}</span>
+                </Link>
+                <span className="small text-body-secondary ligne-decalable">{tournoi.jeu.nomJeu} · Élimination directe</span>
             </div>
-            <div className="col-6 col-md-2 d-flex align-items-center gap-2 mt-2 mt-md-0">
-                <span className={POINT_STATUT[tournoi.statutTournoi]} />
-                {LIBELLES_STATUT[tournoi.statutTournoi]}
-            </div>
-            <div className="col-6 col-md-3 d-flex align-items-center justify-content-end gap-3 mt-2 mt-md-0">
-                <JaugeEquipes inscrites={tournoi.nombreEquipesInscrites} total={tournoi.nombreEquipes} />
-                <span className="small text-body-secondary">{tournoi.nombreEquipesInscrites}/{tournoi.nombreEquipes}</span>
+            <div className="col-12 col-lg-auto d-flex flex-wrap align-items-center gap-3 gap-lg-4 mt-3 mt-lg-0 ligne-infos">
+                <span className="d-flex align-items-center gap-2 ligne-statut">
+                    <span className={POINT_STATUT[tournoi.statutTournoi]} />
+                    {LIBELLES_STATUT[tournoi.statutTournoi]}
+                </span>
+                <span className="ligne-dotation">{dotationAffichee(tournoi)}</span>
+                <span className="d-flex align-items-center gap-3 ms-lg-auto">
+                    <JaugeEquipes inscrites={tournoi.nombreEquipesInscrites} total={tournoi.nombreEquipes} />
+                    <span className="small text-body-secondary">{tournoi.nombreEquipesInscrites}/{tournoi.nombreEquipes}</span>
+                </span>
             </div>
         </li>
     );

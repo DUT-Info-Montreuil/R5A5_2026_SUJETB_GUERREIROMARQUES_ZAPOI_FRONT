@@ -4,8 +4,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Alert, Form, Spinner } from 'react-bootstrap';
 
-import { modifierTournoi } from '../../api/tournois';
-import { useAction } from '../../hooks/useAction';
+import { useModificationTournoi } from '../../hooks/useModificationTournoi';
 import type { Tournoi } from '../../types/api';
 
 interface Props {
@@ -14,13 +13,13 @@ interface Props {
 }
 
 export function FormulaireRenommage({ tournoi, onModifie }: Props) {
-    const { executer, envoi, erreur } = useAction();
+    const { modifier, envoi, erreur } = useModificationTournoi();
     const [ouvert, setOuvert] = useState(false);
     const [nom, setNom] = useState(tournoi.nomTournoi);
 
     async function soumettre(evenement: FormEvent<HTMLFormElement>) {
         evenement.preventDefault();
-        const modifie = await executer(() => modifierTournoi(tournoi.idTournoi, { nomTournoi: nom.trim() }));
+        const modifie = await modifier(tournoi.idTournoi, { nomTournoi: nom.trim() });
         if (modifie) {
             setOuvert(false);
             onModifie(modifie);

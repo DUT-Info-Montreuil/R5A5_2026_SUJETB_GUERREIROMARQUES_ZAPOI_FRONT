@@ -1,6 +1,7 @@
 /**
  * Page /admin/tournois/:idTournoi — la page du tournoi, avec les commandes de
- * l'administrateur : renommer, faire avancer le tournoi, saisir les résultats.
+ * l'administrateur : renommer, faire avancer le tournoi, saisir les résultats,
+ * disqualifier une équipe.
  */
 
 import { useState } from 'react';
@@ -8,6 +9,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import { ActionsTournoi } from '../../components/admin/ActionsTournoi';
 import { FormulaireRenommage } from '../../components/admin/FormulaireRenommage';
+import { ModaleDisqualification } from '../../components/admin/ModaleDisqualification';
 import { ModaleResultat } from '../../components/admin/ModaleResultat';
 import { ArbreTournoi } from '../../components/tournoi/ArbreTournoi';
 import { EnteteTournoi } from '../../components/tournoi/EnteteTournoi';
@@ -15,7 +17,7 @@ import { EtatChargement } from '../../components/tournoi/EtatChargement';
 import { ListeEquipes } from '../../components/tournoi/ListeEquipes';
 import { SectionTournoi } from '../../components/tournoi/SectionTournoi';
 import { useTournoi } from '../../hooks/useTournoi';
-import type { Rencontre, StatutTournoi } from '../../types/api';
+import type { EquipeDuTournoi, Rencontre, StatutTournoi } from '../../types/api';
 
 // Pas de consigne tant que les inscriptions sont ouvertes : l'arbre vide le dit déjà.
 const CONSIGNES: Partial<Record<StatutTournoi, string>> = {
@@ -28,6 +30,7 @@ export function AdminTournoiPage() {
     const idTournoi = Number(useParams().idTournoi);
     const { tournoi, equipes, arbre, erreur, introuvable, recharger } = useTournoi(idTournoi);
     const [aSaisir, setASaisir] = useState<Rencontre | null>(null);
+    const [aDisqualifier, setADisqualifier] = useState<EquipeDuTournoi | null>(null);
 
     if (!tournoi) return <EtatChargement introuvable={introuvable} erreur={erreur} onRecharger={recharger} />;
 
@@ -36,6 +39,14 @@ export function AdminTournoiPage() {
         enCours && rencontre.statutRencontre === 'JOUABLE' ? (
             <button type="button" className="bouton-texte small" onClick={() => setASaisir(rencontre)}>
                 Saisir le résultat
+            </button>
+        ) : null;
+
+    // Une équipe ne se disqualifie qu'en cours de tournoi, tant qu'elle est en lice (B-15).
+    const actionsEquipe = (equipe: EquipeDuTournoi) =>
+        enCours && equipe.statutEquipe === 'EN_LICE' ? (
+            <button type="button" className="bouton-texte small align-self-start" onClick={() => setADisqualifier(equipe)}>
+                Disqualifier
             </button>
         ) : null;
 
@@ -53,8 +64,20 @@ export function AdminTournoiPage() {
             </SectionTournoi>
 
             <SectionTournoi surtitre="Participants" titre="Équipes">
-                <ListeEquipes equipes={equipes} joueursParEquipe={tournoi.jeu.joueursParEquipe} placesLibres={0} />
+                <ListeEquipes equipes={equipes} joueursParEquipe={tournoi.jeu.joueursParEquipe} placesLibres={0} actions={actionsEquipe} />
             </SectionTournoi>
+
+            {aDisqualifier && (
+                <ModaleDisqualification
+                    key={aDisqualifier.idEquipe}
+                    equipe={aDisqualifier}
+                    onFermer={() => setADisqualifier(null)}
+                    onDisqualifiee={() => {
+                        setADisqualifier(null);
+                        recharger();
+                    }}
+                />
+            )}
 
             {aSaisir && (
                 <ModaleResultat

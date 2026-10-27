@@ -1,114 +1,35 @@
 // =============================================================================
-//  Page principale
+//  Accueil et listes : titres de section, chiffres, cartes de tournoi, calendrier,
+//  étapes, appel final. Le hero, le carrousel, les atouts, l'histoire et la FAQ
+//  sont dans _vitrine.scss.
 // =============================================================================
 
-.section-accueil { padding-top: 5.5rem; padding-bottom: 1.5rem; }
 .titre-section { font-size: clamp(2.5rem, 5vw, 4rem); line-height: .95; }
 .texte-section { max-width: 26rem; color: $texte-attenue; }
 
-// --- La une : visuel à droite, voile vers la gauche, onglets en bas ----------
-
-.une {
-  position: relative;
-  min-height: 640px;
-  overflow: hidden;
-  border-bottom: 1px solid $trait;
-
-  &::before {
-    content: "";
-    position: absolute;
-    width: 820px;
-    height: 820px;
-    right: -160px;
-    top: -320px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba($violet, .35), rgba($violet, 0) 65%);
-    animation: derive 18s ease-in-out infinite alternate;
-    pointer-events: none;
-  }
-}
-
-.une-diapositive { position: relative; min-height: 552px; display: flex; }
-
-.une-visuel {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 64%;
-  height: auto;
-
-  .visuel-mot { left: auto; right: -40px; bottom: 40px; font-size: clamp(10rem, 25vw, 22.5rem); animation: recul 12s ease-out both; }
-}
-
-@keyframes recul { from { transform: rotate(-6deg) scale(1.12); } to { transform: rotate(-6deg) scale(1); } }
-
+// Textes d'en-tête de page (tournoi, équipe) : voile, texte, méta et dotation.
 .une-voile {
   position: absolute;
   inset: 0;
   background:
-          linear-gradient(90deg, $fond 0%, rgba($fond, .92) 34%, rgba($fond, .35) 62%, rgba($fond, .2) 100%),
-          linear-gradient(0deg, $fond 0%, rgba($fond, 0) 35%);
+          linear-gradient(90deg, $fond 0%, fond-a(.92) 34%, fond-a(.35) 62%, fond-a(.2) 100%),
+          linear-gradient(0deg, $fond 0%, fond-a(0) 35%);
 }
 
-.une-contenu {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 1.375rem;
-  padding-top: 6rem;
-  padding-bottom: 3rem;
-}
-
-.une-titre { font-size: clamp(3.5rem, 8.5vw, 7.5rem); font-stretch: 68%; line-height: .92; max-width: 900px; }
 .une-texte { max-width: 35rem; font-size: 1.125rem; line-height: 1.55; color: $texte-clair; margin: 0; }
 .une-meta { font-size: .875rem; color: $texte-attenue; }
 
-.une-onglets {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  min-height: 88px;
-  border-top: 1px solid $trait;
-  background: rgba($fond, .72);
-}
-
-.une-onglet {
-  position: relative;
+.une-dotation {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: .25rem;
-  padding: 1rem 1.5rem;
-  border: 0;
-  border-right: 1px solid $trait;
-  background: transparent;
-  color: $texte-attenue;
-  text-align: left;
-  transition: color .2s, background-color .2s;
+  padding-left: 1.25rem;
+  border-left: 1px solid $trait-fort;
+  line-height: 1.2;
 
-  &:hover { color: $texte; background: rgba(255, 255, 255, .03); }
-  &[aria-selected="true"] { color: $texte; }
+  strong { font-size: 1.5rem; font-weight: 900; font-stretch: 75%; color: $lien; }
 }
 
-.une-onglet-titre { font-size: 1.0625rem; font-weight: 600; }
-[aria-selected="true"] .une-onglet-titre { font-weight: 700; }
-
-.une-progression {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -1px;
-  height: 2px;
-  background: $violet;
-  transform-origin: left;
-  animation: progression 6s linear both;
-}
-
-@keyframes progression { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes recul { from { transform: rotate(-8deg) scale(1.12); } to { transform: rotate(-8deg) scale(1); } }
 
 // --- Chiffres de la saison -----------------------------------------------------
 
@@ -129,65 +50,185 @@
   @for $i from 2 through 4 { &:nth-child(#{$i}) { animation-delay: ($i - 1) * .08s; } }
 }
 
-.chiffre-valeur { font-size: clamp(3rem, 6vw, 4rem); line-height: 1; font-variant-numeric: tabular-nums; }
+.chiffre-valeur {
+  font-size: clamp(3rem, 6vw, 4rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(120deg, $texte 30%, $accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 
-// Sur téléphone, les onglets de la une ne gardent que le nom du tournoi.
 @include media-breakpoint-down(md) {
-  .une-onglet { padding: .875rem 1rem; .libelle { display: none; } }
-  .une-onglet-titre { font-size: .9375rem; }
   .chiffre { padding: 1.5rem; border-bottom: 1px solid $trait; }
 }
 
-// --- Jeux ------------------------------------------------------------------------
+// --- Cartes de tournoi -----------------------------------------------------------------
 
-.grille-jeux {
+.grille-tournois {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 310px), 1fr));
+  gap: 1.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.carte-jeu {
+// La carte prend la couleur de son jeu (--jeu-couleur) : bordure, jauge, nom du jeu.
+.carte-tournoi {
+  --jeu-couleur: #{$violet};
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: .375rem;
-  animation: apparition .7s ease-out backwards;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid $trait;
+  background: $surface;
+  transition: transform .35s $courbe, border-color .25s, box-shadow .35s;
 
-  @for $i from 2 through 6 { &:nth-child(#{$i}) { animation-delay: ($i - 1) * .06s; } }
+  // Reflet qui traverse la carte au survol.
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -70%;
+    z-index: 2;
+    width: 40%;
+    background: linear-gradient(100deg, transparent, voile(.1), transparent);
+    transform: skewX(-18deg);
+    pointer-events: none;
+    transition: left .8s $courbe;
+  }
 
-  &:hover .visuel-mot { transform: rotate(-6deg) scale(1.1) translateX(10px); }
-  &:hover .carte-jeu-nom { color: $lien; }
-  &:hover .carte-jeu-trait { transform: scaleX(1); }
+  &:hover {
+    transform: translateY(-6px);
+    border-color: var(--jeu-couleur);
+    box-shadow: 0 20px 48px rgba(var(--c-ombre), .32), 0 0 0 1px var(--jeu-couleur);
+  }
+
+  &:hover::after { left: 140%; }
+  &:hover .visuel-embleme { transform: rotate(-8deg) scale(1.14); }
+  &:hover .carte-tournoi-logo { transform: rotate(-6deg) scale(1.1); }
+  &:hover .carte-tournoi-appel svg { transform: translateX(5px); }
 }
 
-.carte-jeu-visuel { position: relative; height: 300px; margin-bottom: .5rem; border: 1px solid $trait; }
+.carte-tournoi-visuel { position: relative; height: 176px; }
 
-.carte-jeu-compte {
+.carte-tournoi-statut {
   position: absolute;
   top: .875rem;
   left: .875rem;
-  padding: .125rem .5rem;
-  background: rgba($fond, .7);
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .25rem .625rem;
+  background: fond-a(.72);
+  backdrop-filter: blur(8px);
   font-size: .75rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.carte-jeu-nom { font-size: 1.125rem; font-weight: 700; transition: color .2s; }
+.carte-tournoi-dotation {
+  position: absolute;
+  top: .875rem;
+  right: .875rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: .375rem .75rem;
+  background: fond-a(.72);
+  backdrop-filter: blur(8px);
+  line-height: 1.1;
 
-.carte-jeu-trait {
-  height: 2px;
-  background: $violet;
-  transform: scaleX(0);
-  transform-origin: left;
+  .libelle { font-size: .625rem; color: $texte-attenue; }
+  strong { font-size: 1.375rem; font-weight: 900; font-stretch: 72%; color: $lien; }
+}
+
+// Le logo chevauche le bas du visuel.
+.carte-tournoi-logo {
+  position: absolute;
+  left: 1.25rem;
+  bottom: -30px;
+  z-index: 3;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .4);
   transition: transform .35s $courbe;
+}
+
+.carte-tournoi-corps { display: flex; flex: 1; flex-direction: column; gap: .5rem; padding: 2.5rem 1.25rem 1.25rem; }
+
+.carte-tournoi-jeu {
+  font-size: .75rem;
+  color: color-mix(in srgb, var(--jeu-couleur) 72%, var(--c-texte));
+}
+
+.carte-tournoi-titre {
+  font-size: 1.5rem;
+  font-weight: 900;
+  font-stretch: 80%;
+  line-height: 1.05;
+  text-transform: uppercase;
+
+  a { color: inherit; text-decoration: none; }
+}
+
+// Jauge : un segment par place, qui se remplit un à un.
+.carte-tournoi-jauge { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 3px; margin-top: .5rem; }
+.segment { height: 6px; background: $trait-fort; }
+
+.segment-plein {
+  background: var(--jeu-couleur);
+  transform-origin: left;
+  animation: remplit .5s $courbe backwards;
+  animation-delay: calc(var(--i) * 70ms);
+}
+
+@keyframes remplit { from { transform: scaleX(0); } }
+
+.carte-tournoi-pied { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-top: auto; padding-top: .75rem; }
+
+.carte-tournoi-appel {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  color: $accent;
+  font-weight: 700;
+
+  svg { transition: transform .25s $courbe; }
+}
+
+.carte-tournoi-termine { filter: saturate(.65); }
+
+// Entrée en cascade des cartes d'une liste (le rang est posé en variable CSS).
+.entree { animation: apparition .55s ease-out backwards; animation-delay: calc(var(--rang, 0) * 70ms); }
+
+// Bascule cartes / liste.
+.bascule-vue {
+  display: inline-flex;
+  border: 1px solid $trait-fort;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 36px;
+    border: 0;
+    background: transparent;
+    color: $texte-attenue;
+    transition: background-color .2s, color .2s;
+
+    &:hover { color: $texte; }
+    &[aria-pressed="true"] { background: $violet; color: #fff; }
+  }
 }
 
 // --- Calendrier --------------------------------------------------------------------
 
 // Le fond des lignes déborde de 24 px : on le rogne au bord de la section.
-#calendrier { overflow-x: clip; }
+.section-accueil, .section-tournoi { overflow-x: clip; }
 
 .filtre {
   padding: 0;
@@ -212,9 +253,11 @@
 
 .calendrier { margin: 0; padding: 0; list-style: none; border-top: 1px solid $trait; }
 
-// Ligne : le fond glisse depuis la gauche, le titre avance, le visuel grossit.
+// Ligne : le fond glisse depuis la gauche, le titre avance, le logo se soulève.
+// Toute la ligne est cliquable (lien-etendu) ; isolation + z-index -1 laissent le fond sous le texte.
 .ligne-tournoi {
   position: relative;
+  isolation: isolate;
   padding: 1.125rem 0;
   border-bottom: 1px solid $trait;
   animation: apparition .6s ease-out backwards;
@@ -224,6 +267,7 @@
   &::before {
     content: "";
     position: absolute;
+    z-index: -1;
     inset: 0 -24px;
     background: $surface;
     transform: scaleX(0);
@@ -231,17 +275,35 @@
     transition: transform .35s $courbe;
   }
 
-  > * { position: relative; }
   &:hover::before { transform: scaleX(1); }
 
-  .ligne-titre { transition: transform .3s $courbe; }
-  &:hover .ligne-titre { transform: translateX(8px); }
-  &:hover .visuel-mot { transform: rotate(-6deg) scale(1.15); }
+  .ligne-decalable { display: inline-block; transition: transform .3s $courbe; }
+  &:hover .ligne-decalable { transform: translateX(8px); }
+  &:hover .ligne-logo { transform: scale(1.08) rotate(-3deg); border-color: var(--jeu-couleur, #{$violet}); }
+
+  // Filet de la couleur du jeu, à gauche, qui grandit au survol.
+  &::after {
+    content: "";
+    position: absolute;
+    left: -24px;
+    top: 12%;
+    bottom: 12%;
+    width: 3px;
+    background: var(--jeu-couleur, #{$violet});
+    transform: scaleY(0);
+    transition: transform .3s $courbe;
+  }
+
+  &:hover::after { transform: scaleY(1); }
 }
 
-.ligne-visuel { height: 72px; .visuel-mot { font-size: 4rem; left: .625rem; bottom: .375rem; } }
 .ligne-jour { font-size: 2.375rem; font-weight: 900; font-stretch: 70%; line-height: 1; }
 .ligne-nom { font-size: 1.25rem; font-weight: 700; }
+.ligne-statut { min-width: 11rem; }
+.ligne-dotation { min-width: 5rem; font-weight: 800; font-stretch: 80%; color: $lien; }
+.ligne-infos { justify-content: flex-start; }
+
+@include media-breakpoint-up(lg) { .ligne-infos { width: 31rem; } }
 
 // Jauge : une case par place.
 .jauge { display: inline-flex; gap: 3px; }
@@ -252,21 +314,42 @@
 
 .etapes {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 1.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
+  counter-reset: etape;
 }
 
 .etape {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  padding-top: 1.75rem;
-  border-top: 1px solid $trait-fort;
+  height: 100%;
+  padding: 1.75rem;
+  border: 1px solid $trait;
+  background: $surface;
+  transition: border-color .25s, transform .3s $courbe;
 
-  &:hover .etape-icone { transform: translateY(-4px); background: $violet; color: #fff; }
+  // Trait coloré en haut, qui se déploie au survol.
+  &::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    top: -1px;
+    height: 3px;
+    background: linear-gradient(90deg, $violet, #F472B6);
+    transform: scaleX(.18);
+    transform-origin: left;
+    transition: transform .5s $courbe;
+  }
+
+  &:hover { border-color: $trait-fort; transform: translateY(-4px); }
+  &:hover::before { transform: scaleX(1); }
+  &:hover .etape-icone { transform: translateY(-4px) rotate(-4deg); background: $violet; color: #fff; }
   &:hover .etape-numero { -webkit-text-stroke-color: $violet; }
 }
 
@@ -274,10 +357,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   background: $surface-hero;
-  color: $lien;
+  color: $accent;
   transition: transform .35s $courbe, background-color .25s, color .25s;
 }
 
@@ -292,30 +375,47 @@
 
 .etape-titre { margin: 0; font-size: 1.5rem; font-weight: 800; }
 
-// --- Bandeau d'appel ---------------------------------------------------------------
+// --- Appel final -------------------------------------------------------------------
 
 .appel {
   position: relative;
   overflow: hidden;
   isolation: isolate;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 3rem;
-  margin-top: 4rem;
-  padding: clamp(2rem, 5vw, 4rem);
-  background: $violet-profond;
+  min-height: 320px;
+  padding: clamp(2rem, 6vw, 4.5rem);
+  background: linear-gradient(120deg, $violet-profond 0%, $violet-fonce 52%, #C026D3 100%);
 
   &::before {
     content: "";
     position: absolute;
     inset: -60px;
     z-index: -1;
-    background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .06) 0 2px, transparent 2px 18px);
+    background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .07) 0 2px, transparent 2px 18px);
     animation: hachures-visuel 8s linear infinite;
   }
 }
 
-.appel-titre { color: #fff; font-size: clamp(3rem, 6vw, 4.5rem); line-height: .9; }
+.appel-texte-bloc { position: relative; z-index: 1; }
+.appel-titre { color: #fff; font-size: clamp(3rem, 7vw, 5.5rem); line-height: .9; }
 .appel-texte { max-width: 32rem; font-size: 1.125rem; color: $violet-pale; }
+
+// Logos qui flottent à droite du bandeau.
+.appel-logos { position: absolute; right: 4%; top: 0; bottom: 0; width: 38%; z-index: 0; }
+
+.appel-logo {
+  position: absolute;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .35);
+  animation: flotte 5s ease-in-out infinite;
+}
+
+.appel-logo-1 { right: 38%; top: 14%; width: 84px !important; height: 84px !important; }
+.appel-logo-2 { right: 8%; top: 24%; animation-delay: -1.2s; }
+.appel-logo-3 { right: 30%; bottom: 12%; animation-delay: -2.4s; }
+.appel-logo-4 { right: 2%; bottom: 10%; width: 72px !important; height: 72px !important; animation-delay: -3.4s; }
+
+@include media-breakpoint-down(lg) {
+  .appel-logos { opacity: .25; width: 100%; right: 0; }
+  .appel-texte-bloc { z-index: 2; }
+}

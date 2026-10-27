@@ -7,6 +7,10 @@ import '@fontsource-variable/archivo/wdth.css';
 import './styles/main.scss';
 
 import App from './App.tsx';
+import { initialiserTheme } from './theme/theme';
+
+// Avant le premier rendu : le thème choisi par l'utilisateur s'applique sans clignotement.
+initialiserTheme();
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>

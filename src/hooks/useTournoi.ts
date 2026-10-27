@@ -23,6 +23,29 @@ interface Donnees {
     introuvable: boolean;
 }
 
+/** Quelle requête a échoué : « tournoi introuvable » ne se dit que si c'est le tournoi lui-même qui manque. */
+type Etape = 'le tournoi' | 'les équipes' | "l'arbre";
+
+class EchecChargement extends Error {
+    etape: Etape;
+    origine: unknown;
+
+    constructor(etape: Etape, origine: unknown) {
+        super(`Échec du chargement de ${etape}`);
+        this.etape = etape;
+        this.origine = origine;
+    }
+}
+
+function decrireEchec(e: unknown): { introuvable: boolean; erreur: string } {
+    if (!(e instanceof EchecChargement)) return { introuvable: false, erreur: 'Impossible de charger le tournoi.' };
+    const http = e.origine instanceof ErreurHttp ? e.origine : null;
+    if (e.etape === 'le tournoi' && http?.statut === 404) return { introuvable: true, erreur: 'Tournoi introuvable.' };
+    // Une autre requête a échoué (équipes, arbre) : le tournoi existe, on le dit au lieu de mentir.
+    const detail = http ? `${http.message}${http.statut ? ` (HTTP ${http.statut})` : ''}` : 'erreur inattendue';
+    return { introuvable: false, erreur: `Impossible de charger ${e.etape} : ${detail}` };
+}
+
 export function useTournoi(idTournoi: number) {
     const [tentative, setTentative] = useState(0);
     const [donnees, setDonnees] = useState<Donnees | null>(null);
@@ -30,16 +53,20 @@ export function useTournoi(idTournoi: number) {
 
     useEffect(() => {
         let actuelle = true;
-        Promise.all([detailTournoi(idTournoi), equipesDuTournoi(idTournoi), arbreDuTournoi(idTournoi)])
-            .then(([tournoi, equipes, arbre]) => {
-                if (actuelle) setDonnees({ cle, tournoi, equipes, arbre, erreur: null, introuvable: false });
-            })
-            .catch((e: unknown) => {
-                if (!actuelle) return;
-                const introuvable = e instanceof ErreurHttp && e.statut === 404;
-                const erreur = e instanceof ErreurHttp ? e.message : 'Impossible de charger le tournoi.';
-                setDonnees({ cle, tournoi: null, equipes: [], arbre: [], erreur, introuvable });
-            });
+        // allSettled : on attend les trois réponses, puis on juge dans un ordre fixe (le tournoi d'abord).
+        // Avec Promise.all, la première requête à échouer décidait du message, au hasard de la vitesse du réseau.
+        Promise.allSettled([detailTournoi(idTournoi), equipesDuTournoi(idTournoi), arbreDuTournoi(idTournoi)]).then(([tournoi, equipes, arbre]) => {
+            if (!actuelle) return;
+            if (tournoi.status === 'rejected') return signaler(new EchecChargement('le tournoi', tournoi.reason));
+            if (equipes.status === 'rejected') return signaler(new EchecChargement('les équipes', equipes.reason));
+            if (arbre.status === 'rejected') return signaler(new EchecChargement("l'arbre", arbre.reason));
+            setDonnees({ cle, tournoi: tournoi.value, equipes: equipes.value, arbre: arbre.value, erreur: null, introuvable: false });
+        });
+
+        function signaler(echec: EchecChargement) {
+            const { introuvable, erreur } = decrireEchec(echec);
+            setDonnees({ cle, tournoi: null, equipes: [], arbre: [], erreur, introuvable });
+        }
         return () => {
             actuelle = false;
         };
