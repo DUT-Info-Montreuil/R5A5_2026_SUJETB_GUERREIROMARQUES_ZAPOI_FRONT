@@ -1,0 +1,136 @@
+// En-tête commun : marque, navigation soulignée, compte.
+
+.entete {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 72px;
+  border-bottom: 1px solid $trait;
+  background: fond-a(.82);
+  backdrop-filter: blur(16px) saturate(1.4);
+  transition: background-color .25s, border-color .25s;
+}
+
+.marque {
+  display: inline-flex;
+  align-items: center;
+  gap: .75rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: $texte;
+  font-size: 1.625rem;
+  font-weight: 900;
+  font-stretch: 70%;
+  letter-spacing: .01em;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  &:hover { color: $texte; }
+  .marque-accent { color: $accent; }
+  .embleme-vainqueur { fill: $violet; }
+}
+
+.entete-lien {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 72px;
+  color: $texte-attenue;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color .2s;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: $violet;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s $courbe;
+  }
+
+  &:hover { color: $texte; }
+  &:hover::after, &.active::after { transform: scaleX(1); }
+  &.active { color: $texte; font-weight: 600; }
+}
+
+// Carré de recherche, à contour.
+.bouton-carre {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid $trait-fort;
+  background: transparent;
+  color: $texte;
+  transition: border-color .2s, background-color .2s;
+
+  &:hover { border-color: $texte; background: voile(.06); color: $texte; }
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: $violet-fonce;
+  font-size: .75rem;
+  font-weight: 800;
+}
+
+.bouton-texte {
+  border: 0;
+  background: none;
+  color: $texte-attenue;
+  font-weight: 500;
+  transition: color .2s;
+
+  &:hover { color: $texte; }
+}
+
+// Sur téléphone, le logo se réduit pour laisser la place au compte.
+@include media-breakpoint-down(sm) {
+  .entete .marque { font-size: 1.25rem; }
+  .entete a.bouton-carre { display: none; }
+}
+
+// Menu déroulant du téléphone : sous l'en-tête, pleine largeur.
+.menu-mobile {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  padding: .5rem 1.5rem 1rem;
+  border-bottom: 1px solid $trait;
+  background: $fond;
+  animation: apparition .2s ease-out;
+
+  .entete-lien { height: 52px; border-bottom: 1px solid $trait; font-size: 1.0625rem; }
+  .entete-lien::after { bottom: -1px; }
+}
+
+.bouton-menu { background: transparent; }
+
+// Bascule de thème dans le menu du téléphone : une ligne avec son libellé.
+.bouton-theme-large {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  height: 52px;
+  border: 0;
+  background: transparent;
+  color: $texte-attenue;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  text-align: left;
+
+  &:hover { color: $texte; }
+}

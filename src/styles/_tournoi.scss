@@ -1,0 +1,167 @@
+// =============================================================================
+//  Page d'un tournoi (publique et administration) : en-tête, équipes, arbre.
+// =============================================================================
+
+.section-tournoi { padding-top: 4rem; }
+
+// Le nom du tournoi dans le calendrier mène à sa page.
+.ligne-lien {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover { color: $lien; }
+}
+
+// --- En-tête : même langage que la une (visuel à droite, voile vers la gauche) --
+
+.entete-tournoi {
+  position: relative;
+  min-height: 460px;
+  display: flex;
+  overflow: hidden;
+  border-bottom: 1px solid $trait;
+}
+
+.entete-tournoi-visuel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 60%;
+  height: auto;
+
+  .visuel-embleme { right: 4%; bottom: 10%; width: 56%; max-width: 480px; }
+}
+
+.entete-tournoi-contenu {
+  position: relative;
+  z-index: 1;
+  justify-content: flex-end;
+  padding-top: 4.5rem;
+  padding-bottom: 2.5rem;
+}
+
+.entete-tournoi-titre { font-size: clamp(3rem, 7vw, 6rem); font-stretch: 68%; line-height: .92; max-width: 900px; }
+
+.entete-tournoi-etapes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+}
+
+// Confirmation d'une transition : encadrée pour qu'on ne la rate pas.
+.confirmation {
+  padding: .5rem .5rem .5rem 1rem;
+  border: 1px solid $violet;
+  background: fond-a(.8);
+}
+
+.champ-renommage { width: min(22rem, 100%); }
+
+// --- Équipes ---------------------------------------------------------------------
+
+.carte-equipe {
+  display: flex;
+  flex-direction: column;
+  gap: .375rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid $trait;
+  background: $surface;
+}
+
+.carte-equipe-nom { font-size: 1.125rem; font-weight: 700; }
+.carte-equipe-vainqueur { border-color: $violet; box-shadow: inset 3px 0 0 $violet; }
+.carte-equipe-eliminee,
+.carte-equipe-disqualifiee { opacity: .55; }
+
+.carte-equipe-libre {
+  justify-content: center;
+  min-height: 108px;
+  border-style: dashed;
+  background: transparent;
+  color: $texte-discret;
+}
+
+// --- Arbre : une colonne par tour, cartes réparties sur la hauteur ------------------
+
+.arbre {
+  display: grid;
+  grid-auto-columns: minmax(230px, 1fr);
+  grid-auto-flow: column;
+  gap: 2rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.arbre-tour { display: flex; flex-direction: column; gap: 1rem; }
+
+// space-around : chaque carte d'un tour se centre face aux deux qui l'alimentent.
+.arbre-tour-rencontres {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 1.25rem;
+}
+
+.rencontre {
+  border: 1px solid $trait;
+  background: $surface;
+  animation: apparition .5s ease-out backwards;
+}
+
+.rencontre-jouable { border-color: $violet; }
+
+.rencontre-cote {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-height: 44px;
+  padding: 0 .875rem;
+  border-bottom: 1px solid $trait;
+  font-weight: 600;
+}
+
+.rencontre-cote-vide { color: $texte-discret; font-weight: 400; font-style: italic; }
+.rencontre-cote-gagnant { color: $texte; box-shadow: inset 3px 0 0 $violet; }
+.rencontre-cote-perdant { color: $texte-discret; }
+
+.rencontre-score {
+  margin-left: auto;
+  font-size: 1.25rem;
+  font-weight: 900;
+  font-stretch: 70%;
+  font-variant-numeric: tabular-nums;
+}
+
+.rencontre-pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  min-height: 36px;
+  padding: .25rem .875rem;
+}
+
+// --- Administration ------------------------------------------------------------------
+
+.ligne-admin {
+  padding: 1.125rem 0;
+  border-bottom: 1px solid $trait;
+}
+
+// Ligne ou carte entière cliquable : le lien étendu couvre tout, les boutons passent au-dessus.
+.ligne-cliquable,
+.carte-cliquable {
+  position: relative;
+  transition: background-color .2s, border-color .2s;
+
+  &:hover { background: voile(.025); }
+}
+
+.carte-cliquable:hover { border-color: $violet; }
+.carte-actions { position: relative; z-index: 2; }
+
+@include media-breakpoint-down(md) {
+  .entete-tournoi-visuel { width: 100%; opacity: .45; }
+}

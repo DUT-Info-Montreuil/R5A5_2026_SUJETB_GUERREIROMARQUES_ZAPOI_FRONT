@@ -1,0 +1,26 @@
+// Écrans de connexion et d'inscription : accroche à gauche, formulaire à droite.
+
+.ecran-auth { min-height: 100vh; }
+
+.accroche {
+  @include fond-hachure;
+  width: 50%;
+  max-width: 760px;
+  padding: 3rem 4rem 4rem;
+  border-right: 1px solid $trait;
+}
+
+.accroche-titre { font-size: clamp(4rem, 7vw, 7rem); }
+
+.panneau-formulaire { width: 100%; max-width: 26rem; }
+
+.formulaire-titre { font-size: 3rem; }
+
+.bouton-champ {
+  border-color: $trait-fort;
+  color: $texte-attenue;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}

@@ -1,4 +1,4 @@
-# Tournament Organizer — Interface
+# Agôn Cup — Interface
 
 Interface web de la plateforme de tournois de l'association étudiante
 (R5A5, sujet B).
@@ -9,8 +9,35 @@ premier.
 
 | Document | Contenu |
 |---|---|
+| [`API.md`](API.md) | Ce que le front consomme de l'API : appels, écrans, temps réel, état d'avancement |
+| [`CLAUDE.md`](CLAUDE.md) | Règles de travail avec Claude (français, PR obligatoires, pas de secret…) et contexte du projet |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Organisation du code, règles, thème visuel |
 | [`docs/CONTRAT_API.md`](docs/CONTRAT_API.md) | Contrat figé entre le front et le back — identique dans les deux dépôts |
+
+---
+
+## Démarrage rapide : toute la pile avec Docker
+
+Le plus simple pour voir le site fonctionner : la base, l'API et l'interface
+démarrent ensemble avec la configuration du dépôt back (`docker-compose.complet.yml`).
+Les deux dépôts doivent être **côte à côte** :
+
+```bash
+mkdir agon-cup && cd agon-cup
+git clone <adresse du dépôt back>  back
+git clone <adresse du dépôt front> front
+cd back
+docker compose -f docker-compose.complet.yml up --build
+```
+
+Puis ouvrir **http://localhost:8080**. Les comptes de démonstration s'ajoutent
+avec `docker compose -f docker-compose.complet.yml --profile demo run --rm demo`
+(détails dans le README du back).
+
+L'image du front (voir `Dockerfile`) construit le site puis le sert avec nginx,
+qui relaie aussi `/api` et le WebSocket vers l'API : le navigateur ne parle qu'à
+une seule adresse. Pour **développer** avec rechargement automatique, suivre les
+sections suivantes.
 
 ---
 
@@ -40,6 +67,8 @@ VITE_API_URL=http://localhost:5000
 
 À adapter uniquement si l'API tourne ailleurs. Toute variable préfixée
 `VITE_` est visible dans le navigateur : n'y mettez **jamais** de secret.
+Laissée **vide**, l'interface appelle la même adresse que la page : c'est le
+réglage de l'image Docker.
 
 ---
 
@@ -55,6 +84,18 @@ quatre lignes sont vertes, tout est en place.
 
 Le port 5173 doit figurer dans `CORS_ORIGINS` du `.env` du back — c'est la
 valeur par défaut. Sans ça, le navigateur bloque tous les appels à l'API.
+
+---
+
+## Essayer avec des comptes de démonstration
+
+Les comptes et tournois de démonstration sont créés par le **back**
+(`python scripts/donnees_demo.py`, voir son README) : un administrateur
+(`admin@agon-cup.fr`), 40 joueurs (`joueur01@demo.iut.fr` à `joueur40@demo.iut.fr`)
+et treize tournois (six à des étapes différentes, deux ouverts sans équipe, deux en solo, trois de plus pour le palmarès et le direct). Pour tester plusieurs profils en même
+temps, ouvrir des fenêtres de navigation privée distinctes : le cookie de
+session est partagé dans une même fenêtre. Un visiteur est simplement quelqu'un
+qui n'est pas connecté.
 
 ---
 

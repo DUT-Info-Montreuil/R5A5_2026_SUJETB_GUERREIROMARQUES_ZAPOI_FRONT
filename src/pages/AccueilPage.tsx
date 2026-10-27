@@ -1,51 +1,101 @@
 /**
- * Page d'accueil provisoire : elle vérifie que front, API, base et temps réel
- * se parlent. C'est la seule page du socle, et le modèle d'une page qui
- * s'appuie sur un hook. À remplacer par la vraie page d'accueil.
+ * Page d'accueil : une vitrine, pensée pour donner envie de s'inscrire. Elle
+ * enchaîne le hero, les jeux, les chiffres, les tournois à la une, les atouts,
+ * le mode d'emploi, l'histoire, les témoignages, les questions et l'appel final.
+ * La liste complète des tournois est sur /tournois, les jeux sur /jeux.
  */
 
-import { Alert, Badge, Button, Card, ListGroup, Spinner } from 'react-bootstrap';
+import { BandeauAppel } from '../components/accueil/BandeauAppel';
+import { ChiffresSaison } from '../components/accueil/ChiffresSaison';
+import { EnDirect } from '../components/accueil/EnDirect';
+import { Palmares } from '../components/accueil/Palmares';
+import { CommentCaMarche } from '../components/accueil/CommentCaMarche';
+import { EnteteSection } from '../components/accueil/EnteteSection';
+import { NotreHistoire } from '../components/accueil/NotreHistoire';
+import { chiffresDeLaSaison, jeuxPresents } from '../components/accueil/statistiques';
+import { CarteTournoi } from '../components/tournoi/CarteTournoi';
+import { tournoisALaUne } from '../components/tournoi/presentation';
+import { BandeauJeux } from '../components/vitrine/BandeauJeux';
+import { CarrouselTournois } from '../components/vitrine/CarrouselTournois';
+import { HeroVitrine } from '../components/vitrine/HeroVitrine';
+import { PourquoiAgon } from '../components/vitrine/PourquoiAgon';
+import { QuestionsFrequentes } from '../components/vitrine/QuestionsFrequentes';
+import { Revele } from '../components/vitrine/Revele';
+import { Temoignages } from '../components/vitrine/Temoignages';
+import { IconeFleche } from '../components/ui/IconeFleche';
+import { useAuth } from '../context/useAuth';
+import { useJeux } from '../hooks/useJeux';
+import { useTitrePage } from '../hooks/useTitrePage';
+import { useTournois } from '../hooks/useTournois';
+import type { FiltreTournois } from '../types/api';
+import { Link } from 'react-router-dom';
 
-import { useEtatChaine } from '../hooks/useEtatChaine';
-
-function Etat({ ok }: { ok: boolean }) {
-  return <Badge bg={ok ? 'success' : 'danger'}>{ok ? 'opérationnel' : 'injoignable'}</Badge>;
-}
+// Constante hors du composant : même objet à chaque rendu.
+const SANS_FILTRE: FiltreTournois = {};
+const NOMBRE_A_LA_UNE = 4;
+const NOMBRE_DE_CARTES = 3;
 
 export function AccueilPage() {
-  const { sante, erreur, chargement, tempsReel, verifier } = useEtatChaine();
-  const base = sante?.baseDeDonnees;
+    useTitrePage('Accueil');
+    const { utilisateur } = useAuth();
+    const estConnecte = utilisateur !== null;
+    const { tournois, chargement } = useTournois(SANS_FILTRE);
+    const { jeux } = useJeux();
 
-  return (
-    <Card className="mx-auto" style={{ maxWidth: '34rem' }}>
-      <Card.Body className="p-4">
-        <Card.Title as="h1" className="h4 text-uppercase">État de la chaîne</Card.Title>
-        <Card.Text className="text-body-secondary">
-          Front, API, base de données et temps réel.
-        </Card.Text>
+    const nomsDesJeux = jeux.length > 0 ? jeux.map((j) => j.nomJeu) : jeuxPresents(tournois).map((p) => p.jeu.nomJeu);
+    const alaUne = tournoisALaUne(tournois, NOMBRE_A_LA_UNE);
+    const quiRecrute = tournois.filter((t) => t.statutTournoi === 'INSCRIPTIONS_OUVERTES');
+    const chiffres = chiffresDeLaSaison(tournois);
+    const enDirect = tournois.filter((t) => t.statutTournoi === 'EN_COURS').slice(0, 3);
+    const termines = tournois.filter((t) => t.statutTournoi === 'TERMINE').slice(0, 4);
 
-        {erreur && <Alert variant="danger">{erreur}</Alert>}
+    return (
+        <>
+            <HeroVitrine
+                estConnecte={estConnecte}
+                vedette={alaUne[0]}
+                chiffres={chargement ? [] : chiffres.slice(0, 3)}
+                jeux={nomsDesJeux}
+            />
+            <BandeauJeux jeux={nomsDesJeux} />
+            {!chargement && tournois.length > 0 && <ChiffresSaison chiffres={chiffres} />}
 
-        <ListGroup variant="flush" className="mb-3">
-          <ListGroup.Item className="d-flex justify-content-between">
-            API <Etat ok={sante !== null} />
-          </ListGroup.Item>
-          <ListGroup.Item className="d-flex justify-content-between">
-            Base de données <Etat ok={base?.joignable ?? false} />
-          </ListGroup.Item>
-          <ListGroup.Item className="d-flex justify-content-between">
-            Schéma
-            <span>{base?.schemaComplet ? `${base.tables} tables` : '—'}</span>
-          </ListGroup.Item>
-          <ListGroup.Item className="d-flex justify-content-between">
-            Temps réel <Etat ok={tempsReel} />
-          </ListGroup.Item>
-        </ListGroup>
+            {alaUne.length > 0 && (
+                <section className="container-xxl px-4 px-lg-5 section-vitrine d-flex flex-column gap-4">
+                    <Revele><EnteteSection surtitre="À la une" titre="Les tournois du moment" /></Revele>
+                    <Revele delai={100}><CarrouselTournois tournois={alaUne} estConnecte={estConnecte} /></Revele>
+                </section>
+            )}
 
-        <Button className="biseau w-100" onClick={verifier} disabled={chargement}>
-          {chargement ? <Spinner size="sm" /> : 'Revérifier'}
-        </Button>
-      </Card.Body>
-    </Card>
-  );
+            <EnDirect tournois={enDirect} />
+
+            {quiRecrute.length > 0 && (
+                <section className="container-xxl px-4 px-lg-5 section-vitrine d-flex flex-column gap-4">
+                    <Revele>
+                        <EnteteSection surtitre="Inscriptions ouvertes" titre="Il reste de la place">
+                            <Link to="/tournois?statut=INSCRIPTIONS_OUVERTES" className="lien-souligne d-inline-flex align-items-center gap-2">
+                                Tous les tournois ouverts <IconeFleche />
+                            </Link>
+                        </EnteteSection>
+                    </Revele>
+                    <ul className="grille-tournois">
+                        {quiRecrute.slice(0, NOMBRE_DE_CARTES).map((tournoi, i) => (
+                            <li key={tournoi.idTournoi}>
+                                <Revele delai={i * 90} className="h-100"><CarteTournoi tournoi={tournoi} /></Revele>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )}
+
+            <Palmares tournois={termines} />
+
+            <PourquoiAgon />
+            <CommentCaMarche />
+            <NotreHistoire />
+            <Temoignages />
+            <QuestionsFrequentes />
+            <BandeauAppel tournoi={quiRecrute[0]} estConnecte={estConnecte} jeux={nomsDesJeux} />
+        </>
+    );
 }

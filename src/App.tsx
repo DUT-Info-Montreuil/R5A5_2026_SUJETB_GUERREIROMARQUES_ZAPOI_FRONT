@@ -1,15 +1,15 @@
 import { BrowserRouter } from 'react-router-dom';
 
+import { FournisseurAuth } from './context/FournisseurAuth';
 import { Routage } from './routes/Routage';
 
-/**
- * Racine de l'application. Les fournisseurs d'état global (authentification…)
- * viendront envelopper le routage ici, depuis le dossier context/.
- */
+/** Racine : le fournisseur d'authentification enveloppe toutes les pages. */
 export default function App() {
-  return (
-    <BrowserRouter>
-      <Routage />
-    </BrowserRouter>
-  );
+    return (
+        <BrowserRouter>
+            <FournisseurAuth>
+                <Routage />
+            </FournisseurAuth>
+        </BrowserRouter>
+    );
 }

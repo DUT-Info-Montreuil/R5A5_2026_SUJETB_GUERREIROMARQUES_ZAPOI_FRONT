@@ -1,28 +1,54 @@
 // =============================================================================
-//  Thème — surcharge des variables Bootstrap
+//  Thème — « Piste A · Éditorial sport » (toile Design, PisteA.dc.html)
 //
-//  Tout le visuel se règle ici. Aucun composant ne porte de couleur en dur :
-//  changer l'identité du site se fait dans ce fichier, pas dans quarante.
-//  Ce fichier est importé AVANT Bootstrap (voir main.scss) : c'est ce qui
-//  permet à Bootstrap de construire ses composants avec nos valeurs.
+//  Noir neutre, un seul violet d'accent, angles droits, titres condensés.
+//  Importé AVANT Bootstrap (voir main.scss) : Bootstrap construit ses
+//  composants avec ces valeurs. Aucun composant ne porte de couleur en dur.
 // =============================================================================
 
-// --- Palette : noir, blanc, violet -------------------------------------------
-$violet-profond:   #4C1D95;
-$violet:           #8B5CF6;
-$violet-clair:     #C084FC;
-$noir-fond:        #08070C;
-$noir-panneau:     #0C0A14;
-$gris-bordure:     #27272A;
-$blanc:            #F4F4F5;
+// --- Palette sombre : valeurs réelles, que Bootstrap lit en Sass pur ----------------
+$sombre-fond:          #0B0B0D;
+$sombre-surface:       #141418;
+$sombre-surface-hero:  #17171B;
+$sombre-trait:         #222226;
+$sombre-texte:         #F2F1F5;
+$sombre-texte-attenue: #9C9AA6;
+$sombre-texte-discret: #6E6C78;
+$sombre-lien:          #C4B5FD;
+$sombre-lien-survol:   #DDD6FE;
 
-$primary:          $violet;
-$body-bg:          $noir-fond;
-$body-color:       $blanc;
-$border-color:     $gris-bordure;
-$link-color:       $violet-clair;
+// --- Violets : les mêmes dans les deux thèmes ---------------------------------------
+$violet:         #8B5CF6;
+$violet-fonce:   #6D28D9;
+$violet-profond: #5B21B6;
+$violet-pale:    #EDE9FE;
+$violet-focus:   #A78BFA;
+$rouge:          #F87171;
 
-// --- Zéro arrondi : le vocabulaire visuel repose sur l'angle droit ----------
+// --- Couleurs de nos composants : des variables CSS, définies dans _theme.scss ------
+// Un composant écrit `$fond` ou `$texte` ; la valeur dépend du thème choisi.
+$fond:           var(--c-fond);
+$surface:        var(--c-surface);
+$surface-hero:   var(--c-surface-hero);
+$trait:          var(--c-trait);
+$trait-fort:     var(--c-trait-fort);
+$texte:          var(--c-texte);
+$texte-attenue:  var(--c-texte-attenue);
+$texte-discret:  var(--c-texte-discret);
+$texte-clair:    var(--c-texte-clair);
+$contour:        var(--c-contour);
+$lien:           var(--c-lien);
+$lien-survol:    var(--c-lien-survol);
+$accent:         var(--c-accent);
+
+// Les mêmes, avec transparence : `fond-a(.5)`, `voile(.04)` (voile = blanc en sombre, encre en clair).
+@function fond-a($alpha) { @return rgba(var(--c-fond-rgb), $alpha); }
+@function voile($alpha) { @return rgba(var(--c-voile-rgb), $alpha); }
+
+$primary:        $violet;
+$danger:         $rouge;
+
+// --- Angles droits ------------------------------------------------------------
 $enable-rounded:     false;
 $border-radius:      0;
 $border-radius-sm:   0;
@@ -31,7 +57,43 @@ $border-radius-xl:   0;
 $border-radius-xxl:  0;
 $border-radius-pill: 0;
 
-// --- Typographie ------------------------------------------------------------
-$font-family-sans-serif: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-$headings-font-family:   'Chakra Petch', 'Inter', system-ui, sans-serif;
-$headings-font-weight:   700;
+// --- Typographie : Archivo, largeur variable (titres condensés à 70-75 %) -----
+$famille:                'Archivo Variable', 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+$font-family-sans-serif: $famille;
+$headings-font-family:   $famille;
+$headings-font-weight:   900;
+$btn-font-weight:        700;
+
+// --- Champs ---------------------------------------------------------------------
+$input-bg:                 var(--c-surface);
+$input-border-color:       var(--c-trait-fort);
+$input-focus-border-color: $violet;
+$input-focus-box-shadow:   0 0 0 3px rgba($violet, .25);
+$input-padding-y:          .75rem;
+
+// --- Thème clair (data-bs-theme="light") : les réglages de Bootstrap ------------------
+$body-bg:                   #F7F6FB;
+$body-color:                #17151F;
+$body-secondary-color:      #5D5A6B;
+$body-secondary-bg:         #FFFFFF;
+$body-tertiary-bg:          #EFEDF8;
+$body-tertiary-color:       #8A8798;
+$border-color:              #E4E1EE;
+$link-color:                #6D28D9;
+$link-hover-color:          #5B21B6;
+
+// --- Thème sombre (par défaut : index.html pose data-bs-theme="dark") -----------------
+$body-bg-dark:              $sombre-fond;
+$body-color-dark:           $sombre-texte;
+$body-secondary-color-dark: $sombre-texte-attenue;
+$body-secondary-bg-dark:    $sombre-surface;
+$body-tertiary-bg-dark:     $sombre-surface-hero;
+$body-tertiary-color-dark:  $sombre-texte-discret;
+$border-color-dark:         $sombre-trait;
+$link-color-dark:           $sombre-lien;
+$link-hover-color-dark:     $sombre-lien-survol;
+$form-invalid-color-dark:   $rouge;
+$danger-text-emphasis-dark: $rouge;
+
+// --- Mouvement : transform et opacity uniquement, 150 à 300 ms -----------------
+$courbe: cubic-bezier(.2, .7, .1, 1);

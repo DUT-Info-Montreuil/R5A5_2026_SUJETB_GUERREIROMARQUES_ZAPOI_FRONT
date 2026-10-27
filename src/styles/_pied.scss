@@ -1,0 +1,30 @@
+// Pied de page : marque, rubriques, association, contacts.
+
+.pied {
+  padding: 4rem 0 2rem;
+  border-top: 1px solid $trait;
+}
+
+.pied-texte { max-width: 24rem; }
+
+.pied-titre {
+  margin-bottom: .25rem;
+  font-size: .8125rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.pied-bas {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid $trait;
+}
+
+.pied-lien {
+  color: $texte-attenue;
+  text-decoration: none;
+  transition: color .2s, transform .2s;
+
+  &:hover { color: $texte; }
+}

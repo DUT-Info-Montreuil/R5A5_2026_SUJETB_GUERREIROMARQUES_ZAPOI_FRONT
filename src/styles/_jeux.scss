@@ -1,0 +1,70 @@
+// =============================================================================
+//  Page des jeux : une grille de cartes, le visuel du jeu en haut, sa présentation et ses tournois dessous.
+// =============================================================================
+
+.jeux { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 1.5rem; align-items: stretch; }
+
+.jeu {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $trait;
+  background: $surface;
+  animation: apparition .6s ease-out backwards;
+  transition: border-color .25s;
+
+  @for $i from 2 through 9 { &:nth-child(#{$i}) { animation-delay: ($i - 1) * .06s; } }
+
+  &:hover { border-color: $trait-fort; }
+  &:hover .visuel-embleme { transform: rotate(-8deg) scale(1.1); }
+  &:hover .jeu-logo { transform: translateY(-4px) scale(1.04); }
+}
+
+.jeu-visuel { position: relative; height: 180px; flex: none; overflow: hidden; }
+
+.jeu-logo {
+  position: absolute;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .45);
+}
+
+.jeu-corps { flex: 1; padding: 1.75rem 1.5rem 1.5rem; }
+.jeu-nom { font-size: clamp(1.75rem, 3vw, 2.25rem); }
+
+.jeu-tournois { display: flex; flex-direction: column; gap: .5rem; margin-top: auto; }
+.jeu-liste { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; border-top: 1px solid $trait; }
+
+.jeu-tournoi {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .75rem .5rem;
+  border-bottom: 1px solid $trait;
+  color: inherit;
+  text-decoration: none;
+  transition: background-color .2s, padding-left .25s $courbe;
+
+  &:hover { background: voile(.04); padding-left: 1rem; color: $lien; }
+}
+
+.jeu-tournoi-nom { flex: 1; font-weight: 600; }
+.jeu-tournoi-dotation { font-weight: 800; font-stretch: 80%; color: $lien-survol; }
+
+// Barre de filtres du catalogue.
+.barre-filtres { padding-bottom: 1.25rem; border-bottom: 1px solid $trait; }
+
+.case-filtre {
+  display: inline-flex;
+  align-items: center;
+  gap: .625rem;
+  color: $texte-attenue;
+  cursor: pointer;
+  transition: color .2s;
+
+  &:hover { color: $texte; }
+  input { width: 1.125rem; height: 1.125rem; accent-color: $violet; cursor: pointer; }
+}
+
+// Les cartes en attente du catalogue gardent la hauteur d'une vraie carte.
+.jeu.carte-attente { display: block; min-height: 220px; }
+.squelette-puces { display: block; width: 70%; height: 28px; }

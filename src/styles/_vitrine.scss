@@ -1,0 +1,555 @@
+// =============================================================================
+//  Vitrine : hero, bande des jeux, carrousel, atouts, histoire, témoignages, FAQ.
+//  Chaque couleur vient des variables du thème (voir _theme.scss), donc tout
+//  marche en sombre comme en clair.
+// =============================================================================
+
+// --- Hero --------------------------------------------------------------------------------
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: clamp(2.5rem, 7vw, 5.5rem) 0 clamp(3rem, 6vw, 5rem);
+}
+
+.hero-fond { position: absolute; inset: 0; z-index: -1; }
+
+// Trois taches de couleur floues qui dérivent lentement.
+.hero-lueur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: .5;
+  animation: derive-lueur 22s ease-in-out infinite alternate;
+}
+
+.hero-lueur-1 { width: 560px; height: 560px; right: -8%; top: -18%; background: $violet; }
+.hero-lueur-2 { width: 440px; height: 440px; left: -10%; bottom: -22%; background: #F472B6; animation-delay: -7s; opacity: .32; }
+.hero-lueur-3 { width: 360px; height: 360px; right: 22%; bottom: -26%; background: #22D3EE; animation-delay: -13s; opacity: .26; }
+
+[data-bs-theme="light"] .hero-lueur { opacity: .3; }
+[data-bs-theme="light"] .hero-lueur-2 { opacity: .22; }
+[data-bs-theme="light"] .hero-lueur-3 { opacity: .2; }
+
+@keyframes derive-lueur { to { transform: translate(-70px, 50px) scale(1.12); } }
+
+// Quadrillage discret, fondu vers les bords.
+.hero-grille {
+  position: absolute;
+  inset: 0;
+  background-image:
+          linear-gradient(voile(.06) 1px, transparent 1px),
+          linear-gradient(90deg, voile(.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 70% at 60% 40%, #000 25%, transparent 75%);
+}
+
+.hero-contenu {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+.hero-texte { display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem; animation: apparition .9s ease-out both; }
+.hero-pastille { height: 34px; padding: 0 1rem; background: fond-a(.6); backdrop-filter: blur(8px); }
+
+.hero-titre {
+  font-size: clamp(3.2rem, 7.6vw, 6rem);
+  font-stretch: 66%;
+  line-height: .92;
+}
+
+// Deuxième ligne : un dégradé qui défile.
+.hero-titre-degrade {
+  display: block;
+  background: linear-gradient(90deg, #8B5CF6, #F472B6, #F99E1A, #8B5CF6);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: defile-degrade 9s linear infinite;
+}
+
+@keyframes defile-degrade { to { background-position: -300% 0; } }
+
+.hero-sous-titre { max-width: 34rem; font-size: clamp(1.0625rem, 2vw, 1.25rem); line-height: 1.55; color: $texte-clair; }
+
+.hero-chiffres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 2.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid $trait;
+
+  strong { font-size: 1.75rem; font-weight: 900; font-stretch: 72%; }
+  span { color: $texte-attenue; font-size: .9375rem; }
+}
+
+// La scène : l'arbre, les logos qui flottent, la carte du tournoi en vedette.
+.hero-scene { position: relative; padding: 4.25rem 2rem 4.5rem; animation: apparition 1.1s ease-out .2s both; }
+
+.arbre-illustre { display: block; width: 100%; height: auto; overflow: visible; }
+
+.arbre-liaisons path { fill: none; stroke: $trait-fort; stroke-width: 2; }
+
+.arbre-chemin path {
+  fill: none;
+  stroke: url(#arbre-degrade);
+  stroke-width: 3.5;
+  stroke-linecap: square;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: trace 6s ease-in-out infinite;
+}
+
+@keyframes trace { 0% { stroke-dashoffset: 1; } 35%, 82% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -1; } }
+
+.arbre-case rect:first-child { fill: $surface; stroke: $trait-fort; stroke-width: 1.5; }
+.arbre-case-gagnante rect:first-child { stroke: $violet; }
+.arbre-pastille { fill: $trait-fort; }
+.arbre-case-gagnante .arbre-pastille { fill: $violet; }
+.arbre-nom { fill: $texte-discret; opacity: .6; }
+
+.arbre-trophee { animation: flotte 4.5s ease-in-out infinite; }
+
+.hero-flottant { position: absolute; z-index: 2; box-shadow: 0 16px 36px rgba(var(--c-ombre), .35); animation: flotte 5.5s ease-in-out infinite; }
+.hero-flottant-1 { left: 0; top: 0; }
+.hero-flottant-2 { right: 2%; top: 1%; animation-delay: -1.6s; }
+.hero-flottant-3 { right: 0; bottom: 16%; animation-delay: -2.8s; }
+.hero-flottant-4 { left: 1%; bottom: 14%; animation-delay: -3.9s; }
+
+.hero-vedette {
+  position: absolute;
+  left: 50%;
+  bottom: -1.75rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: .875rem;
+  width: max-content;
+  max-width: 94%;
+  padding: .75rem 1rem;
+  border: 1px solid $trait-fort;
+  background: fond-a(.82);
+  backdrop-filter: blur(14px);
+  color: inherit;
+  text-decoration: none;
+  transform: translateX(-50%);
+  box-shadow: 0 16px 40px rgba(var(--c-ombre), .3);
+  transition: border-color .2s, transform .3s $courbe;
+
+  &:hover { border-color: $violet; color: inherit; transform: translateX(-50%) translateY(-3px); }
+  strong { font-size: 1.0625rem; }
+}
+
+// Le seul « en direct » pulsant de l'accueil.
+.hero-direct { display: inline-flex; align-items: center; gap: .5rem; color: #F472B6; font-size: .75rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.hero-direct .point-blanc { background: #F472B6; }
+.hero-direct-calme { color: $texte-attenue; }
+
+@include media-breakpoint-down(lg) {
+  .hero-contenu { grid-template-columns: 1fr; }
+  .hero-scene { max-width: 560px; margin: 1rem auto 2.5rem; width: 100%; }
+}
+
+@include media-breakpoint-down(sm) {
+  .hero-scene { padding: 3.25rem 1rem 4rem; }
+  .hero-flottant { width: 44px !important; height: 44px !important; }
+  .hero-vedette { bottom: -2.25rem; padding: .625rem .75rem; strong { font-size: .9375rem; } }
+}
+
+// --- Bande des jeux (défile en continu) -----------------------------------------------
+
+.bandeau-jeux {
+  position: relative;
+  overflow: hidden;
+  padding: 1.25rem 0 .75rem;
+  border-block: 1px solid $trait;
+  background: $surface;
+  text-align: center;
+}
+
+.bandeau-piste {
+  display: flex;
+  width: max-content;
+  animation: defile 45s linear infinite;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+
+  .bandeau-jeux:hover & { animation-play-state: paused; }
+}
+
+@keyframes defile { to { transform: translateX(-50%); } }
+
+.bandeau-liste { display: flex; flex-shrink: 0; margin: 0; padding: 0; list-style: none; }
+
+.bandeau-jeu {
+  display: flex;
+  align-items: center;
+  gap: .875rem;
+  padding-right: 1.75rem;
+  white-space: nowrap;
+  font-size: 1.125rem;
+  font-weight: 800;
+  font-stretch: 80%;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.bandeau-separateur { color: $accent; opacity: .7; padding-left: .5rem; }
+.bandeau-lien { display: inline-block; margin-top: .75rem; font-size: .875rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bandeau-piste { width: auto; flex-wrap: wrap; justify-content: center; mask-image: none; }
+  .bandeau-liste[aria-hidden] { display: none; }
+  .bandeau-liste { flex-wrap: wrap; justify-content: center; gap: .75rem 0; }
+}
+
+// --- Carrousel « à la une » ---------------------------------------------------------------
+
+.carrousel-piste {
+  display: flex;
+  gap: 24px; // CarrouselTournois.tsx lit cette valeur pour calculer le pas du défilement
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.carrousel-element { flex: 0 0 min(100%, 1120px); scroll-snap-align: start; min-width: 0; }
+
+.diapo {
+  --jeu-couleur: #{$violet};
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  min-height: 480px;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid $trait;
+  border-top: 3px solid var(--jeu-couleur);
+  background: $surface;
+}
+
+.diapo-texte { display: flex; flex-direction: column; justify-content: center; gap: 1.25rem; min-width: 0; padding: clamp(1.5rem, 4vw, 3.25rem); }
+.diapo-jeu { color: color-mix(in srgb, var(--jeu-couleur) 72%, var(--c-texte)); }
+// Le nom du tournoi ne déborde jamais sur le visuel : taille modérée, retour à la ligne
+// possible même dans un mot composé (« Inter-IUT »), équilibré sur les lignes.
+.diapo-titre .insecable { white-space: normal; }
+.diapo-titre {
+  max-width: 100%;
+  font-size: clamp(2rem, 4.2vw, 3.75rem);
+  font-stretch: 66%;
+  line-height: .95;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.diapo-description { max-width: 32rem; color: $texte-clair; font-size: 1.0625rem; line-height: 1.55; }
+
+.diapo-faits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2.25rem;
+
+  span { display: flex; flex-direction: column; line-height: 1.15; }
+  strong { font-size: 1.75rem; font-weight: 900; font-stretch: 72%; }
+  small { color: $texte-attenue; }
+}
+
+.diapo-visuel { position: relative; min-height: 260px; overflow: hidden; }
+
+// La dotation en très grand, en contour, au bas du visuel.
+.diapo-dotation {
+  position: absolute;
+  left: 1.25rem;
+  bottom: .5rem;
+  z-index: 1;
+  color: transparent;
+  -webkit-text-stroke: 2px voile(.55);
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 900;
+  font-stretch: 62%;
+  line-height: 1;
+}
+
+.carrousel-commandes { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.25rem; }
+.carrousel-points { display: flex; gap: .5rem; }
+
+// Zone de clic haute (padding), trait fin (background-clip).
+.carrousel-point {
+  position: relative;
+  width: 48px;
+  height: 22px;
+  padding: 8px 0;
+  border: 0;
+  background: $trait-fort;
+  background-clip: content-box;
+  overflow: hidden;
+
+  &[aria-selected="true"] { background-color: $violet; }
+}
+
+.carrousel-progression {
+  position: absolute;
+  inset: 8px 0;
+  background: $texte;
+  opacity: .55;
+  transform-origin: left;
+  animation: progression linear both;
+}
+
+@keyframes progression { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+@include media-breakpoint-down(lg) {
+  .diapo { grid-template-columns: 1fr; min-height: 0; }
+  .diapo-visuel { order: -1; min-height: 190px; }
+  .diapo-dotation { font-size: 3.5rem; }
+}
+
+// --- Atouts ----------------------------------------------------------------------------------
+
+.atouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.atout {
+  --atout: #{$violet};
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+  padding: 1.75rem;
+  border: 1px solid $trait;
+  background: $surface;
+  transition: border-color .25s, transform .3s $courbe, box-shadow .3s;
+
+  &:hover { border-color: var(--atout); transform: translateY(-5px); box-shadow: 0 18px 40px rgba(var(--c-ombre), .22); }
+  &:hover .atout-icone { transform: rotate(-6deg) scale(1.08); }
+}
+
+.atout-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: color-mix(in srgb, var(--atout) 18%, transparent);
+  color: var(--atout);
+  transition: transform .35s $courbe;
+}
+
+.atout-titre { margin: 0; font-size: 1.375rem; font-weight: 800; }
+
+// --- Histoire : cinq dates, chacune avec son chiffre ---------------------------------------------
+//
+// Trois colonnes par étape : le chiffre (à droite), le rail (la ligne et le point, centrés dans
+// leur colonne), le texte. Le point est à la hauteur de la date, sur la même ligne que son libellé.
+
+.chapitres { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+
+.chapitre {
+  --rail: 28px;
+  display: grid;
+  grid-template-columns: clamp(5rem, 13vw, 8.5rem) var(--rail) minmax(0, 1fr);
+  column-gap: clamp(1rem, 3vw, 2.25rem);
+  align-items: start;
+}
+
+.chapitre-repere,
+.chapitre-texte { padding-bottom: clamp(2.5rem, 6vw, 4.5rem); }
+.chapitre:last-child .chapitre-repere,
+.chapitre:last-child .chapitre-texte { padding-bottom: 0; }
+
+.chapitre-rail {
+  position: relative;
+  align-self: stretch;
+
+  // La ligne court sur toute la hauteur de l'étape, jusqu'à la suivante.
+  &::before {
+    content: "";
+    position: absolute;
+    top: .625rem;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: $trait-fort;
+    transform: translateX(-50%);
+  }
+
+  // Le point, sur la ligne de la date.
+  &::after {
+    content: "";
+    position: absolute;
+    top: .125rem;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    background: $violet;
+    box-shadow: 0 0 0 4px $fond;
+    transform: translateX(-50%);
+  }
+}
+
+.chapitre:last-child .chapitre-rail::before { display: none; }
+
+.chapitre-repere { display: flex; flex-direction: column; align-items: flex-end; gap: .375rem; text-align: right; }
+
+.chapitre-chiffre {
+  color: transparent;
+  -webkit-text-stroke: 1.5px $violet-focus;
+  font-size: clamp(3.25rem, 8vw, 5.75rem);
+  font-stretch: 62%;
+  line-height: .8;
+}
+
+.chapitre-legende { max-width: 9rem; color: $texte-attenue; font-size: .8125rem; line-height: 1.3; }
+
+.chapitre-texte { display: flex; flex-direction: column; gap: .75rem; max-width: 46rem; }
+.chapitre-texte > .libelle { line-height: 1; }
+
+.chapitre-titre { margin: 0; font-size: clamp(1.75rem, 3vw, 2.375rem); font-weight: 900; font-stretch: 85%; }
+
+.chapitre-logos { display: flex; flex-wrap: wrap; gap: .5rem; padding-top: .5rem; }
+
+@include media-breakpoint-down(md) {
+  .chapitre { grid-template-columns: 1fr; row-gap: .5rem; }
+  .chapitre-rail { display: none; }
+  .chapitre-repere { flex-direction: row; align-items: baseline; gap: .75rem; padding-bottom: 0; text-align: left; }
+  .chapitre-legende { max-width: none; }
+  .chapitre-texte { padding-bottom: 2.5rem; }
+}
+
+.histoire-citation {
+  max-width: 48rem;
+  margin-inline: auto !important;
+  padding: 1.5rem 0 0 1.75rem;
+  border-left: 3px solid $violet;
+  font-size: clamp(1.375rem, 3vw, 2rem);
+  font-weight: 800;
+  line-height: 1.25;
+
+  cite { display: block; margin-top: .75rem; font-size: .9375rem; font-style: normal; font-weight: 500; color: $texte-attenue; }
+}
+
+// --- Témoignages -------------------------------------------------------------------------------
+
+.temoignages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.temoignage {
+  --couleur: #{$violet};
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  height: 100%;
+  margin: 0;
+  padding: 2rem;
+  border: 1px solid $trait;
+  border-top: 3px solid var(--couleur);
+  background: $surface;
+  transition: transform .3s $courbe, box-shadow .3s;
+
+  &:hover { transform: translateY(-5px); box-shadow: 0 18px 40px rgba(var(--c-ombre), .22); }
+
+  blockquote { font-size: 1.0625rem; line-height: 1.6; }
+
+  figcaption { display: flex; align-items: center; gap: .875rem; margin-top: auto; }
+}
+
+.temoignage-guillemet { color: var(--couleur); font-size: 5rem; font-weight: 900; line-height: .55; height: 2rem; }
+
+.temoignage-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--couleur);
+  color: #17151F;
+  font-weight: 900;
+}
+
+// --- Questions fréquentes ------------------------------------------------------------------------
+
+.faq {
+  --bs-accordion-bg: transparent;
+  --bs-accordion-border-color: var(--c-trait);
+  --bs-accordion-btn-color: var(--c-texte);
+  --bs-accordion-btn-bg: transparent;
+  --bs-accordion-active-bg: transparent;
+  --bs-accordion-active-color: var(--c-accent);
+  --bs-accordion-btn-focus-box-shadow: none;
+  --bs-accordion-btn-padding-y: 1.375rem;
+  --bs-accordion-btn-padding-x: 0;
+  --bs-accordion-body-padding-x: 0;
+
+  .accordion-button { font-size: 1.125rem; font-weight: 700; box-shadow: none; }
+  .accordion-button:not(.collapsed) { box-shadow: none; }
+  .accordion-body { font-size: 1.0625rem; line-height: 1.6; }
+}
+
+// --- En direct : les matchs des tournois en cours -------------------------------------------------
+
+.direct { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
+
+.direct-carte {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  height: 100%;
+  padding: 1.5rem;
+  border: 1px solid $trait;
+  border-top: 3px solid var(--jeu-couleur, #{$violet});
+  background: $surface;
+}
+
+.direct-titre { font-size: 1.125rem; font-weight: 800; }
+.direct-matchs { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.direct-match { display: flex; flex-direction: column; gap: .375rem; padding: .875rem 0; border-top: 1px solid $trait; }
+.direct-duel { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: .75rem; }
+.direct-equipe { overflow: hidden; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; color: $texte-attenue; &:last-child { text-align: right; } }
+.direct-equipe-gagnante { color: $texte; font-weight: 800; }
+.direct-score { padding: .125rem .625rem; background: $trait; font-weight: 800; font-size: .875rem; white-space: nowrap; }
+
+// --- Palmarès -------------------------------------------------------------------------------------
+
+.palmares { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 1.25rem; margin: 0; padding: 0; list-style: none; }
+
+.palmares-carte {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  height: 100%;
+  padding: 1.5rem;
+  border: 1px solid $trait;
+  border-bottom: 3px solid var(--jeu-couleur, #{$violet});
+  background: $surface;
+  transition: transform .3s $courbe, box-shadow .3s;
+
+  &:hover { transform: translateY(-5px); box-shadow: 0 18px 40px rgba(var(--c-ombre), .22); }
+}
+
+.palmares-coupe { color: #F5C542; }
+.palmares-vainqueur { font-size: 2rem; font-weight: 900; text-transform: uppercase; overflow-wrap: anywhere; }
+.palmares-tournoi { color: $texte; font-weight: 600; text-decoration: none; }
+.palmares-dotation { margin-top: auto; font-size: 1.125rem; font-weight: 800; font-stretch: 80%; color: $lien-survol; }
+
+.squelette-ligne { display: block; width: 70%; height: 1.5rem; }
