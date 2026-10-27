@@ -478,3 +478,7 @@
   .accordion-button:not(.collapsed) { box-shadow: none; }
   .accordion-body { font-size: 1.0625rem; line-height: 1.6; }
 }
+
+// Scène « le tableur de trop » (histoire) : une grille, des cases, quelques erreurs.
+.scene-grille { stroke: $trait-fort; stroke-width: 1; }
+.scene-erreur { fill: $rouge; opacity: .9; animation: clignote 2.4s ease-in-out infinite; }
