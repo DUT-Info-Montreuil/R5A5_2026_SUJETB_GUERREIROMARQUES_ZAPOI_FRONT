@@ -7,6 +7,8 @@
 
 import { BandeauAppel } from '../components/accueil/BandeauAppel';
 import { ChiffresSaison } from '../components/accueil/ChiffresSaison';
+import { EnDirect } from '../components/accueil/EnDirect';
+import { Palmares } from '../components/accueil/Palmares';
 import { CommentCaMarche } from '../components/accueil/CommentCaMarche';
 import { EnteteSection } from '../components/accueil/EnteteSection';
 import { NotreHistoire } from '../components/accueil/NotreHistoire';
@@ -44,6 +46,8 @@ export function AccueilPage() {
     const alaUne = tournoisALaUne(tournois, NOMBRE_A_LA_UNE);
     const quiRecrute = tournois.filter((t) => t.statutTournoi === 'INSCRIPTIONS_OUVERTES');
     const chiffres = chiffresDeLaSaison(tournois);
+    const enDirect = tournois.filter((t) => t.statutTournoi === 'EN_COURS').slice(0, 3);
+    const termines = tournois.filter((t) => t.statutTournoi === 'TERMINE').slice(0, 4);
 
     return (
         <>
@@ -63,6 +67,8 @@ export function AccueilPage() {
                 </section>
             )}
 
+            <EnDirect tournois={enDirect} />
+
             {quiRecrute.length > 0 && (
                 <section className="container-xxl px-4 px-lg-5 section-vitrine d-flex flex-column gap-4">
                     <Revele>
@@ -81,6 +87,8 @@ export function AccueilPage() {
                     </ul>
                 </section>
             )}
+
+            <Palmares tournois={termines} />
 
             <PourquoiAgon />
             <CommentCaMarche />

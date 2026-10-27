@@ -18,6 +18,7 @@ import { VisuelJeu } from '../tournoi/VisuelJeu';
 import { dotationAffichee } from '../tournoi/dotations';
 import { identiteJeu } from '../tournoi/identitesJeux';
 import { LIBELLES_STATUT, POINT_STATUT, dateLongue, descriptionTournoi } from '../tournoi/presentation';
+import { estSolo, motParticipants } from '../tournoi/vocabulaire';
 
 const DUREE_MS = 7000;
 
@@ -37,8 +38,10 @@ function Diapositive({ tournoi, estConnecte }: { tournoi: TournoiResume; estConn
                 <p className="diapo-description m-0">{descriptionTournoi(tournoi)}</p>
                 <div className="diapo-faits">
                     <span><strong>{dotationAffichee(tournoi)}</strong><small>de dotation</small></span>
-                    <span><strong>{tournoi.nombreEquipesInscrites}/{tournoi.nombreEquipes}</strong><small>équipes</small></span>
-                    <span><strong>{tournoi.jeu.joueursParEquipe}</strong><small>{tournoi.jeu.joueursParEquipe > 1 ? 'joueurs' : 'joueur'} par équipe</small></span>
+                    <span><strong>{tournoi.nombreEquipesInscrites}/{tournoi.nombreEquipes}</strong><small>{motParticipants(tournoi.jeu.joueursParEquipe)}</small></span>
+                    {estSolo(tournoi.jeu.joueursParEquipe)
+                        ? <span><strong>Solo</strong><small>en duel</small></span>
+                        : <span><strong>{tournoi.jeu.joueursParEquipe}</strong><small>joueurs par équipe</small></span>}
                 </div>
                 <div className="d-flex flex-wrap align-items-center gap-3 pt-1">
                     <Link to={`/tournois/${tournoi.idTournoi}`} className="btn-principal">
