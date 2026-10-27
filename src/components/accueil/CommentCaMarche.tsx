@@ -14,7 +14,7 @@ interface Etape {
 const ETAPES: Etape[] = [
     {
         titre: 'Monte ton équipe',
-        texte: 'Crée une équipe pour un tournoi et deviens capitaine, ou demande à rejoindre une équipe existante. Cinq joueurs, un rôle chacun.',
+        texte: 'Crée une équipe pour un tournoi et deviens capitaine, ou demande à rejoindre une équipe existante. De un à six joueurs selon le jeu, un rôle chacun.',
         icone: <><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5M19 8v6M16 11h6" /></>,
     },
     {

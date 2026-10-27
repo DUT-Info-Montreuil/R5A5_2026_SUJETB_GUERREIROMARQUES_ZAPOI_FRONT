@@ -22,7 +22,7 @@ export function PiedDePage() {
                             <span>Agôn <span className="marque-accent">Cup</span></span>
                         </Link>
                         <p className="text-body-secondary m-0 pied-texte">
-                            La plateforme de tournois de l'association étudiante : cinq joueurs, un rôle chacun,
+                            La plateforme de tournois de l'association étudiante : une équipe, un rôle chacun,
                             et une finale entre les IUT de la région.
                         </p>
                     </div>
