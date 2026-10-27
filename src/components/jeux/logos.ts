@@ -8,12 +8,13 @@
  * d'origine dans `source`.
  *
  * Overwatch 2 et Rocket League n'y figurent pas : ils n'existent pas dans cette
- * bibliothèque. Tant qu'on n'a pas leur fichier officiel, la tuile affiche leur
- * sigle (voir EmblemeJeu). Minecraft et Pokémon viennent de la version 9.21.0
- * de la bibliothèque : les versions récentes les ont retirés.
- * Pour l'ajouter : copier le fichier dans `public/jeux/` et le déclarer dans
- * FICHIERS_OFFICIELS ci-dessous, par exemple
- * `'Overwatch 2': '/jeux/overwatch-2.svg'`. Le logo apparaît alors partout.
+ * bibliothèque. Choix assumé : on ne récupère pas de logo de marque ailleurs
+ * que dans une source à la licence claire, et la tuile affiche leur sigle
+ * (voir EmblemeJeu). Minecraft et Pokémon viennent de la version 9.21.0 de la
+ * bibliothèque : les versions récentes les ont retirés.
+ * Si un fichier officiel sous licence claire est un jour disponible : le copier
+ * dans `public/jeux/` et le déclarer dans FICHIERS_OFFICIELS ci-dessous, par
+ * exemple `'Overwatch 2': '/jeux/overwatch-2.svg'`. Le logo apparaît alors partout.
  */
 
 export interface LogoVectoriel {

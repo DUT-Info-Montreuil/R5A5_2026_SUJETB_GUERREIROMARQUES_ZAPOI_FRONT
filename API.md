@@ -217,8 +217,9 @@ Règles : un champ facultatif (`?`) correspond à un champ **omis** par l'API
    aucun champ de dotation : une vraie dotation demande une colonne en base et
    un champ dans le contrat (décision à deux, voir `CLAUDE.md`).
    **Logos des jeux** : pictogrammes officiels de la bibliothèque Simple Icons
-   (`components/jeux/logos.ts`), sauf **Overwatch 2** (absent de cette
-   bibliothèque) : son sigle s'affiche en attendant le fichier officiel.
+   (`components/jeux/logos.ts`), sauf **Overwatch 2** et **Rocket League**
+   (absents de cette bibliothèque) : leur sigle s'affiche. Choix assumé : pas de
+   logo de marque récupéré hors d'une source à la licence claire.
    Les marques restent la propriété de leurs éditeurs.
 
 1. **Aucun test automatisé côté front** : pas de test runner dans `package.json`.
