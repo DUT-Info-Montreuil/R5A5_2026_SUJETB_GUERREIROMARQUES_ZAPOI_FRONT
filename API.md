@@ -171,7 +171,15 @@ pour ne pas se réabonner à chaque rendu.
 Rappel : **pas de rejeu des événements manqués** pendant une coupure. Le motif
 suivi est « snapshot HTTP, puis deltas par événements ».
 
-### Le chat d'équipe (`useChatEquipe`)
+### La messagerie latérale (`useMessagerie`, `FournisseurMessagerie`)
+
+Les membres discutent depuis un **tiroir à droite de l'écran**, ouvert par un bouton « Messages » en bas
+à gauche, présent sur toutes les pages. Un badge compte les messages non lus (ceux des autres, plus
+récents que le dernier vu ; le dernier vu est gardé dans le navigateur, par utilisateur). Une seule série
+d'écouteurs suit **toutes** les équipes en lice (hors jeux en solo). L'administrateur, qui ne joue pas,
+n'a pas de messagerie : il lit l'espace d'une équipe depuis sa page (`useChatEquipe`, lecture seule).
+
+### Le chat d'équipe (`useChatEquipe`, lecture seule de l'administrateur)
 
 1. snapshot : `GET /api/equipes/{id}/messages` ;
 2. `equipe:suivre` à chaque connexion ; si l'accusé est `{ ok: false }`, l'espace est considéré comme inaccessible (le serveur ne dit pas pourquoi) ;

@@ -8,6 +8,7 @@
 import { Form } from 'react-bootstrap';
 
 import type { Membre, RoleJeu } from '../../types/api';
+import { IconePoste } from '../jeux/IconePoste';
 import { BoutonConfirme } from '../ui/BoutonConfirme';
 
 interface Props {
@@ -40,7 +41,12 @@ export function CarteMembre({
             </span>
             {membre.estCapitaine && <span className="libelle small">Capitaine</span>}
 
-            {peutGerer ? (
+            <span className="poste-membre">
+                {membre.role && <IconePoste libelle={membre.role.libelleRole} taille={18} />}
+                <span className="small text-body-secondary">{membre.role?.libelleRole ?? 'Poste à attribuer'}</span>
+            </span>
+
+            {peutGerer && (
                 <Form.Select
                     size="sm"
                     aria-label={`Poste de ${membre.pseudo}`}
@@ -55,8 +61,6 @@ export function CarteMembre({
                         </option>
                     ))}
                 </Form.Select>
-            ) : (
-                <span className="small text-body-secondary">{membre.role?.libelleRole ?? 'Poste à attribuer'}</span>
             )}
 
             {peutGerer && !membre.estCapitaine && (

@@ -1,5 +1,6 @@
 /** Libellés, dates et textes d'affichage des tournois, partagés par les composants. */
 
+import { estSolo, participants } from './vocabulaire';
 import type { StatutEquipe, StatutTournoi, TournoiResume, TypeResultat } from '../../types/api';
 
 export const LIBELLES_STATUT: Record<StatutTournoi, string> = {
@@ -45,11 +46,11 @@ export function descriptionTournoi(t: TournoiResume): string {
     const places = placesRestantes(t);
     switch (t.statutTournoi) {
         case 'EN_COURS':
-            return `${t.nombreEquipesInscrites} équipes s'affrontent en élimination directe. Le tournoi est lancé : les résultats s'affichent au fil des matchs.`;
+            return `${participants(t.jeu.joueursParEquipe, t.nombreEquipesInscrites)} s'affrontent en élimination directe. Le tournoi est lancé : les résultats s'affichent au fil des matchs.`;
         case 'INSCRIPTIONS_OUVERTES':
-            return `Montez votre équipe de ${t.jeu.joueursParEquipe} joueurs et réservez votre place. Encore ${places} ${places > 1 ? 'places' : 'place'} sur ${t.nombreEquipes} avant la clôture.`;
+            return `${estSolo(t.jeu.joueursParEquipe) ? 'Inscrivez-vous en solo' : `Montez votre équipe de ${t.jeu.joueursParEquipe} joueurs`} et réservez votre place. Encore ${places} ${places > 1 ? 'places' : 'place'} sur ${t.nombreEquipes} avant la clôture.`;
         case 'INSCRIPTIONS_CLOSES':
-            return `Les ${t.nombreEquipesInscrites} équipes sont connues et l'arbre est prêt. Le coup d'envoi approche.`;
+            return `Les ${participants(t.jeu.joueursParEquipe, t.nombreEquipesInscrites)} sont connus et l'arbre est prêt. Le coup d'envoi approche.`;
         case 'TERMINE':
             return "Le tournoi est terminé. L'arbre complet reste consultable.";
     }
@@ -69,6 +70,13 @@ export const LIBELLES_RESULTAT: Record<TypeResultat, string> = {
 };
 
 const NOMS_DES_TOURS = ['Finale', 'Demi-finales', 'Quarts de finale', 'Huitièmes de finale'];
+
+const NOMS_D_UN_MATCH = ['Finale', 'Demi-finale', 'Quart de finale', 'Huitième de finale'];
+
+/** Nom d'un match (au singulier), pour une rencontre prise seule : « Demi-finale ». */
+export function nomDuMatch(tour: number, nombreDeTours: number): string {
+    return NOMS_D_UN_MATCH[nombreDeTours - tour] ?? `Tour ${tour}`;
+}
 
 /** Nom d'un tour, compté depuis la finale : le dernier tour est toujours la finale. */
 export function nomDuTour(tour: number, nombreDeTours: number): string {

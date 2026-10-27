@@ -47,7 +47,9 @@ R5A5_..._FRONT/
     ├── context/
     │   ├── AuthContext.ts             Forme de l'état + objet contexte
     │   ├── FournisseurAuth.tsx        Le composant qui porte l'état
-    │   └── useAuth.ts                 Lecture de l'état depuis un composant
+    │   ├── useAuth.ts                 Lecture de l'état depuis un composant
+    │   ├── MessagerieContext.ts, useMessagerieContexte.ts   Ce que les pages savent de la messagerie (ouvrir, non lus)
+    │   └── FournisseurMessagerie.tsx  Suit toutes les équipes en lice et monte le tiroir de messages
     ├── hooks/                         useConnexion, useInscription, useTournois, useEtatChaine,
     │                                  useTheme (sombre / clair), useTitrePage, useCompteurAnime, useMouvementReduit,
     │                                  useTournoi (+ useSuiviTournoi : temps réel), useJeux, usePostes,
@@ -56,7 +58,9 @@ R5A5_..._FRONT/
     │                                  useDisqualification ; équipes : useEquipe, useCreationEquipe,
     │                                  useDemandeAdhesion, useDemandesEquipe, useGestionEquipe,
     │                                  useMesParticipations, useRechargeAuRetour ;
-    │                                  chat : useChatEquipe (snapshot + événements + reconnexion)
+    │                                  chat : useMessagerie (toutes mes équipes : snapshot + événements + non lus),
+    │                                  useChatEquipe (une équipe, lecture seule de l'administrateur) ;
+    │                                  useInscriptionSolo, useVainqueur
     ├── components/
     │   ├── ui/                        Marque (et son emblème), IconeFleche, ChampTexte, ChampMotDePasse
     │   ├── layout/                    MiseEnPage, EnTete (menu mobile), ZoneCompte, PiedDePage,

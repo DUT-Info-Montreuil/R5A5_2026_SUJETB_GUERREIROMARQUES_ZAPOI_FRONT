@@ -102,7 +102,10 @@ Claude le signale et demande confirmation.
 | Page publique d'un tournoi : en-tête, arbre, équipes, **mise à jour en temps réel** (B-02, B-19) | ✅ |
 | Administration : liste, création, renommage, transitions d'état, saisie des résultats (B-01, B-03, B-04, B-13, B-14, B-15) | ✅ |
 | **Équipes** : créer, demander à rejoindre, gérer (postes, demandes, passation, exclusion, quitter), « Mes équipes » (B-05 à B-11) | ✅ |
-| **Chat d'équipe** en temps réel + perte d'accès immédiate, reconnexion, dédoublonnage (B-16 à B-18) | ✅ |
+| **Messagerie** en tiroir à droite, bouton « Messages » en bas à gauche, badge de non lus, toutes les équipes en lice ; temps réel, perte d'accès immédiate, reconnexion, dédoublonnage (B-16 à B-18) | ✅ |
+| **Jeux en solo** (échecs, EA FC, Pokémon) : inscription en un clic, ni équipe, ni postes, ni chat | ✅ |
+| **Un administrateur ne joue pas** : pas de bouton pour s'inscrire (l'API répond 403) | ✅ |
+| Icônes des postes (Lucide, ISC) ; accueil avec « En direct » et « Palmarès » ; histoire en frise | ✅ |
 | Disqualification d'une équipe par l'administrateur (B-15) | ✅ |
 | Avertissement « équipe incomplète » (joueurs ou postes manquants) pour le capitaine, avant le lancement (B-08) | ✅ |
 | Tests automatisés front | ❌ aucun (pas de test runner installé) |

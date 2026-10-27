@@ -9,6 +9,7 @@ import { LignesDeTitre } from './LignesDeTitre';
 import { VisuelJeu } from './VisuelJeu';
 import { dotationAffichee } from './dotations';
 import { LIBELLES_STATUT, POINT_STATUT, dateLongue, descriptionTournoi } from './presentation';
+import { formatDuJeu, motParticipants } from './vocabulaire';
 
 interface Props {
     tournoi: Tournoi;
@@ -49,7 +50,7 @@ export function EnteteTournoi({ tournoi, surtitre, retour = { vers: '/tournois',
                         <strong>{dotationAffichee(tournoi)}</strong>
                     </span>
                     <span className="une-meta">
-                        {tournoi.nombreEquipesInscrites}/{tournoi.nombreEquipes} équipes · {tournoi.jeu.joueursParEquipe} {tournoi.jeu.joueursParEquipe > 1 ? 'joueurs' : 'joueur'} par équipe · Élimination directe
+                        {tournoi.nombreEquipesInscrites}/{tournoi.nombreEquipes} {motParticipants(tournoi.jeu.joueursParEquipe)} · {formatDuJeu(tournoi.jeu.joueursParEquipe)} · Élimination directe
                     </span>
                 </div>
                 <p className="une-texte m-0">{descriptionTournoi(tournoi)}</p>

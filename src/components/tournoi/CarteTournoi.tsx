@@ -15,6 +15,7 @@ import { VisuelJeu } from './VisuelJeu';
 import { dotationAffichee } from './dotations';
 import { identiteJeu } from './identitesJeux';
 import { LIBELLES_STATUT, POINT_STATUT, dateLongue, placesRestantes } from './presentation';
+import { participants } from './vocabulaire';
 
 function appelALAction(tournoi: TournoiResume): string {
     switch (tournoi.statutTournoi) {
@@ -26,7 +27,7 @@ function appelALAction(tournoi: TournoiResume): string {
 }
 
 function messageDeRemplissage(tournoi: TournoiResume): string {
-    if (tournoi.statutTournoi !== 'INSCRIPTIONS_OUVERTES') return `${tournoi.nombreEquipesInscrites} équipes`;
+    if (tournoi.statutTournoi !== 'INSCRIPTIONS_OUVERTES') return participants(tournoi.jeu.joueursParEquipe, tournoi.nombreEquipesInscrites);
     const places = placesRestantes(tournoi);
     return places === 0 ? 'Complet' : `${places} ${places > 1 ? 'places' : 'place'} restante${places > 1 ? 's' : ''}`;
 }
@@ -55,7 +56,7 @@ export function CarteTournoi({ tournoi }: { tournoi: TournoiResume }) {
                 </h3>
                 <span className="small text-body-secondary">{dateLongue(tournoi.creeLe)} · Élimination directe</span>
 
-                <div className="carte-tournoi-jauge" role="img" aria-label={`${tournoi.nombreEquipesInscrites} équipes inscrites sur ${tournoi.nombreEquipes}`}>
+                <div className="carte-tournoi-jauge" role="img" aria-label={`${participants(tournoi.jeu.joueursParEquipe, tournoi.nombreEquipesInscrites)} inscrits sur ${tournoi.nombreEquipes}`}>
                     {Array.from({ length: tournoi.nombreEquipes }, (_, i) => (
                         <span key={i} className={i < tournoi.nombreEquipesInscrites ? 'segment segment-plein' : 'segment'} style={{ '--i': i } as CSSProperties} />
                     ))}

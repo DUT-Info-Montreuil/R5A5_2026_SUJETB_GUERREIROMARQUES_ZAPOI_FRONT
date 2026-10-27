@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 import type { EquipeDuTournoi } from '../../types/api';
 import { LIBELLES_STATUT_EQUIPE } from './presentation';
+import { estSolo } from './vocabulaire';
 
 interface Props {
     equipes: EquipeDuTournoi[];
@@ -17,7 +18,7 @@ interface Props {
 
 export function ListeEquipes({ equipes, joueursParEquipe, placesLibres, actions }: Props) {
     if (equipes.length === 0 && placesLibres === 0) {
-        return <p className="text-body-secondary m-0">Aucune équipe inscrite.</p>;
+        return <p className="text-body-secondary m-0">{estSolo(joueursParEquipe) ? 'Aucun joueur inscrit.' : 'Aucune équipe inscrite.'}</p>;
     }
 
     return (
@@ -30,9 +31,11 @@ export function ListeEquipes({ equipes, joueursParEquipe, placesLibres, actions 
                             <Link to={`/equipes/${equipe.idEquipe}`} className="carte-equipe-nom text-truncate ligne-lien lien-etendu">
                                 {equipe.nomEquipe}
                             </Link>
-                            <span className="small text-body-secondary">
-                                {equipe.nombreMembres}/{joueursParEquipe} joueurs{complete ? '' : ' · incomplète'}
-                            </span>
+                            {!estSolo(joueursParEquipe) && (
+                                <span className="small text-body-secondary">
+                                    {equipe.nombreMembres}/{joueursParEquipe} joueurs{complete ? '' : ' · incomplète'}
+                                </span>
+                            )}
                             <span className="libelle small mt-auto">{LIBELLES_STATUT_EQUIPE[equipe.statutEquipe]}</span>
                             {equipe.motifSortie && <span className="small text-body-secondary">{equipe.motifSortie}</span>}
                             {/* Au-dessus du lien étendu : les boutons restent cliquables. */}

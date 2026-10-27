@@ -8,6 +8,7 @@ import { VisuelJeu } from '../tournoi/VisuelJeu';
 import { dotationAffichee } from '../tournoi/dotations';
 import { identiteJeu } from '../tournoi/identitesJeux';
 import { LIBELLES_STATUT, POINT_STATUT } from '../tournoi/presentation';
+import { IconePoste } from './IconePoste';
 import { LogoJeu } from './LogoJeu';
 
 interface Props {
@@ -37,7 +38,11 @@ export function CarteJeu({ jeu, tournois }: Props) {
                     <span className="squelette squelette-puces" aria-hidden="true" />
                 ) : postes.length > 0 && (
                     <ul className="puces" aria-label={jeu.joueursParEquipe > 1 ? `Postes de ${jeu.nomJeu}` : `Format de ${jeu.nomJeu}`}>
-                        {postes.map((poste) => <li key={poste.idRole} className="puce">{poste.libelleRole}</li>)}
+                        {postes.map((poste) => (
+                            <li key={poste.idRole} className="puce">
+                                <IconePoste libelle={poste.libelleRole} nomJeu={jeu.nomJeu} taille={15} /> {poste.libelleRole}
+                            </li>
+                        ))}
                     </ul>
                 )}
 
