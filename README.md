@@ -20,8 +20,12 @@ premier.
 
 Le plus simple pour voir le site fonctionner (et pour la correction) : la base,
 l'API et l'interface démarrent ensemble avec la configuration du dépôt back
-(`docker-compose.complet.yml`). Il ne faut que **Docker Desktop** (démarré) et
-**Git**. Les deux dépôts doivent être **côte à côte**. Dans **PowerShell** :
+(`docker-compose.complet.yml`). Il ne faut que **Docker Desktop** (lancé) et
+**Git**. Sous Windows, Docker Desktop a besoin de **WSL 2** : l'installation de
+WSL (`wsl --install` dans un PowerShell administrateur, puis redémarrage) et de
+Docker Desktop est détaillée dans le README du dépôt back, section « Windows :
+installer Docker Desktop et WSL ». Les deux dépôts doivent être **côte à côte**.
+Dans **PowerShell** :
 
 ```powershell
 mkdir agon-cup
@@ -53,6 +57,7 @@ sections suivantes.
 
 - **Node.js 22** (avec npm 10) — la version avec laquelle le front est testé
   et construit dans l'image Docker
+- Pour la pile Docker sous Windows : **Docker Desktop** et **WSL 2** (README du back)
 - L'**API back-end démarrée** — voir le README du dépôt back (Python 3.13,
   PostgreSQL 16 dans Docker)
 
