@@ -204,39 +204,3 @@ n'a pas de messagerie : il lit l'espace d'une équipe depuis sa page (`useChatEq
 Règles : un champ facultatif (`?`) correspond à un champ **omis** par l'API
 (jamais `null`) ; les dates sont des chaînes ISO 8601 ; ce fichier se modifie
 **en même temps** que le contrat, dans les deux dépôts.
----
-
-## 6. Limites connues
-
-À connaître avant l'oral.
-
-0. **Contenus éditoriaux fictifs, non fournis par l'API** : l'histoire d'Agôn Cup
-   (`NotreHistoire.tsx`), les témoignages (`Temoignages.tsx`), les coordonnées du pied de page, et la **dotation**
-   (« cash prize ») des tournois, calculée dans `components/tournoi/dotations.ts`
-   à partir du jeu et de la taille de l'arbre. Le schéma et le contrat n'ont
-   aucun champ de dotation : une vraie dotation demande une colonne en base et
-   un champ dans le contrat (décision à deux, voir `CLAUDE.md`).
-   **Logos des jeux** : pictogrammes officiels de la bibliothèque Simple Icons
-   (`components/jeux/logos.ts`), sauf **Overwatch 2** et **Rocket League**
-   (absents de cette bibliothèque) : leur sigle s'affiche. Choix assumé : pas de
-   logo de marque récupéré hors d'une source à la licence claire.
-   Les marques restent la propriété de leurs éditeurs.
-
-1. **Tests front ciblés, pas de bout en bout** : `npm test` (Vitest, `src/__tests__/`)
-   (25 tests) couvre le client HTTP, `RouteProtegee`, le hook du chat et le diagnostic
-   du temps réel, avec un socket et une API simulés. Les écrans ne sont pas tous testés ; les parcours complets se jouent
-   à la main avec les données de démonstration du back
-   (`python scripts/donnees_demo.py`). Les droits d'accès, eux, sont testés côté
-   back, seul endroit où ils comptent.
-2. **L'interface cache, le serveur refuse.** Les boutons masqués ou grisés
-   (capitaine, administrateur, composition figée) sont du confort : la sécurité
-   est dans l'API (403/404 testés).
-3. **Le chat charge tout l'historique, sans pagination** (décision du contrat
-   §6) : un très long historique alourdirait la page.
-4. **Un capitaine seul ne peut pas « quitter » son équipe** : le back refuse (`422`),
-   car il n'a personne à qui passer la main. Il peut en revanche **la dissoudre**
-   (« Se désister », `DELETE /api/equipes/{id}`), tant que les inscriptions sont
-   ouvertes ; l'interface lui propose ce bouton à la place de « Quitter ».
-5. **Les demandes d'adhésion et les postes ne sont pas poussés en temps réel** :
-   `useRechargeAuRetour` relit les données quand on revient sur l'onglet, plutôt
-   qu'un polling permanent.
