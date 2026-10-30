@@ -1,5 +1,17 @@
 # Agôn Cup — Interface
 
+![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript 6](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
+![Vite 8](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Bootstrap 5.3](https://img.shields.io/badge/Bootstrap-5.3-7952B3?logo=bootstrap&logoColor=white)
+![Socket.IO client](https://img.shields.io/badge/Socket.IO-temps%20r%C3%A9el-010101?logo=socketdotio&logoColor=white)
+![React Router 7](https://img.shields.io/badge/React%20Router-7-CA4245?logo=reactrouter&logoColor=white)
+![Sass](https://img.shields.io/badge/Sass-1.x-CC6699?logo=sass&logoColor=white)
+![oxlint](https://img.shields.io/badge/lint-oxlint-2A7FFF)
+![Docker nginx](https://img.shields.io/badge/Docker-nginx-2496ED?logo=docker&logoColor=white)
+![Tests Vitest 25](https://img.shields.io/badge/tests-25%20Vitest-6E9F18?logo=vitest&logoColor=white)
+![R5A5 sujet B](https://img.shields.io/badge/R5A5-sujet%20B-8A2BE2)
+
 Interface web de la plateforme de tournois de l'association étudiante
 (R5A5, sujet B).
 
