@@ -126,11 +126,70 @@ qui n'est pas connecté.
 Avant une pull request : `npm test`, puis `npm run build`, qui échoue à la
 moindre erreur de typage (tests compris), puis `npm run lint`.
 
-Les tests vivent dans `src/__tests__/`. Ils couvrent le client HTTP (cookie
-joint, traduction des erreurs, réaction au 401), `RouteProtegee`, et l'espace
+Les tests (25) vivent dans `src/__tests__/`. Ils couvrent le client HTTP (cookie
+joint, traduction des erreurs, réaction au 401), `RouteProtegee`, l'espace
 d'échange (`useChatEquipe` : dédoublonnage, perte d'accès immédiate, relecture
-après reconnexion). Le socket et l'API y sont remplacés par des doublures :
+après reconnexion) et le diagnostic du temps réel (`useEtatChaine` : transport,
+erreur de connexion). Le socket et l'API y sont remplacés par des doublures :
 aucun back n'est nécessaire.
+
+---
+
+## Les écrans
+
+| Adresse | Page | Qui y accède |
+|---|---|---|
+| `/` | Accueil : tournois en direct, palmarès, jeux, histoire, FAQ | Tout le monde |
+| `/tournois`, `/tournois/:id` | Liste filtrable ; détail avec arbre et équipes, **à jour en temps réel** | Tout le monde |
+| `/jeux` | Catalogue des jeux, leurs postes et leurs tournois | Tout le monde |
+| `/connexion`, `/inscription` | Authentification | Tout le monde |
+| `/equipes/:id` | Équipe : composition, gestion (capitaine), demandes | Public ; gestion réservée au capitaine |
+| `/mes-equipes` | Mon prochain match, mes équipes et mes demandes | Joueur connecté |
+| `/admin/tournois`, `/admin/tournois/:id` | Créer, faire avancer, saisir les résultats | Administrateur |
+| `/diagnostic` | État de la chaîne front → API → base → temps réel | Tout le monde |
+
+La messagerie d'équipe est un **tiroir** ouvert depuis le bouton « Messages » en
+bas à gauche, présent sur toutes les pages pour un joueur connecté. Les pages
+d'administration sont chargées à la demande (`React.lazy`) : un visiteur ne
+télécharge pas leur code.
+
+---
+
+## Organisation du code
+
+```
+src/
+├── api/          Seule couche qui parle au réseau : un fetch, une connexion Socket.IO
+├── types/        Le contrat d'API en TypeScript
+├── context/      État global : session, messagerie
+├── hooks/        Orchestration d'un écran : appel, chargement, erreur, temps réel
+├── components/   Ce qui s'affiche, rangé par domaine (tournoi, equipe, admin, chat…)
+├── pages/        Une page par route
+├── routes/       Déclaration des routes, RouteProtegee
+├── styles/       Thème Bootstrap surchargé en Sass, sombre et clair
+└── __tests__/    Tests Vitest
+```
+
+Une page n'appelle jamais `api/` directement : elle passe par un hook. Le détail
+des règles est dans [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+---
+
+## Image Docker de production
+
+Le `Dockerfile` a deux étapes : `node:22-alpine` construit le site (`npm ci`,
+`npm run build`), puis `nginx:1.27-alpine` sert le dossier `dist/`.
+`nginx.conf` fait trois choses :
+
+- sert l'application, et renvoie `index.html` pour toute adresse inconnue (le
+  routage est côté navigateur) ;
+- relaie `/api`, `/health`, `/apidoc` et `/socket.io` vers le service `api` ;
+  le navigateur ne parle donc qu'à **une seule adresse**, sans CORS ;
+- plafonne à 20 les connexions temps réel par adresse et pose les en-têtes de sécurité.
+
+`VITE_API_URL` est **vide** dans l'image (même adresse que la page). Cette image
+ne démarre que dans la pile du dépôt back, où l'hôte `api` existe :
+`docker compose -f docker-compose.complet.yml up --build` (voir plus haut).
 
 ---
 
