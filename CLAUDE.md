@@ -209,7 +209,7 @@ Le front **affiche** et **demande** ; c'est le back qui **décide**.
 
 ---
 
-## 6. Temps réel (4 points) — règles tirées du cours
+## 6. Temps réel — règles tirées du cours
 
 Canal : **Socket.IO** (`socket.io-client`), parce que le back utilise
 Flask-SocketIO. Un `WebSocket` natif ne peut **pas** parler à un serveur
