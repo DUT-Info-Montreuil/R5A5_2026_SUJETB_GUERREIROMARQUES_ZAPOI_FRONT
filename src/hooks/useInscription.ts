@@ -11,7 +11,8 @@ function messageErreur(e: unknown): string {
     // 409 : l'API précise lequel, du pseudo ou de l'e-mail, est déjà pris.
     if (e instanceof ErreurHttp && (e.statut === 409 || e.statut === 0)) return e.message;
     if (e instanceof ErreurHttp && e.statut === 400) return 'Vérifiez les champs : un format ne convient pas.';
-    if (e instanceof ErreurHttp && e.statut === 429) return 'Trop de tentatives. Réessayez dans une minute.';
+    // 10 inscriptions par heure et par adresse (contrat v13) : la connexion, elle, se compte à la minute.
+    if (e instanceof ErreurHttp && e.statut === 429) return "Trop de tentatives d'inscription depuis cette adresse. Réessayez dans une heure.";
     return "L'inscription a échoué. Réessayez.";
 }
 
