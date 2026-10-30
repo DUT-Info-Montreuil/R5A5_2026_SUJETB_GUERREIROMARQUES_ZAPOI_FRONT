@@ -86,7 +86,7 @@ R5A5_..._FRONT/
     │                                  Tournoi, Equipe, MesEquipes
     │   └── admin/                     AdminTournois, AdminTournoi
     ├── routes/
-    │   ├── Routage.tsx                Déclaration des routes
+    │   ├── Routage.tsx                Déclaration des routes (pages admin chargées à la demande : React.lazy)
     │   └── RouteProtegee.tsx          Enveloppe des routes /admin (confort, pas sécurité)
     └── styles/                        Thème « Piste A », sombre et clair (§4)
 ```
