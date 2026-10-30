@@ -217,15 +217,17 @@ Règles : un champ facultatif (`?`) correspond à un champ **omis** par l'API
    aucun champ de dotation : une vraie dotation demande une colonne en base et
    un champ dans le contrat (décision à deux, voir `CLAUDE.md`).
    **Logos des jeux** : pictogrammes officiels de la bibliothèque Simple Icons
-   (`components/jeux/logos.ts`), sauf **Overwatch 2** (absent de cette
-   bibliothèque) : son sigle s'affiche en attendant le fichier officiel.
+   (`components/jeux/logos.ts`), sauf **Overwatch 2** et **Rocket League**
+   (absents de cette bibliothèque) : leur sigle s'affiche. Choix assumé : pas de
+   logo de marque récupéré hors d'une source à la licence claire.
    Les marques restent la propriété de leurs éditeurs.
 
-1. **Aucun test automatisé côté front** : pas de test runner dans `package.json`.
-   Ce qui tient lieu de vérification : `npm run build` (typage), `npm run lint`,
-   et des parcours de bout en bout jouables avec les données de démonstration du
-   back (`python scripts/donnees_demo.py`). Les droits d'accès, eux, sont testés
-   côté back, seul endroit où ils comptent.
+1. **Tests front ciblés, pas de bout en bout** : `npm test` (Vitest, `src/__tests__/`)
+   couvre le client HTTP, `RouteProtegee` et le hook du chat, avec un socket et une
+   API simulés. Les écrans ne sont pas tous testés ; les parcours complets se jouent
+   à la main avec les données de démonstration du back
+   (`python scripts/donnees_demo.py`). Les droits d'accès, eux, sont testés côté
+   back, seul endroit où ils comptent.
 2. **L'interface cache, le serveur refuse.** Les boutons masqués ou grisés
    (capitaine, administrateur, composition figée) sont du confort : la sécurité
    est dans l'API (403/404 testés).

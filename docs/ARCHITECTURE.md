@@ -86,7 +86,7 @@ R5A5_..._FRONT/
     │                                  Tournoi, Equipe, MesEquipes
     │   └── admin/                     AdminTournois, AdminTournoi
     ├── routes/
-    │   ├── Routage.tsx                Déclaration des routes
+    │   ├── Routage.tsx                Déclaration des routes (pages admin chargées à la demande : React.lazy)
     │   └── RouteProtegee.tsx          Enveloppe des routes /admin (confort, pas sécurité)
     └── styles/                        Thème « Piste A », sombre et clair (§4)
 ```
@@ -225,8 +225,8 @@ s'affiche aussi hors ligne. Ses deux axes servent : la graisse, et la largeur
 et sa flèche avance.
 
 **Logos et visuels de jeu** : chaque jeu a son logo officiel (`components/jeux/logos.ts`,
-pictogrammes de Simple Icons ; Overwatch 2 n'y figure pas, son sigle le remplace en
-attendant son fichier). `LogoJeu` l'affiche sur une tuile aux couleurs du jeu ; `VisuelJeu`
+pictogrammes de Simple Icons ; Overwatch 2 et Rocket League n'y figurent pas : leur sigle
+les remplace, choix assumé plutôt qu'un logo de marque à la licence incertaine). `LogoJeu` l'affiche sur une tuile aux couleurs du jeu ; `VisuelJeu`
 l'utilise en filigrane sur un fond CSS (dégradé, hachures). Les couleurs, les postes et la
 présentation de chaque jeu sont dans `components/tournoi/identitesJeux.ts`.
 

@@ -16,23 +16,31 @@ premier.
 
 ---
 
-## Démarrage rapide : toute la pile avec Docker
+## Démarrage rapide sous Windows : toute la pile avec Docker
 
-Le plus simple pour voir le site fonctionner : la base, l'API et l'interface
-démarrent ensemble avec la configuration du dépôt back (`docker-compose.complet.yml`).
-Les deux dépôts doivent être **côte à côte** :
+Le plus simple pour voir le site fonctionner (et pour la correction) : la base,
+l'API et l'interface démarrent ensemble avec la configuration du dépôt back
+(`docker-compose.complet.yml`). Il ne faut que **Docker Desktop** (démarré) et
+**Git**. Les deux dépôts doivent être **côte à côte**. Dans **PowerShell** :
 
-```bash
-mkdir agon-cup && cd agon-cup
-git clone <adresse du dépôt back>  back
-git clone <adresse du dépôt front> front
+```powershell
+mkdir agon-cup
+cd agon-cup
+git clone https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_GUERREIROMARQUES_ZAPOI_BACK.git back
+git clone https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_GUERREIROMARQUES_ZAPOI_FRONT.git front
 cd back
 docker compose -f docker-compose.complet.yml up --build
 ```
 
-Puis ouvrir **http://localhost:8080**. Les comptes de démonstration s'ajoutent
-avec `docker compose -f docker-compose.complet.yml --profile demo run --rm demo`
-(détails dans le README du back).
+Puis ouvrir **http://localhost:8080**. Sans données, le site est vide : dans un
+second PowerShell, depuis le dossier `back`, charger la démonstration (comptes,
+équipes, tournois) :
+
+```powershell
+docker compose -f docker-compose.complet.yml --profile demo run --rm demo
+```
+
+Le détail (réglages, mise à jour, dépannage) est dans le README du back.
 
 L'image du front (voir `Dockerfile`) construit le site puis le sert avec nginx,
 qui relaie aussi `/api` et le WebSocket vers l'API : le navigateur ne parle qu'à
@@ -41,10 +49,15 @@ sections suivantes.
 
 ---
 
-## Prérequis
+## Prérequis (développement)
 
-- **Node.js 20 ou plus récent** (avec npm)
-- L'**API back-end démarrée** — voir le README du dépôt back
+- **Node.js 22** (avec npm 10) — la version avec laquelle le front est testé
+  et construit dans l'image Docker
+- L'**API back-end démarrée** — voir le README du dépôt back (Python 3.13,
+  PostgreSQL 16 dans Docker)
+
+Principales versions figées dans `package-lock.json` : React 19, React Router 7,
+Vite 8.3.5, TypeScript 6.0, Socket.IO client 4.8, Bootstrap 5.3, Vitest.
 
 ---
 
@@ -78,9 +91,10 @@ réglage de l'image Docker.
 npm run dev
 ```
 
-L'interface est disponible sur `http://localhost:5173`. La page d'accueil
-provisoire vérifie que l'API, la base et le canal temps réel répondent : si les
-quatre lignes sont vertes, tout est en place.
+L'interface est disponible sur `http://localhost:5173` (**pas** `127.0.0.1`, qui
+n'est pas une origine autorisée par défaut). La page `/diagnostic` vérifie que
+l'API, la base et le canal temps réel répondent : si les quatre lignes sont
+vertes, tout est en place.
 
 Le port 5173 doit figurer dans `CORS_ORIGINS` du `.env` du back — c'est la
 valeur par défaut. Sans ça, le navigateur bloque tous les appels à l'API.
@@ -106,9 +120,17 @@ qui n'est pas connecté.
 | `npm run build` | Vérifie le typage TypeScript puis produit la version de production dans `dist/` |
 | `npm run preview` | Sert la version de production en local |
 | `npm run lint` | Analyse statique du code |
+| `npm test` | Lance les tests automatisés (Vitest), une fois |
+| `npm run test:watch` | Relance les tests à chaque modification |
 
-`npm run build` est le meilleur test avant une pull request : il échoue à la
-moindre erreur de typage.
+Avant une pull request : `npm test`, puis `npm run build`, qui échoue à la
+moindre erreur de typage (tests compris), puis `npm run lint`.
+
+Les tests vivent dans `src/__tests__/`. Ils couvrent le client HTTP (cookie
+joint, traduction des erreurs, réaction au 401), `RouteProtegee`, et l'espace
+d'échange (`useChatEquipe` : dédoublonnage, perte d'accès immédiate, relecture
+après reconnexion). Le socket et l'API y sont remplacés par des doublures :
+aucun back n'est nécessaire.
 
 ---
 
@@ -123,3 +145,21 @@ l'origine du front. Ajouter `http://localhost:5173` à `CORS_ORIGINS` dans le
 
 **Modification du `.env` sans effet** — Vite ne relit ce fichier qu'au
 démarrage : arrêter et relancer `npm run dev`.
+
+**Page blanche, ou « Outdated Optimize Dep » dans la console** — Vite a mis en cache
+d'anciennes versions des dépendances (après `npm ci`, ou un changement de branche).
+Arrêter le serveur, puis `npm run dev -- --force`.
+
+**Un autre programme occupe le port 5000 ou 5173** — l'« API injoignable » vient
+souvent d'une ancienne instance du back restée en arrière-plan. Voir le dépannage
+du README du back (`Get-NetTCPConnection -LocalPort 5000`). Le port 5173 est
+fixe : si Vite refuse de démarrer, c'est qu'une ancienne instance l'occupe.
+
+**Le temps réel ne charge pas** — ouvrir `/diagnostic` : la ligne « Temps réel »
+doit être verte. Sinon, vérifier l'adresse ouverte (`http://localhost:5173`), que
+le back est bien démarré, et la section « Le temps réel ne charge pas » du README
+du back (plafond de 20 connexions par adresse, dépendances à jour, pare-feu).
+
+**Windows : fins de ligne** — le dépôt contient un `.gitattributes` qui force le
+LF pour `nginx.conf` et le `Dockerfile` ; sans lui, Git pour Windows peut les
+convertir en CRLF et casser l'image Docker.

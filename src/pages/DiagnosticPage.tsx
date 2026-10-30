@@ -12,7 +12,7 @@ function Etat({ ok }: { ok: boolean }) {
 }
 
 export function DiagnosticPage() {
-    const { sante, erreur, chargement, tempsReel, verifier } = useEtatChaine();
+    const { sante, erreur, chargement, tempsReel, erreurTempsReel, transport, adresse, verifier } = useEtatChaine();
     const base = sante?.baseDeDonnees;
 
     return (
@@ -38,6 +38,24 @@ export function DiagnosticPage() {
                         Temps réel <Etat ok={tempsReel} />
                     </ListGroup.Item>
                 </ListGroup>
+
+                {/* Ce que le navigateur essaie d'atteindre, et pourquoi le temps réel échoue, le cas échéant. */}
+                <dl className="small text-body-secondary mb-3" aria-label="Détail du temps réel">
+                    <dt className="d-inline">Adresse de l'API : </dt>
+                    <dd className="d-inline"><code>{adresse}</code></dd>
+                    {tempsReel && transport && (
+                        <>
+                            <br /><dt className="d-inline">Transport temps réel : </dt>
+                            <dd className="d-inline">{transport === 'websocket' ? 'WebSocket' : `${transport} (le WebSocket n'est pas établi)`}</dd>
+                        </>
+                    )}
+                    {!tempsReel && erreurTempsReel && (
+                        <>
+                            <br /><dt className="d-inline">Erreur temps réel : </dt>
+                            <dd className="d-inline text-danger">{erreurTempsReel}</dd>
+                        </>
+                    )}
+                </dl>
 
                 <button type="button" className="btn-principal w-100" onClick={verifier} disabled={chargement}>
                     {chargement ? <Spinner size="sm" /> : 'Revérifier'}

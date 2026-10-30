@@ -1,0 +1,7 @@
+# Fins de ligne : Git pour Windows convertit en CRLF à l'extraction par défaut, ce qui
+# peut casser l'image Docker (nginx.conf, Dockerfile). Ces fichiers restent en LF partout.
+* text=auto
+Dockerfile text eol=lf
+*.conf text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
