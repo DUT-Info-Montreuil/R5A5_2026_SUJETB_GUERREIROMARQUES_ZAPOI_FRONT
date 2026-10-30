@@ -29,10 +29,18 @@ protocole Socket.IO. Un `WebSocket` natif du navigateur ne suffit pas.
 R5A5_..._FRONT/
 ├── index.html
 ├── package.json / package-lock.json   Dépendances, versions figées par le lock
-├── vite.config.ts                     Port 5173, options Sass
+├── vite.config.ts                     Port 5173, options Sass, configuration de Vitest
+├── tsconfig*.json                     TypeScript strict (application et outils)
+├── .oxlintrc.json                     Règles de lint (oxlint)
 ├── .env.example                       VITE_API_URL
-├── docs/
+├── Dockerfile, nginx.conf             Image de production : build Vite, puis nginx (site + relais /api et /socket.io)
+├── .dockerignore                      Ce qui n'entre pas dans l'image
+├── .gitattributes                     Fins de ligne LF pour nginx.conf et le Dockerfile (Windows)
+├── API.md, CLAUDE.md                  Appels consommés ; règles de travail avec l'assistant
+├── public/favicon.svg
+├── docs/                              Architecture et contrat d'API (identique à celui du back)
 └── src/
+    ├── __tests__/                     Tests Vitest : client HTTP, RouteProtegee, chat, diagnostic
     ├── main.tsx                       Point d'entrée : police et thème
     ├── App.tsx                        Racine : FournisseurAuth + routage
     ├── api/                           Seule couche qui parle au réseau
