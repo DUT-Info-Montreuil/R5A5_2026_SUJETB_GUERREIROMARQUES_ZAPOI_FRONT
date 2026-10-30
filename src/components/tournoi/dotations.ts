@@ -23,7 +23,7 @@ const PALIER = 50;
 
 const FORMAT_EUROS = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
 
-export function dotationEnEuros(tournoi: Pick<TournoiResume, 'nomTournoi' | 'nombreEquipes' | 'jeu'>): number {
+function dotationEnEuros(tournoi: Pick<TournoiResume, 'nomTournoi' | 'nombreEquipes' | 'jeu'>): number {
     const base = BASE_PAR_JEU[tournoi.jeu.nomJeu] ?? BASE_PAR_DEFAUT;
     const coupe = tournoi.nomTournoi.startsWith('Coupe') ? 2 : 1;
     const brut = (base * coupe * tournoi.nombreEquipes) / POIDS_D_UN_ARBRE_DE_HUIT;

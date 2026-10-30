@@ -10,11 +10,11 @@ Le front **ne définit aucune API** : il consomme celle du dépôt back
 | Source | Contenu |
 |---|---|
 | Swagger du back — http://localhost:5000/apidoc/swagger (back démarré) | Schémas exacts, générés depuis le code |
-| [`docs/CONTRAT_API.md`](docs/CONTRAT_API.md) | Règles transverses et décisions — **identique** dans les deux dépôts (v8) |
+| [`docs/CONTRAT_API.md`](docs/CONTRAT_API.md) | Règles transverses et décisions — **identique** dans les deux dépôts (v15) |
 | `API.md` du dépôt back | Routes, événements temps réel, état d'avancement côté serveur |
 | [`src/types/api.ts`](src/types/api.ts) | Le contrat en TypeScript : types de toutes les charges |
 
-Légende : ✅ branché dans l'interface · ⏳ prévu au contrat, pas encore consommé. Tout le contrat actuel est consommé, sauf la route de supervision (administrateur, hors interface).
+Légende : ✅ branché dans l'interface. Tout le contrat actuel est consommé, sauf la route de supervision (administrateur, hors interface).
 
 ---
 
@@ -138,7 +138,7 @@ L'état d'authentification ne contient **que** `Utilisateur`
 | `404` | Page tournoi ou équipe : écran « introuvable ». Pour le chat : l'espace se ferme (« tu n'y as pas accès ») sans dire pourquoi |
 | `409` | Message de l'API affiché tel quel (« La finale n'a pas encore de vainqueur. ») ; à l'inscription, indique si le pseudo ou l'e-mail est pris |
 | `422` | Message de l'API affiché tel quel |
-| `429` | Message de l'API affiché tel quel (trop de messages envoyés) |
+| `429` | Message de l'API affiché tel quel (trop d'essais de connexion, trop de messages envoyés, ou plafond global de 1 200 requêtes par minute) |
 | `5xx` | « Le serveur a rencontré une erreur. Réessayez. » — jamais le détail technique |
 
 ---
@@ -223,8 +223,8 @@ Règles : un champ facultatif (`?`) correspond à un champ **omis** par l'API
    Les marques restent la propriété de leurs éditeurs.
 
 1. **Tests front ciblés, pas de bout en bout** : `npm test` (Vitest, `src/__tests__/`)
-   couvre le client HTTP, `RouteProtegee` et le hook du chat, avec un socket et une
-   API simulés. Les écrans ne sont pas tous testés ; les parcours complets se jouent
+   (25 tests) couvre le client HTTP, `RouteProtegee`, le hook du chat et le diagnostic
+   du temps réel, avec un socket et une API simulés. Les écrans ne sont pas tous testés ; les parcours complets se jouent
    à la main avec les données de démonstration du back
    (`python scripts/donnees_demo.py`). Les droits d'accès, eux, sont testés côté
    back, seul endroit où ils comptent.
@@ -233,8 +233,10 @@ Règles : un champ facultatif (`?`) correspond à un champ **omis** par l'API
    est dans l'API (403/404 testés).
 3. **Le chat charge tout l'historique, sans pagination** (décision du contrat
    §6) : un très long historique alourdirait la page.
-4. **Un capitaine seul ne peut pas quitter son équipe** : le back refuse (`422`)
-   et ne propose pas de suppression d'équipe ; l'interface ne lui offre donc pas le bouton « Quitter ».
+4. **Un capitaine seul ne peut pas « quitter » son équipe** : le back refuse (`422`),
+   car il n'a personne à qui passer la main. Il peut en revanche **la dissoudre**
+   (« Se désister », `DELETE /api/equipes/{id}`), tant que les inscriptions sont
+   ouvertes ; l'interface lui propose ce bouton à la place de « Quitter ».
 5. **Les demandes d'adhésion et les postes ne sont pas poussés en temps réel** :
    `useRechargeAuRetour` relit les données quand on revient sur l'onglet, plutôt
    qu'un polling permanent.
