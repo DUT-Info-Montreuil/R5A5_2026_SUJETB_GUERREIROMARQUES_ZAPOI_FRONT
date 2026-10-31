@@ -51,7 +51,18 @@ function lireLus(moiId: number | null): Record<number, number> {
 
 export function useMessagerie(idsEquipes: number[], moiId: number | null) {
     const [etats, setEtats] = useState<Record<number, EtatEquipe>>({});
-    const [lus, setLus] = useState<Record<number, number>>(() => lireLus(moiId));
+    // Ce que `moiId` a déjà vu. L'état garde pour quel utilisateur il a été lu : quand `moiId` change
+    // (session restaurée après le premier affichage, ou autre compte dans le même onglet), on le relit
+    // dans le navigateur pendant l'affichage, avant que la première lecture des messages ne fixe une
+    // ligne de départ — sinon elle écrase la mémoire et un message arrivé pendant l'absence passe pour « lu ».
+    const [memoire, setMemoire] = useState(() => ({ pour: moiId, lus: lireLus(moiId) }));
+    if (memoire.pour !== moiId) setMemoire({ pour: moiId, lus: lireLus(moiId) });
+    const lus = memoire.lus;
+    const setLus = useCallback(
+        (suite: (avant: Record<number, number>) => Record<number, number>) =>
+            setMemoire((m) => ({ ...m, lus: suite(m.lus) })),
+        [],
+    );
     const [connecte, setConnecte] = useState(socket.connected);
     const [relecture, setRelecture] = useState(0);
     const { executer, envoi, erreur: erreurEnvoi, effacerErreur } = useAction();
@@ -78,7 +89,7 @@ export function useMessagerie(idsEquipes: number[], moiId: number | null) {
             }
             return apres;
         });
-    }, [moiId]);
+    }, [moiId, setLus]);
 
     // Snapshot : à l'arrivée d'une équipe, puis après chaque reconnexion.
     useEffect(() => {
