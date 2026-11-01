@@ -12,6 +12,7 @@
 ![Tests Vitest 27](https://img.shields.io/badge/tests-27%20Vitest-6E9F18?logo=vitest&logoColor=white)
 ![R5A5 sujet B](https://img.shields.io/badge/R5A5-sujet%20B-8A2BE2)
 [![CI Front](https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_GUERREIROMARQUES_ZAPOI_FRONT/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_GUERREIROMARQUES_ZAPOI_FRONT/actions/workflows/ci.yml)
+[![Licence CC BY-NC-SA 4.0](https://img.shields.io/badge/licence-CC%20BY--NC--SA%204.0-lightgrey?logo=creativecommons&logoColor=white)](LICENSE)
 
 Interface web de la plateforme de tournois de l'association étudiante
 (R5A5, sujet B).
@@ -241,3 +242,33 @@ du back (plafond de 20 connexions par adresse, dépendances à jour, pare-feu).
 **Windows : fins de ligne** — le dépôt contient un `.gitattributes` qui force le
 LF pour `nginx.conf` et le `Dockerfile` ; sans lui, Git pour Windows peut les
 convertir en CRLF et casser l'image Docker.
+
+---
+
+## Licence
+
+Ce projet est publié sous la licence **Creative Commons Attribution - Pas d'Utilisation Commerciale -
+Partage dans les Mêmes Conditions 4.0 International (CC BY-NC-SA 4.0)**. Le texte complet est dans
+[`LICENSE`](LICENSE) ; un résumé en français est sur https://creativecommons.org/licenses/by-nc-sa/4.0/deed.fr.
+
+Copyright (c) 2026 Denis Zapoi et Fabio Guerreiro-Marques, BUT Informatique, IUT de Montreuil.
+
+Vous pouvez copier, modifier et redistribuer ce code, **à trois conditions** :
+
+- **Citer l'origine (BY).** Nommer les auteurs, donner le lien du dépôt d'origine
+  (https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_GUERREIROMARQUES_ZAPOI_FRONT), indiquer la licence et signaler vos modifications.
+- **Pas d'usage commercial (NC).** Interdit de vendre ce code ou un produit qui l'embarque, ou de s'en servir
+  pour gagner de l'argent.
+- **Garder la même licence (SA).** Tout travail dérivé doit être publié sous la même licence, donc rester ouvert
+  à la lecture et à la réutilisation non commerciale.
+
+Ce n'est donc pas une licence « open source » au sens strict de l'OSI (qui n'autorise aucune restriction
+d'usage commercial) : le code est public et réutilisable, dans ces limites.
+
+**Ce que la licence ne couvre pas :**
+- les dépendances de `package.json`, qui gardent chacune leur propre licence ;
+- les logos des jeux (bibliothèque Simple Icons, domaine public CC0) : les marques elles-mêmes restent la propriété de
+  leurs éditeurs (Riot Games, Valve, Blizzard…) et ne sont pas concédées par cette licence ;
+- la police Archivo, sous sa propre licence.
+
+Le projet est un travail pédagogique, fourni « en l'état », sans garantie.
