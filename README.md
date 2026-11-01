@@ -9,7 +9,7 @@
 ![Sass](https://img.shields.io/badge/Sass-1.x-CC6699?logo=sass&logoColor=white)
 ![oxlint](https://img.shields.io/badge/lint-oxlint-2A7FFF)
 ![Docker nginx](https://img.shields.io/badge/Docker-nginx-2496ED?logo=docker&logoColor=white)
-![Tests Vitest 25](https://img.shields.io/badge/tests-25%20Vitest-6E9F18?logo=vitest&logoColor=white)
+![Tests Vitest 27](https://img.shields.io/badge/tests-27%20Vitest-6E9F18?logo=vitest&logoColor=white)
 ![R5A5 sujet B](https://img.shields.io/badge/R5A5-sujet%20B-8A2BE2)
 
 Interface web de la plateforme de tournois de l'association étudiante
@@ -143,10 +143,11 @@ qui n'est pas connecté.
 Avant une pull request : `npm test`, puis `npm run build`, qui échoue à la
 moindre erreur de typage (tests compris), puis `npm run lint`.
 
-Les tests (25) vivent dans `src/__tests__/`. Ils couvrent le client HTTP (cookie
+Les tests (27) vivent dans `src/__tests__/`. Ils couvrent le client HTTP (cookie
 joint, traduction des erreurs, réaction au 401), `RouteProtegee`, l'espace
 d'échange (`useChatEquipe` : dédoublonnage, perte d'accès immédiate, relecture
-après reconnexion) et le diagnostic du temps réel (`useEtatChaine` : transport,
+après reconnexion), la messagerie (`useMessagerie` : messages « non lus » conservés
+après un rechargement) et le diagnostic du temps réel (`useEtatChaine` : transport,
 erreur de connexion). Le socket et l'API y sont remplacés par des doublures :
 aucun back n'est nécessaire.
 
