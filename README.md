@@ -11,6 +11,7 @@
 ![Docker nginx](https://img.shields.io/badge/Docker-nginx-2496ED?logo=docker&logoColor=white)
 ![Tests Vitest 27](https://img.shields.io/badge/tests-27%20Vitest-6E9F18?logo=vitest&logoColor=white)
 ![R5A5 sujet B](https://img.shields.io/badge/R5A5-sujet%20B-8A2BE2)
+[![CI Front](https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_GUERREIROMARQUES_ZAPOI_FRONT/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/DUT-Info-Montreuil/R5A5_2026_SUJETB_GUERREIROMARQUES_ZAPOI_FRONT/actions/workflows/ci.yml)
 
 Interface web de la plateforme de tournois de l'association étudiante
 (R5A5, sujet B).
